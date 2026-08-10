@@ -336,6 +336,7 @@ private struct HeaderSection: View {
             VStack(alignment: .leading) {
                 Button(action: showFullTitleAction) {
                     Text(title)
+                        .foregroundStyle(favoriteForeground ?? .tint)
                         .font(.title3.bold())
                         .multilineTextAlignment(.leading)
                         .tint(.primary)
@@ -397,6 +398,10 @@ private struct HeaderSection: View {
             .padding(.horizontal, 10)
             .frame(minHeight: Defaults.ImageSize.headerH)
         }
+    }
+
+    private var favoriteForeground: Color? {
+        FavoriteTagPalette.color(forGalleryFavoriteIndex: gallery.favoriteTagIndex, name: gallery.favoriteTagName)
     }
 }
 
