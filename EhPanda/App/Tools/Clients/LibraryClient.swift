@@ -60,7 +60,7 @@ extension LibraryClient {
             let cache = ImageCache(name: "ehpanda")
             cache.diskStorage.config.sizeLimit = Defaults.Cache.diskSizeLimit
             cache.memoryStorage.config.totalCostLimit = Defaults.Cache.memorySizeLimit
-            cache.diskStorage.config.expiration = Defaults.Cache.diskExpiration
+            cache.diskStorage.config.expiration = .seconds(Defaults.Cache.diskExpiration)
             KingfisherManager.shared.cache = cache
             Logger.info("ImageCache configured", context: [
                 "diskSizeLimit": Defaults.Cache.diskSizeLimit,
