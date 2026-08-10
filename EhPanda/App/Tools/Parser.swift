@@ -187,6 +187,10 @@ struct Parser {
                         category: category,
                         uploader: try? parseUploader(node: link),
                         pageCount: pageCount,
+                        hasRated: false,
+                        isExpunged: false,
+                        favoriteTagIndex: nil,
+                        favoriteTagName: nil,
                         postedDate: publishedDate,
                         coverURL: coverURL,
                         galleryURL: galleryURL
@@ -215,6 +219,10 @@ struct Parser {
                         category: category,
                         uploader: try? parseUploader(node: link),
                         pageCount: pageCount,
+                        hasRated: false,
+                        isExpunged: false,
+                        favoriteTagIndex: nil,
+                        favoriteTagName: nil,
                         postedDate: publishedDate,
                         coverURL: coverURL,
                         galleryURL: galleryURL
@@ -243,6 +251,10 @@ struct Parser {
                         category: category,
                         uploader: uploader,
                         pageCount: pageCount,
+                        hasRated: false,
+                        isExpunged: false,
+                        favoriteTagIndex: nil,
+                        favoriteTagName: nil,
                         postedDate: publishedDate,
                         coverURL: coverURL,
                         galleryURL: galleryURL
@@ -268,7 +280,12 @@ struct Parser {
                         rating: rating,
                         tags: (try? parseGalleryTags(node: gl6tNode)) ?? [],
                         category: category,
+                        uploader: nil,
                         pageCount: pageCount,
+                        hasRated: false,
+                        isExpunged: false,
+                        favoriteTagIndex: nil,
+                        favoriteTagName: nil,
                         postedDate: publishedDate,
                         coverURL: coverURL,
                         galleryURL: galleryURL
@@ -507,8 +524,16 @@ struct Parser {
             let isFavorited = gdfNode
                 .at_xpath("//a [@id='favoritelink']")?
                 .text?.contains("Add to Favorites") == false
+            let gnText = link.at_xpath("//h1 [@id='gn']")?.text
             let gjText = link.at_xpath("//h1 [@id='gj']")?.text
+            let engTitle = (gnText?.isEmpty == false ? gnText : gjText) ?? ""
             let jpnTitle = gjText?.isEmpty != false ? nil : gjText
+            let language = tags
+                .first(where: { $0.namespace == .language })?
+                .contents
+                .first(where: { Language(rawValue: $0.firstLetterCapitalizedText) != nil })
+                .flatMap { Language(rawValue: $0.firstLetterCapitalizedText) } ?? .invalid
+            let isExpunged = if case .no(let reason) = visibility { reason == "Expunged" } else { false }
             let parentURLString = infoPanel[1].isValidURL ? infoPanel[1] : ""
 
             // parse favorite tag index and name from #fav > .i style if present
@@ -537,6 +562,7 @@ struct Parser {
                 isFavorited: isFavorited,
                 visibility: visibility,
                 rating: containsUserRating ? textRating ?? 0.0 : imgRating,
+                hasRated: containsUserRating,
                 userRating: containsUserRating ? imgRating : 0.0,
                 ratingCount: ratingCount,
                 category: category,
@@ -550,6 +576,9 @@ struct Parser {
                 pageCount: pageCount,
                 sizeCount: sizeCount,
                 sizeType: infoPanel[5],
+                favoriteTagIndex: favoriteTagIndex,
+                favoriteTagName: favoriteTagName,
+                isExpunged: isExpunged,
                 torrentCount: arcAndTor.1
             )
             tmpGalleryState = GalleryState(
