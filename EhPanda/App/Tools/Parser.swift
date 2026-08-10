@@ -533,7 +533,7 @@ struct Parser {
                 .contents
                 .lazy
                 .compactMap { Language(rawValue: $0.firstLetterCapitalizedText) }
-                .first ?? .invalid
+                .first ?? Language(rawValue: infoPanel[3]) ?? .invalid
             let isExpunged = if case .no(let reason) = visibility { reason == "Expunged" } else { false }
             let parentURLString = infoPanel[1].isValidURL ? infoPanel[1] : ""
 
