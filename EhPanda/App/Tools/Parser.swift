@@ -531,8 +531,9 @@ struct Parser {
             let language = tags
                 .first(where: { $0.namespace == .language })?
                 .contents
-                .first(where: { Language(rawValue: $0.firstLetterCapitalizedText) != nil })
-                .flatMap { Language(rawValue: $0.firstLetterCapitalizedText) } ?? .invalid
+                .lazy
+                .compactMap { Language(rawValue: $0.firstLetterCapitalizedText) }
+                .first ?? .invalid
             let isExpunged = if case .no(let reason) = visibility { reason == "Expunged" } else { false }
             let parentURLString = infoPanel[1].isValidURL ? infoPanel[1] : ""
 
