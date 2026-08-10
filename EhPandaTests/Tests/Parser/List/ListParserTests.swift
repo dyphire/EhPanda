@@ -19,8 +19,8 @@ class ListParserTests: XCTestCase, TestHelper {
             let uploaders = galleries.compactMap(\.uploader).filter(\.notEmpty)
             XCTAssertEqual(galleries.count, type.assertCount, .init(describing: type))
             XCTAssertTrue(galleries.allSatisfy({ $0.readingProgress == .zero }), .init(describing: type))
-            XCTAssertTrue(galleries.allSatisfy({ $0.hasRated == false }), .init(describing: type))
-            XCTAssertTrue(galleries.allSatisfy({ $0.isExpunged == false }), .init(describing: type))
+            XCTAssertTrue(galleries.allSatisfy({ !$0.hasRated }), .init(describing: type))
+            XCTAssertTrue(galleries.allSatisfy({ !$0.isExpunged }), .init(describing: type))
             if type.hasUploader {
                 XCTAssertEqual(uploaders.count, type.assertCount, .init(describing: type))
             }
