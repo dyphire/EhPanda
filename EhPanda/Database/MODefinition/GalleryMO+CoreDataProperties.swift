@@ -22,4 +22,7 @@ extension GalleryMO: GalleryIdentifiable {
     @NSManaged public var title: String
     @NSManaged public var token: String
     @NSManaged public var uploader: String?
+    @NSManaged public var hasRated: Bool
+    @NSManaged public var isFavorited: Bool
+    @NSManaged public var isExpunged: Bool
 }
