@@ -12,10 +12,10 @@ extension GalleryMO: ManagedObjectProtocol {
         Gallery(
             gid: gid, token: token,
             title: title, rating: rating,
+            readingProgress: 0,
             tags: tags?.toObject() ?? [GalleryTag](),
             category: Category(rawValue: category) ?? .private,
             uploader: uploader, pageCount: Int(pageCount),
-            readingProgress: 0,
             hasRated: false,
             isExpunged: false,
             postedDate: postedDate,
