@@ -11,11 +11,13 @@ struct GalleryDetailCell: View {
 
     private let gallery: Gallery
     private let setting: Setting
+    private let showFavoriteBadge: Bool
     private let translateAction: ((String) -> (String, TagTranslation?))?
 
-    init(gallery: Gallery, setting: Setting, translateAction: ((String) -> (String, TagTranslation?))? = nil) {
+    init(gallery: Gallery, setting: Setting, showFavoriteBadge: Bool = true, translateAction: ((String) -> (String, TagTranslation?))? = nil) {
         self.gallery = gallery
         self.setting = setting
+        self.showFavoriteBadge = showFavoriteBadge
         self.translateAction = translateAction
     }
 
@@ -27,11 +29,15 @@ struct GalleryDetailCell: View {
         HStack(spacing: 10) {
             KFImage(gallery.coverURL)
                 .placeholder { Placeholder(style: .activity(ratio: Defaults.ImageSize.rowAspect)) }
-                .defaultModifier().scaledToFit().frame(width: Defaults.ImageSize.rowW, height: Defaults.ImageSize.rowH)
+                .defaultModifier()
+                .scaledToFit()
+                .frame(width: Defaults.ImageSize.rowW, height: Defaults.ImageSize.rowH)
+
             VStack(alignment: .leading, spacing: 5) {
                 Text(gallery.title).lineLimit(3).font(.headline).foregroundStyle(.primary)
                     .fixedSize(horizontal: false, vertical: true)
                 Text(gallery.uploader ?? "").lineLimit(1).font(.subheadline).foregroundStyle(.secondary)
+
                 let tagContents = gallery.tagContents(maximum: setting.listTagsNumberMaximum)
                 if setting.showsTagsInList, !tagContents.isEmpty {
                     TagCloudView(data: tagContents) { content in
@@ -46,11 +52,26 @@ struct GalleryDetailCell: View {
                         )
                     }
                 }
+
                 HStack {
-                    RatingView(rating: gallery.rating).font(.caption).foregroundStyle(.yellow)
+                    RatingView(rating: gallery.rating)
+                        .font(.caption)
+                        .foregroundStyle(gallery.hasRated ? Color.green : Color.yellow)
+
                     Spacer()
+
                     HStack(spacing: 10) {
-                        Text(gallery.language?.value ?? "")
+                        if let language = gallery.language {
+                            HStack(spacing: 4) {
+                                if showFavoriteBadge && gallery.isFavorite {
+                                    Image(systemSymbol: .heartFill)
+                                        .imageScale(.small)
+                                        .foregroundStyle(Color.red)
+                                }
+                                Text(gallery.language?.value ?? "")
+                            }
+                        }
+
                         HStack(spacing: 2) {
                             Image(systemSymbol: .photoOnRectangleAngled)
                             Text(String(gallery.pageCount))
@@ -58,6 +79,7 @@ struct GalleryDetailCell: View {
                     }
                     .lineLimit(1).font(.footnote).foregroundStyle(.secondary).minimumScaleFactor(0.75)
                 }
+
                 HStack(alignment: .bottom) {
                     CategoryLabel(text: gallery.category.value, color: gallery.color)
                     Spacer()

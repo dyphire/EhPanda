@@ -22,10 +22,15 @@ struct Gallery: Identifiable, Codable, Equatable, Hashable {
             token: "",
             title: "",
             rating: 0.0,
+            readingProgress: 0,
             tags: [],
             category: .doujinshi,
             uploader: "",
             pageCount: 1,
+            hasRated: false,
+            favoriteTagIndex: nil,
+            favoriteTagName: nil,
+            isExpunged: false,
             postedDate: .now,
             coverURL: nil,
             galleryURL: nil
@@ -36,10 +41,15 @@ struct Gallery: Identifiable, Codable, Equatable, Hashable {
         token: "",
         title: "Preview",
         rating: 3.5,
+        readingProgress: 0,
         tags: [],
         category: .doujinshi,
         uploader: "Anonymous",
         pageCount: 1,
+        hasRated: false,
+        favoriteTagIndex: nil,
+        favoriteTagName: nil,
+        isExpunged: false,
         postedDate: .now,
         coverURL: URL(
             string: "https://github.com/"
@@ -70,16 +80,25 @@ struct Gallery: Identifiable, Codable, Equatable, Hashable {
         return .init(tagContents.prefix(min(tagContents.count, maximum)))
     }
 
+    var isFavorite: Bool {
+        favoriteTagIndex != nil || favoriteTagName != nil
+    }
+
     var id: String { gid }
     let gid: String
     let token: String
 
     var title: String
     var rating: Float
+    var readingProgress: Int = .zero
     var tags: [GalleryTag]
     let category: Category
     var uploader: String?
     var pageCount: Int
+    var hasRated: Bool = false
+    var favoriteTagIndex: Int?
+    var favoriteTagName: String?
+    var isExpunged: Bool = false
     let postedDate: Date
     let coverURL: URL?
     let galleryURL: URL?

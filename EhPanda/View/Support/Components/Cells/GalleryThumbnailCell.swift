@@ -11,11 +11,13 @@ struct GalleryThumbnailCell: View {
 
     private let gallery: Gallery
     private let setting: Setting
+    private let showFavoriteBadge: Bool
     private let translateAction: ((String) -> (String, TagTranslation?))?
 
-    init(gallery: Gallery, setting: Setting, translateAction: ((String) -> (String, TagTranslation?))? = nil) {
+    init(gallery: Gallery, setting: Setting, showFavoriteBadge: Bool = true, translateAction: ((String) -> (String, TagTranslation?))? = nil) {
         self.gallery = gallery
         self.setting = setting
+        self.showFavoriteBadge = showFavoriteBadge
         self.translateAction = translateAction
     }
 
@@ -65,7 +67,14 @@ struct GalleryThumbnailCell: View {
                 }
                 HStack(spacing: 10) {
                     if let language = gallery.language {
-                        Text(language.value)
+                        HStack(spacing: 4) {
+                            if showFavoriteBadge && gallery.isFavorite {
+                                Image(systemSymbol: .heartFill)
+                                    .imageScale(.small)
+                                    .foregroundStyle(Color.red)
+                            }
+                            Text(language.value)
+                        }
                     }
                     HStack(spacing: 2) {
                         Image(systemSymbol: .photoOnRectangleAngled)
@@ -73,7 +82,9 @@ struct GalleryThumbnailCell: View {
                     }
                 }
                 .lineLimit(1).font(.footnote).foregroundStyle(.secondary)
-                RatingView(rating: gallery.rating).foregroundColor(.yellow).font(.caption)
+                RatingView(rating: gallery.rating)
+                    .foregroundColor(gallery.hasRated ? .green : .yellow)
+                    .font(.caption)
             }
             .padding()
         }
