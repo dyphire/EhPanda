@@ -90,6 +90,7 @@ private struct DetailList: View {
     private let navigateAction: ((String) -> Void)?
     private let translateAction: ((String) -> (String, TagTranslation?))?
     private let showFavoriteBadge: Bool
+    private let showReadingProgress: Bool
 
     init(
         galleries: [Gallery], setting: Setting, pageNumber: PageNumber?,
@@ -151,6 +152,7 @@ private struct WaterfallList: View {
     private let navigateAction: ((String) -> Void)?
     private let translateAction: ((String) -> (String, TagTranslation?))?
     private let showFavoriteBadge: Bool
+    private let showReadingProgress: Bool
 
     private var columnsInPortrait: Int {
         DeviceUtil.isPadWidth ? 4 : 2
