@@ -7,9 +7,11 @@ import SwiftUI
 
 struct RatingView: View {
     private let rawRating: Float
+    private let highlighted: Bool
 
-    init(rating: Float) {
+    init(rating: Float, highlighted: Bool = false) {
         self.rawRating = rating
+        self.highlighted = highlighted
     }
 
     var body: some View {
@@ -50,6 +52,7 @@ struct RatingView: View {
                 ForEach(0..<5) { _ in FilledStar() }
             }
         }
+        .foregroundStyle(highlighted ? Color.green : Color.yellow)
     }
 }
 

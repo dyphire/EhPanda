@@ -47,6 +47,7 @@ struct FavoritesView: View {
                         translateAction: {
                             tagTranslator.lookup(word: $0, returnOriginal: !setting.translatesTags)
                         }
+                        , showFavoriteBadge: false
                     )
                 } else {
                     NotLoginView(action: { store.send(.onNotLoginViewButtonTapped) })

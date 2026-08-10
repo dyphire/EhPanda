@@ -37,6 +37,7 @@ struct HistoryView: View {
             translateAction: {
                 tagTranslator.lookup(word: $0, returnOriginal: !setting.translatesTags)
             }
+            , showFavoriteBadge: false, showReadingProgress: true
         )
         .searchable(text: $store.keyword, prompt: L10n.Localizable.Searchable.Prompt.filter)
         .onAppear {

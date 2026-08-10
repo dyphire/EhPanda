@@ -34,11 +34,15 @@
         <attribute name="coverURL" attributeType="String" defaultValueString=""/>
         <attribute name="galleryURL" attributeType="String" defaultValueString=""/>
         <attribute name="gid" attributeType="String" defaultValueString=""/>
+        <attribute name="hasRated" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="isExpunged" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="isFavorited" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="language" optional="YES" attributeType="String"/>
         <attribute name="lastOpenDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="pageCount" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="postedDate" attributeType="Date" defaultDateTimeInterval="646585860" usesScalarValueType="NO"/>
         <attribute name="rating" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="tags" optional="YES" attributeType="Binary"/>
         <attribute name="title" attributeType="String" defaultValueString=""/>
         <attribute name="token" attributeType="String" defaultValueString=""/>
         <attribute name="uploader" optional="YES" attributeType="String"/>

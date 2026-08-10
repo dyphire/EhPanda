@@ -571,7 +571,7 @@ private struct ActionSection: View {
                 HStack {
                     RatingView(rating: Float(userRating) / 2)
                         .font(.system(size: 24))
-                        .foregroundStyle(.yellow)
+                        .foregroundStyle(galleryDetail.userRating > 0 ? Color.green : Color.yellow)
                         .gesture(
                             DragGesture(minimumDistance: 0)
                                 .onChanged(updateRatingAction)
@@ -676,8 +676,9 @@ private extension TagsSection {
                             text: translation?.displayValue ?? content.text,
                             imageURL: translation?.valueImageURL,
                             showsImages: showsImages,
-                            font: .subheadline, padding: padding, textColor: .primary,
-                            backgroundColor: backgroundColor
+                            font: .subheadline, padding: padding,
+                            textColor: content.textColor ?? .primary,
+                            backgroundColor: content.backgroundColor ?? backgroundColor
                         )
                     }
                     .contextMenu {

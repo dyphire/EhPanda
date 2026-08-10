@@ -24,13 +24,32 @@ struct GalleryHistoryCell: View {
                 if let uploader = gallery.uploader {
                     Text(uploader).foregroundColor(.secondary).lineLimit(1)
                 }
-                Spacer()
-                RatingView(rating: gallery.rating).foregroundColor(.primary)
+                HStack(spacing: 8) {
+                        if gallery.readingProgress > 0 {
+                            ReadingProgressRing(progress: gallery.readingProgress, pageCount: gallery.pageCount)
+                        }
+                    Spacer()
+                    RatingView(rating: gallery.rating, highlighted: gallery.hasRated)
+                }
             }
             .font(.caption)
             Spacer()
         }
         .frame(width: Defaults.ImageSize.rowW * 3, height: Defaults.ImageSize.rowH * 0.75)
+    }
+}
+
+private struct ReadingProgressRing: View {
+    let progress: Int
+    let pageCount: Int
+
+    var body: some View {
+        let fraction = pageCount > 0 ? Double(min(progress, pageCount)) / Double(pageCount) : 0
+        ZStack {
+            Circle().trim(from: 0, to: 1).stroke(Color(.systemGray4), lineWidth: 2)
+            Circle().trim(from: 0, to: fraction).stroke(Color.accentColor, style: StrokeStyle(lineWidth: 2, lineCap: .round))
+        }
+        .frame(width: 16, height: 16)
     }
 }
 
