@@ -20,10 +20,12 @@ extension GalleryDetailMO: GalleryIdentifiable {
     @NSManaged public var favoritedCount: Int64
     @NSManaged public var favoriteTagIndex: Int64
     @NSManaged public var favoriteTagName: String?
+    @NSManaged public var isExpunged: Bool
     @NSManaged public var pageCount: Int64
     @NSManaged public var parentURL: URL?
     @NSManaged public var postedDate: Date
     @NSManaged public var rating: Float
+    @NSManaged public var hasRated: Bool
     @NSManaged public var userRating: Float
     @NSManaged public var ratingCount: Int64
     @NSManaged public var sizeCount: Float
