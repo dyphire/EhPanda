@@ -19,7 +19,6 @@ struct GenericList: View {
     private let translateAction: ((String) -> (String, TagTranslation?))?
     private let showReadingProgress: Bool
     private let progressMap: [String: Int]?
-    private let progressMap: [String: Int]?
 
     init(
         galleries: [Gallery], setting: Setting, pageNumber: PageNumber?,
@@ -85,6 +84,7 @@ private struct DetailList: View {
     private let pageNumber: PageNumber?
     private let footerLoadingState: LoadingState
     private let showReadingProgress: Bool
+    private let progressMap: [String: Int]?
     private let fetchMoreAction: (() -> Void)?
     private let navigateAction: ((String) -> Void)?
     private let translateAction: ((String) -> (String, TagTranslation?))?
