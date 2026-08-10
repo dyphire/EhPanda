@@ -220,9 +220,7 @@ extension DatabaseClient {
             if let stateMO = fetch(entityType: GalleryStateMO.self, gid: galleryMO.gid) {
                 gallery.readingProgress = Int(stateMO.readingProgress)
             }
-            if let detailMO = fetch(entityType: GalleryDetailMO.self, gid: galleryMO.gid) {
-                gallery.hasRated = detailMO.hasRated
-            }
+            gallery.hasRated = galleryMO.hasRated
             if let detailMO = fetch(entityType: GalleryDetailMO.self, gid: galleryMO.gid) {
                 gallery.isFavorited = detailMO.isFavorited
             }
