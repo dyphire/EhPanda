@@ -24,13 +24,43 @@ struct GalleryHistoryCell: View {
                 if let uploader = gallery.uploader {
                     Text(uploader).foregroundColor(.secondary).lineLimit(1)
                 }
-                Spacer()
-                RatingView(rating: gallery.rating).foregroundColor(.primary)
+                HStack(spacing: 8) {
+                    ReadingProgressRing(gid: gallery.gid, pageCount: gallery.pageCount)
+                    if let language = gallery.language {
+                        Text(language.value).foregroundColor(.secondary)
+                    }
+                    Spacer()
+                    RatingView(rating: gallery.rating)
+                        .foregroundColor(gallery.hasRated ? .green : .primary)
+                }
             }
             .font(.caption)
             Spacer()
         }
         .frame(width: Defaults.ImageSize.rowW * 3, height: Defaults.ImageSize.rowH * 0.75)
+    }
+}
+
+private struct ReadingProgressRing: View {
+    let gid: String
+    let pageCount: Int
+
+    @State private var progress: Int = 0
+
+    var body: some View {
+        let fraction = pageCount > 0 ? Double(min(progress, pageCount)) / Double(pageCount) : 0
+        ZStack {
+            Circle().trim(from: 0, to: 1).stroke(Color(.systemGray4), lineWidth: 2)
+            Circle().trim(from: 0, to: fraction).stroke(Color.accentColor, style: StrokeStyle(lineWidth: 2, lineCap: .round))
+        }
+        .frame(width: 16, height: 16)
+        .onAppear {
+            Task { @MainActor in
+                if let state = await DatabaseClient.live.fetchGalleryState(gid: gid) {
+                    progress = state.readingProgress
+                }
+            }
+        }
     }
 }
 

@@ -56,7 +56,8 @@ struct GalleryCardCell: View {
                 VStack(alignment: .leading) {
                     Text(title).font(.title3.bold()).lineLimit(4)
                     Spacer()
-                    RatingView(rating: gallery.rating).foregroundColor(.yellow)
+                    RatingView(rating: gallery.rating)
+                        .foregroundColor(gallery.hasRated ? .green : .yellow)
                 }
                 .padding(.leading, 15)
             }

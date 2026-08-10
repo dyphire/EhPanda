@@ -10,6 +10,7 @@ import ComposableArchitecture
 struct GenericList: View {
     private let galleries: [Gallery]
     private let setting: Setting
+    private let showFavoriteBadge: Bool
     private let pageNumber: PageNumber?
     private let loadingState: LoadingState
     private let footerLoadingState: LoadingState
@@ -24,10 +25,12 @@ struct GenericList: View {
         fetchAction: (() -> Void)? = nil,
         fetchMoreAction: (() -> Void)? = nil,
         navigateAction: ((String) -> Void)? = nil,
-        translateAction: ((String) -> (String, TagTranslation?))? = nil
+        translateAction: ((String) -> (String, TagTranslation?))? = nil,
+        showFavoriteBadge: Bool = true
     ) {
         self.galleries = galleries
         self.setting = setting
+        self.showFavoriteBadge = showFavoriteBadge
         self.pageNumber = pageNumber
         self.loadingState = loadingState
         self.footerLoadingState = footerLoadingState
@@ -108,10 +111,10 @@ private struct DetailList: View {
 
     var body: some View {
         List(galleries) { gallery in
-            Button {
+                Button {
                 navigateAction?(gallery.id)
             } label: {
-                GalleryDetailCell(gallery: gallery, setting: setting, translateAction: translateAction)
+                GalleryDetailCell(gallery: gallery, setting: setting, showFavoriteBadge: showFavoriteBadge, translateAction: translateAction)
             }
             .foregroundColor(.primary)
             .onAppear {
@@ -174,7 +177,7 @@ private struct WaterfallList: View {
                 Button {
                     navigateAction?(gallery.id)
                 } label: {
-                    GalleryThumbnailCell(gallery: gallery, setting: setting, translateAction: translateAction)
+                    GalleryThumbnailCell(gallery: gallery, setting: setting, showFavoriteBadge: showFavoriteBadge, translateAction: translateAction)
                         .tint(.primary).multilineTextAlignment(.leading)
                 }
                 .buttonStyle(.borderless)

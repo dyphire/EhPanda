@@ -385,6 +385,7 @@ struct GalleryReverseRequest: Request {
                 token: url.pathComponents[3],
                 title: detail.title,
                 rating: detail.rating,
+                readingProgress: 0,
                 tags: [],
                 category: detail.category,
                 uploader: detail.uploader,
