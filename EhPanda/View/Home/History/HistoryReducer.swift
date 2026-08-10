@@ -25,6 +25,7 @@ struct HistoryReducer {
             return galleries.filter({ $0.title.caseInsensitiveContains(keyword) })
         }
         var galleries = [Gallery]()
+        var readingProgressMap: [String: Int] = [:]
         var loadingState: LoadingState = .idle
 
         var detailState: Heap<DetailReducer.State?>
@@ -42,6 +43,8 @@ struct HistoryReducer {
 
         case fetchGalleries
         case fetchGalleriesDone([Gallery])
+        case fetchReadingProgressMap
+        case fetchReadingProgressMapDone([String: Int])
 
         case detail(DetailReducer.Action)
     }
@@ -89,12 +92,24 @@ struct HistoryReducer {
                 state.loadingState = .idle
                 if galleries.isEmpty {
                     state.loadingState = .failed(.notFound)
+                    return .none
                 } else {
                     state.galleries = galleries
+                    return .run { send in
+                        var map = [String: Int]()
+                        for gallery in galleries {
+                            if let state = await databaseClient.fetchGalleryState(gid: gallery.gid) {
+                                map[gallery.gid] = state.readingProgress
+                            }
+                        }
+                        await send(.fetchReadingProgressMapDone(map))
+                    }
                 }
-                return .none
 
             case .detail:
+                return .none
+            case .fetchReadingProgressMapDone(let map):
+                state.readingProgressMap = map
                 return .none
             }
         }

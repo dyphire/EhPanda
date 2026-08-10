@@ -32,6 +32,8 @@ struct HistoryView: View {
             pageNumber: nil,
             loadingState: store.loadingState,
             footerLoadingState: .idle,
+            showReadingProgress: true,
+            progressMap: store.readingProgressMap,
             fetchAction: { store.send(.fetchGalleries) },
             navigateAction: { store.send(.setNavigation(.detail($0))) },
             translateAction: {

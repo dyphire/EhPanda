@@ -12,11 +12,15 @@ struct GalleryDetailCell: View {
     private let gallery: Gallery
     private let setting: Setting
     private let translateAction: ((String) -> (String, TagTranslation?))?
+    private let showReadingProgress: Bool
+    private let readingProgress: Int
 
-    init(gallery: Gallery, setting: Setting, translateAction: ((String) -> (String, TagTranslation?))? = nil) {
+    init(gallery: Gallery, setting: Setting, translateAction: ((String) -> (String, TagTranslation?))? = nil, showReadingProgress: Bool = false, readingProgress: Int = 0) {
         self.gallery = gallery
         self.setting = setting
         self.translateAction = translateAction
+        self.showReadingProgress = showReadingProgress
+        self.readingProgress = readingProgress
     }
 
     private var tagColor: Color {
@@ -50,7 +54,12 @@ struct GalleryDetailCell: View {
                     RatingView(rating: gallery.rating).font(.caption).foregroundStyle(.yellow)
                     Spacer()
                     HStack(spacing: 10) {
-                        Text(gallery.language?.value ?? "")
+                        HStack(spacing: 6) {
+                            if showReadingProgress, gallery.pageCount > 0, readingProgress > 0 {
+                                CircularReadingProgress(progress: Double(readingProgress) / Double(gallery.pageCount))
+                            }
+                            Text(gallery.language?.value ?? "")
+                        }
                         HStack(spacing: 2) {
                             Image(systemSymbol: .photoOnRectangleAngled)
                             Text(String(gallery.pageCount))
@@ -69,6 +78,24 @@ struct GalleryDetailCell: View {
             .drawingGroup()
         }
         .padding(.vertical, 5).padding(.leading, -10).padding(.trailing, -5)
+    }
+}
+
+private struct CircularReadingProgress: View {
+    let progress: Double
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .stroke(lineWidth: 2)
+                .foregroundStyle(Color(.systemGray5))
+            Circle()
+                .trim(from: 0, to: CGFloat(min(max(progress, 0), 1)))
+                .stroke(style: StrokeStyle(lineWidth: 2, lineCap: .round))
+                .rotation(Angle(degrees: -90))
+                .foregroundStyle(Color.accentColor)
+        }
+        .frame(width: 18, height: 18)
     }
 }
 

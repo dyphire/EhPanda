@@ -17,6 +17,9 @@ struct GenericList: View {
     private let fetchMoreAction: (() -> Void)?
     private let navigateAction: ((String) -> Void)?
     private let translateAction: ((String) -> (String, TagTranslation?))?
+    private let showReadingProgress: Bool
+    private let progressMap: [String: Int]?
+    private let progressMap: [String: Int]?
 
     init(
         galleries: [Gallery], setting: Setting, pageNumber: PageNumber?,
@@ -24,7 +27,9 @@ struct GenericList: View {
         fetchAction: (() -> Void)? = nil,
         fetchMoreAction: (() -> Void)? = nil,
         navigateAction: ((String) -> Void)? = nil,
-        translateAction: ((String) -> (String, TagTranslation?))? = nil
+        translateAction: ((String) -> (String, TagTranslation?))? = nil,
+        showReadingProgress: Bool = false,
+        progressMap: [String: Int]? = nil
     ) {
         self.galleries = galleries
         self.setting = setting
@@ -35,6 +40,8 @@ struct GenericList: View {
         self.fetchMoreAction = fetchMoreAction
         self.navigateAction = navigateAction
         self.translateAction = translateAction
+        self.showReadingProgress = showReadingProgress
+        self.progressMap = progressMap
     }
 
     var body: some View {
@@ -45,7 +52,8 @@ struct GenericList: View {
                     DetailList(
                         galleries: galleries, setting: setting, pageNumber: pageNumber,
                         footerLoadingState: footerLoadingState, fetchMoreAction: fetchMoreAction,
-                        navigateAction: navigateAction, translateAction: translateAction
+                        navigateAction: navigateAction, translateAction: translateAction,
+                        showReadingProgress: showReadingProgress, progressMap: progressMap
                     )
                 case .thumbnail:
                     WaterfallList(
@@ -76,6 +84,7 @@ private struct DetailList: View {
     private let setting: Setting
     private let pageNumber: PageNumber?
     private let footerLoadingState: LoadingState
+    private let showReadingProgress: Bool
     private let fetchMoreAction: (() -> Void)?
     private let navigateAction: ((String) -> Void)?
     private let translateAction: ((String) -> (String, TagTranslation?))?
@@ -85,7 +94,9 @@ private struct DetailList: View {
         footerLoadingState: LoadingState,
         fetchMoreAction: (() -> Void)?,
         navigateAction: ((String) -> Void)? = nil,
-        translateAction: ((String) -> (String, TagTranslation?))? = nil
+        translateAction: ((String) -> (String, TagTranslation?))? = nil,
+        showReadingProgress: Bool = false,
+        progressMap: [String: Int]? = nil
     ) {
         self.galleries = galleries
         self.setting = setting
@@ -94,6 +105,8 @@ private struct DetailList: View {
         self.fetchMoreAction = fetchMoreAction
         self.navigateAction = navigateAction
         self.translateAction = translateAction
+        self.showReadingProgress = showReadingProgress
+        self.progressMap = progressMap
     }
 
     private func shouldShowFooter(gallery: Gallery) -> Bool {
@@ -108,11 +121,14 @@ private struct DetailList: View {
 
     var body: some View {
         List(galleries) { gallery in
-            Button {
-                navigateAction?(gallery.id)
-            } label: {
-                GalleryDetailCell(gallery: gallery, setting: setting, translateAction: translateAction)
-            }
+                Button {
+                    navigateAction?(gallery.id)
+                } label: {
+                    GalleryDetailCell(
+                        gallery: gallery, setting: setting, translateAction: translateAction,
+                        showReadingProgress: showReadingProgress, readingProgress: progressMap?[gallery.id] ?? 0
+                    )
+                }
             .foregroundColor(.primary)
             .onAppear {
                 if gallery == galleries.last {
