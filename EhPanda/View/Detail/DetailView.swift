@@ -339,7 +339,7 @@ private struct HeaderSection: View {
                         .foregroundStyle(favoriteForeground ?? .tint)
                         .font(.title3.bold())
                         .multilineTextAlignment(.leading)
-                        .tint(.primary)
+                        .tint(Color.primary)
                         .lineLimit(showFullTitle ? nil : 3)
                         .fixedSize(horizontal: false, vertical: true)
                 }
