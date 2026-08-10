@@ -18,6 +18,8 @@ class ListParserTests: XCTestCase, TestHelper {
             let galleries = try Parser.parseGalleries(doc: document)
             let uploaders = galleries.compactMap(\.uploader).filter(\.notEmpty)
             XCTAssertEqual(galleries.count, type.assertCount, .init(describing: type))
+            XCTAssertTrue(galleries.allSatisfy { !$0.hasRated }, .init(describing: type))
+            XCTAssertTrue(galleries.allSatisfy { !$0.isExpunged }, .init(describing: type))
             if type.hasUploader {
                 XCTAssertEqual(uploaders.count, type.assertCount, .init(describing: type))
             }
