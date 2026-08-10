@@ -349,13 +349,31 @@ struct Parser {
                     if let range = text.range(of: " | ") {
                         text = .init(text[..<range.lowerBound])
                     }
+                    var contentTextColor: Color?
+                    var contentBackgroundColor: Color?
+                    if let style = divLink["style"], let rangeB = style.range(of: ",#"),
+                       let rangeA = style.range(of: "background:radial-gradient(#")
+                    {
+                        let hex = String(style[rangeA.upperBound..<rangeB.lowerBound])
+                        if hex.count == 6, let red = Int(hex.prefix(2), radix: 16),
+                           let green = Int(hex.prefix(4).suffix(2), radix: 16),
+                           let blue = Int(hex.suffix(2), radix: 16)
+                        {
+                            contentBackgroundColor = .init(hex: .init(hex))
+                            if (.init(red) * 0.299 + .init(green) * 0.587 + .init(blue) * 0.114) > 151 {
+                                contentTextColor = .secondary
+                            } else {
+                                contentTextColor = .white
+                            }
+                        }
+                    }
                     contents.append(
                         .init(
                             rawNamespace: namespace, text: text,
                             isVotedUp: aClass == "tup",
                             isVotedDown: aClass == "tdn",
-                            textColor: nil,
-                            backgroundColor: nil
+                            textColor: contentTextColor,
+                            backgroundColor: contentBackgroundColor
                         )
                     )
                 }
