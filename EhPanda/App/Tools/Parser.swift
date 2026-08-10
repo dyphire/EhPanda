@@ -478,15 +478,14 @@ struct Parser {
             }
         }
 
-            tmpGalleryDetail = GalleryDetail(
+        var tmpGalleryDetail: GalleryDetail?
         var tmpGalleryState: GalleryState?
         for link in doc.xpath("//div [@class='gm']") {
             guard tmpGalleryDetail == nil, tmpGalleryState == nil,
                   let gd3Node = link.at_xpath("//div [@id='gd3']"),
                   let gd4Node = link.at_xpath("//div [@id='gd4']"),
                   let gd5Node = link.at_xpath("//div [@id='gd5']"),
-                hasRated: containsUserRating,
-                userRating: containsUserRating ? imgRating : 0.0,
+                  let gddNode = link.at_xpath("//div [@id='gdd']"),
                   let gdrNode = gd3Node.at_xpath("//div [@id='gdr']"),
                   let gdfNode = gd3Node.at_xpath("//div [@id='gdf']"),
                   let coverURL = try? parseCoverURL(node: link),
@@ -498,14 +497,6 @@ struct Parser {
                   let sizeCount = Float(infoPanel[4]),
                   let pageCount = Int(infoPanel[6]),
                   let favoritedCount = Int(infoPanel[7]),
-                favoriteTagIndex: favoriteTagIndex, favoriteTagName: favoriteTagName,
-                isExpunged: {
-                    switch visibility {
-                    case .no(let reason): return reason == "Expunged"
-                    default: return false
-                    }
-                }(),
-                torrentCount: arcAndTor.1
                   let uploader = try? parseUploader(node: gd3Node),
                   let (imgRating, textRating, containsUserRating) = try? parseRating(node: gdrNode),
                   let ratingCount = Int(gdrNode.at_xpath("//span [@id='rating_count']")?.text ?? ""),
