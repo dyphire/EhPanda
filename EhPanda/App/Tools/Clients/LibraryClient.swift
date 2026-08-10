@@ -14,7 +14,7 @@ import ComposableArchitecture
 struct LibraryClient {
     let initializeLogger: () -> Void
     let initializeWebImage: () -> Void
-    let clearWebImageDiskCache: () -> Void
+    let clearWebImageDiskCache: () async -> Void
     let analyzeImageColors: (UIImage) async -> UIImageColors?
     let calculateWebImageDiskCacheSize: () async -> UInt?
 }
@@ -51,12 +51,29 @@ extension LibraryClient {
             #endif
         },
         initializeWebImage: {
+            // Downloader session
             let config = KingfisherManager.shared.downloader.sessionConfiguration
             config.httpCookieStorage = HTTPCookieStorage.shared
             KingfisherManager.shared.downloader.sessionConfiguration = config
+
+            // Explicit ImageCache configuration to control disk/memory usage
+            let cache = ImageCache(name: "ehpanda")
+            cache.diskStorage.config.sizeLimit = Defaults.Cache.diskSizeLimit
+            cache.memoryStorage.config.totalCostLimit = Defaults.Cache.memorySizeLimit
+            cache.diskStorage.config.expiration = .seconds(Defaults.Cache.diskExpiration)
+            KingfisherManager.shared.cache = cache
+            Logger.info("ImageCache configured", context: [
+                "diskSizeLimit": Defaults.Cache.diskSizeLimit,
+                "memorySizeLimit": Defaults.Cache.memorySizeLimit,
+                "diskExpiration": Defaults.Cache.diskExpiration
+            ])
         },
         clearWebImageDiskCache: {
-            KingfisherManager.shared.cache.clearDiskCache()
+            await withCheckedContinuation { continuation in
+                KingfisherManager.shared.cache.clearDiskCache {
+                    continuation.resume()
+                }
+            }
         },
         analyzeImageColors: { image in
             await withCheckedContinuation { continuation in

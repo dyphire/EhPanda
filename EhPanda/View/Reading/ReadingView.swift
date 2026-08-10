@@ -257,7 +257,7 @@ extension ReadingView {
             Logger.info("analyzeImageForLiveText duplicated", context: ["index": index])
             return
         }
-        guard let key = store.imageURLs[index]?.absoluteString else {
+        guard let key = store.imageURLs[index]?.cacheKey else {
             Logger.info("analyzeImageForLiveText URL not found", context: ["index": index])
             return
         }
