@@ -15,13 +15,13 @@ extension GalleryMO: ManagedObjectProtocol {
             tags: tags?.toObject() ?? [GalleryTag](),
             category: Category(rawValue: category) ?? .private,
             uploader: uploader, pageCount: Int(pageCount),
-            postedDate: postedDate,
-            coverURL: coverURL, galleryURL: galleryURL,
-            lastOpenDate: lastOpenDate,
             hasRated: hasRated,
             isExpunged: isExpunged,
             favoriteTagIndex: favoriteTagIndex == -1 ? nil : Int(favoriteTagIndex),
-            favoriteTagName: favoriteTagName
+            favoriteTagName: favoriteTagName,
+            postedDate: postedDate,
+            coverURL: coverURL, galleryURL: galleryURL,
+            lastOpenDate: lastOpenDate
         )
     }
 }
