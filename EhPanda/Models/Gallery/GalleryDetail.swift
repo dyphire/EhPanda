@@ -8,15 +8,14 @@ import Foundation
 struct GalleryDetail: Codable, Equatable {
     static let empty: Self = .init(
         gid: "", title: "", isFavorited: false,
-        visibility: .yes, rating: 0, userRating: 0,
-        ratingCount: 0, category: .private,
+        visibility: .yes, rating: 0, hasRated: false,
+        userRating: 0, ratingCount: 0, category: .private,
         language: .japanese, uploader: "",
         postedDate: .now, coverURL: nil,
         favoritedCount: 0, pageCount: 0,
         sizeCount: 0, sizeType: "",
         favoriteTagIndex: nil, favoriteTagName: nil,
-        hasRated: false, isExpunged: false,
-        torrentCount: 0
+        isExpunged: false, torrentCount: 0
     )
     static let preview = GalleryDetail(
         gid: "",
@@ -25,6 +24,7 @@ struct GalleryDetail: Codable, Equatable {
         isFavorited: true,
         visibility: .yes,
         rating: 3.5,
+        hasRated: true,
         userRating: 4.0,
         ratingCount: 1919,
         category: .doujinshi,
@@ -42,7 +42,6 @@ struct GalleryDetail: Codable, Equatable {
         sizeType: "MB",
         favoriteTagIndex: 1,
         favoriteTagName: "Favorites 1",
-        hasRated: true,
         isExpunged: false,
         torrentCount: 101
     )
