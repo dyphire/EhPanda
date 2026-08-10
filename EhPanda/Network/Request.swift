@@ -393,7 +393,7 @@ struct GalleryReverseRequest: Request {
                 hasRated: detail.userRating != 0,
                 favoriteTagIndex: nil,
                 favoriteTagName: nil,
-                isExpunged: false,
+                isExpunged: detail.visibility == .no(reason: "Expunged"),
                 postedDate: detail.postedDate,
                 coverURL: detail.coverURL,
                 galleryURL: url
