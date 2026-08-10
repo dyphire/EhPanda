@@ -45,7 +45,7 @@ struct PreviewsView: View {
                             store.send(.updateReadingProgress(index))
                             store.send(.setNavigation(.reading()))
                         } label: {
-                            KFImage.url(url, cacheKey: store.previewURLs[index]?.absoluteString)
+                            KFImage.url(url, cacheKey: store.previewURLs[index]?.cacheKey)
                                 .placeholder({ Placeholder(style: .activity(ratio: Defaults.ImageSize.previewAspect)) })
                                 .imageModifier(modifier)
                                 .fade(duration: 0.25)

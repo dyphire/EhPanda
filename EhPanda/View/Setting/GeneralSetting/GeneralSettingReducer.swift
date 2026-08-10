@@ -74,11 +74,11 @@ struct GeneralSettingReducer {
                 return .none
 
             case .clearWebImageCache:
-                return .merge(
-                    .run(operation: { _ in libraryClient.clearWebImageDiskCache() }),
-                    .run(operation: { _ in await databaseClient.removeImageURLs() }),
-                    .send(.calculateWebImageDiskCache)
-                )
+                return .run { send in
+                    await libraryClient.clearWebImageDiskCache()
+                    await databaseClient.removeImageURLs()
+                    await send(.calculateWebImageDiskCache)
+                }
 
             case .checkPasscodeSetting:
                 state.passcodeNotSet = authorizationClient.passcodeNotSet()
