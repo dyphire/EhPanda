@@ -90,15 +90,15 @@ struct Gallery: Identifiable, Codable, Equatable, Hashable {
 
     var title: String
     var rating: Float
-    var readingProgress: Int
+    var readingProgress: Int = .zero
     var tags: [GalleryTag]
     let category: Category
     var uploader: String?
     var pageCount: Int
-    var hasRated: Bool
+    var hasRated: Bool = false
     var favoriteTagIndex: Int?
     var favoriteTagName: String?
-    var isExpunged: Bool
+    var isExpunged: Bool = false
     let postedDate: Date
     let coverURL: URL?
     let galleryURL: URL?
