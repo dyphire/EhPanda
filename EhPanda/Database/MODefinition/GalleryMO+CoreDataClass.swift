@@ -16,6 +16,8 @@ extension GalleryMO: ManagedObjectProtocol {
             category: Category(rawValue: category) ?? .private,
             uploader: uploader, pageCount: Int(pageCount),
             readingProgress: 0,
+            hasRated: false,
+            isExpunged: false,
             postedDate: postedDate,
             coverURL: coverURL, galleryURL: galleryURL,
             lastOpenDate: lastOpenDate
