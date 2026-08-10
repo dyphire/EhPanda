@@ -391,9 +391,9 @@ struct GalleryReverseRequest: Request {
                 pageCount: detail.pageCount,
                 hasRated: detail.hasRated,
                 isExpunged: detail.isExpunged,
-                postedDate: detail.postedDate,
                 favoriteTagIndex: detail.favoriteTagIndex,
                 favoriteTagName: detail.favoriteTagName,
+                postedDate: detail.postedDate,
                 coverURL: detail.coverURL,
                 galleryURL: url
             )
