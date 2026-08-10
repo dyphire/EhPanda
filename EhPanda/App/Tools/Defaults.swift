@@ -62,6 +62,14 @@ struct Defaults {
         static let logs = "logs"
         static let ehpandaLog = "EhPanda.log"
     }
+    struct Cache {
+        /// Disk size limit in bytes
+        static let diskSizeLimit: UInt = 2000 * 1024 * 1024 // 2000 MB
+        /// Memory size limit in bytes
+        static let memorySizeLimit: Int = 200 * 1024 * 1024 // 200 MB
+        /// Default disk expiration in seconds (e.g., 7 days)
+        static let diskExpiration: TimeInterval = 7 * 24 * 60 * 60
+    }
     struct Regex {
         static let tagSuggestion: NSRegularExpression? = try? .init(pattern: "(\\S+:\".+?\"|\".+?\"|\\S+:\\S+|\\S+)")
     }
