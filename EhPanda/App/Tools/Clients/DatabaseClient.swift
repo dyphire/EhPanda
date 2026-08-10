@@ -215,7 +215,19 @@ extension DatabaseClient {
             entityType: GalleryMO.self, fetchLimit: fetchLimit, predicate: predicate,
             findBeforeFetch: false, sortDescriptors: [sortDescriptor]
         )
-        .map { $0.toEntity() }
+        .map { galleryMO -> Gallery in
+            var gallery = galleryMO.toEntity()
+            if let stateMO = fetch(entityType: GalleryStateMO.self, gid: galleryMO.gid) {
+                gallery.readingProgress = Int(stateMO.readingProgress)
+            }
+            if let detailMO = fetch(entityType: GalleryDetailMO.self, gid: galleryMO.gid) {
+                gallery.hasRated = detailMO.hasRated
+            }
+            if let detailMO = fetch(entityType: GalleryDetailMO.self, gid: galleryMO.gid) {
+                gallery.isFavorited = detailMO.isFavorited
+            }
+            return gallery
+        }
         return galleries
     }
 }

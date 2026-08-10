@@ -12,9 +12,13 @@ extension GalleryMO: ManagedObjectProtocol {
         Gallery(
             gid: gid, token: token,
             title: title, rating: rating,
+            readingProgress: 0,
             tags: tags?.toObject() ?? [GalleryTag](),
             category: Category(rawValue: category) ?? .private,
             uploader: uploader, pageCount: Int(pageCount),
+            hasRated: hasRated,
+            isFavorited: isFavorited,
+            isExpunged: isExpunged,
             postedDate: postedDate,
             coverURL: coverURL, galleryURL: galleryURL,
             lastOpenDate: lastOpenDate
@@ -37,6 +41,9 @@ extension Gallery: ManagedObjectConvertible {
         galleryMO.title = title
         galleryMO.token = token
         galleryMO.uploader = uploader
+        galleryMO.hasRated = hasRated
+        galleryMO.isFavorited = isFavorited
+        galleryMO.isExpunged = isExpunged
 
         return galleryMO
     }

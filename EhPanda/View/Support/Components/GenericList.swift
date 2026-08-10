@@ -10,6 +10,8 @@ import ComposableArchitecture
 struct GenericList: View {
     private let galleries: [Gallery]
     private let setting: Setting
+    private let showFavoriteBadge: Bool
+    private let showReadingProgress: Bool
     private let pageNumber: PageNumber?
     private let loadingState: LoadingState
     private let footerLoadingState: LoadingState
@@ -24,10 +26,14 @@ struct GenericList: View {
         fetchAction: (() -> Void)? = nil,
         fetchMoreAction: (() -> Void)? = nil,
         navigateAction: ((String) -> Void)? = nil,
-        translateAction: ((String) -> (String, TagTranslation?))? = nil
+        translateAction: ((String) -> (String, TagTranslation?))? = nil,
+        showFavoriteBadge: Bool = true,
+        showReadingProgress: Bool = false
     ) {
         self.galleries = galleries
         self.setting = setting
+        self.showFavoriteBadge = showFavoriteBadge
+        self.showReadingProgress = showReadingProgress
         self.pageNumber = pageNumber
         self.loadingState = loadingState
         self.footerLoadingState = footerLoadingState
@@ -45,13 +51,17 @@ struct GenericList: View {
                     DetailList(
                         galleries: galleries, setting: setting, pageNumber: pageNumber,
                         footerLoadingState: footerLoadingState, fetchMoreAction: fetchMoreAction,
-                        navigateAction: navigateAction, translateAction: translateAction
+                        navigateAction: navigateAction, translateAction: translateAction,
+                        showFavoriteBadge: showFavoriteBadge,
+                        showReadingProgress: showReadingProgress
                     )
                 case .thumbnail:
                     WaterfallList(
                         galleries: galleries, setting: setting, pageNumber: pageNumber,
                         footerLoadingState: footerLoadingState, fetchMoreAction: fetchMoreAction,
-                        navigateAction: navigateAction, translateAction: translateAction
+                        navigateAction: navigateAction, translateAction: translateAction,
+                        showFavoriteBadge: showFavoriteBadge,
+                        showReadingProgress: showReadingProgress
                     )
                 }
             }
@@ -79,13 +89,16 @@ private struct DetailList: View {
     private let fetchMoreAction: (() -> Void)?
     private let navigateAction: ((String) -> Void)?
     private let translateAction: ((String) -> (String, TagTranslation?))?
+    private let showFavoriteBadge: Bool
 
     init(
         galleries: [Gallery], setting: Setting, pageNumber: PageNumber?,
         footerLoadingState: LoadingState,
         fetchMoreAction: (() -> Void)?,
         navigateAction: ((String) -> Void)? = nil,
-        translateAction: ((String) -> (String, TagTranslation?))? = nil
+        translateAction: ((String) -> (String, TagTranslation?))? = nil,
+        showFavoriteBadge: Bool = true,
+        showReadingProgress: Bool = false
     ) {
         self.galleries = galleries
         self.setting = setting
@@ -94,6 +107,8 @@ private struct DetailList: View {
         self.fetchMoreAction = fetchMoreAction
         self.navigateAction = navigateAction
         self.translateAction = translateAction
+        self.showFavoriteBadge = showFavoriteBadge
+        self.showReadingProgress = showReadingProgress
     }
 
     private func shouldShowFooter(gallery: Gallery) -> Bool {
@@ -108,10 +123,10 @@ private struct DetailList: View {
 
     var body: some View {
         List(galleries) { gallery in
-            Button {
+                Button {
                 navigateAction?(gallery.id)
-            } label: {
-                GalleryDetailCell(gallery: gallery, setting: setting, translateAction: translateAction)
+                } label: {
+                GalleryDetailCell(gallery: gallery, setting: setting, showFavoriteBadge: showFavoriteBadge, showReadingProgress: showReadingProgress, translateAction: translateAction)
             }
             .foregroundColor(.primary)
             .onAppear {
@@ -135,6 +150,7 @@ private struct WaterfallList: View {
     private let fetchMoreAction: (() -> Void)?
     private let navigateAction: ((String) -> Void)?
     private let translateAction: ((String) -> (String, TagTranslation?))?
+    private let showFavoriteBadge: Bool
 
     private var columnsInPortrait: Int {
         DeviceUtil.isPadWidth ? 4 : 2
@@ -157,7 +173,9 @@ private struct WaterfallList: View {
         footerLoadingState: LoadingState,
         fetchMoreAction: (() -> Void)?,
         navigateAction: ((String) -> Void)? = nil,
-        translateAction: ((String) -> (String, TagTranslation?))? = nil
+        translateAction: ((String) -> (String, TagTranslation?))? = nil,
+        showFavoriteBadge: Bool = true,
+        showReadingProgress: Bool = false
     ) {
         self.galleries = galleries
         self.setting = setting
@@ -166,6 +184,8 @@ private struct WaterfallList: View {
         self.fetchMoreAction = fetchMoreAction
         self.navigateAction = navigateAction
         self.translateAction = translateAction
+        self.showFavoriteBadge = showFavoriteBadge
+        self.showReadingProgress = showReadingProgress
     }
 
     var body: some View {
@@ -174,7 +194,7 @@ private struct WaterfallList: View {
                 Button {
                     navigateAction?(gallery.id)
                 } label: {
-                    GalleryThumbnailCell(gallery: gallery, setting: setting, translateAction: translateAction)
+                    GalleryThumbnailCell(gallery: gallery, setting: setting, showFavoriteBadge: showFavoriteBadge, showReadingProgress: showReadingProgress, translateAction: translateAction)
                         .tint(.primary).multilineTextAlignment(.leading)
                 }
                 .buttonStyle(.borderless)
