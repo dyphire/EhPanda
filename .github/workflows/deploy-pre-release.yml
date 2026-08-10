@@ -27,6 +27,8 @@ env:
 jobs:
   Deploy:
     runs-on: macos-26
+    permissions:
+      contents: write
     if: github.event_name == 'workflow_dispatch'
     steps:
       - name: Checkout
@@ -95,4 +97,4 @@ jobs:
          token: ${{ secrets.GITHUB_TOKEN }}
          name: ${{ inputs.releaseTitle }}
          body: ${{ inputs.releaseDescription }}
-         tag_name: 'v${{ steps.bump-version.outputs.version }}'
+         tag_name: '${{ steps.bump-version.outputs.version }}'
