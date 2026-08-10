@@ -108,6 +108,8 @@ struct HistoryReducer {
 
             case .detail:
                 return .none
+            case .fetchReadingProgressMap:
+                return .none
             case .fetchReadingProgressMapDone(let map):
                 state.readingProgressMap = map
                 return .none
