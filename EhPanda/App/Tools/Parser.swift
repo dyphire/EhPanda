@@ -178,7 +178,7 @@ struct Parser {
                       let (galleryTitle, galleryURL) = try? parseGalleryTitle(node: gl3mNode)
                 else { continue }
                 galleries.append(
-                    .init(
+                    Gallery(
                         gid: galleryURL.pathComponents[2],
                         token: galleryURL.pathComponents[3],
                         title: galleryTitle,
@@ -206,7 +206,7 @@ struct Parser {
                       let (galleryTitle, galleryURL) = try? parseGalleryTitle(node: gl3cNode)
                 else { continue }
                 galleries.append(
-                    .init(
+                    Gallery(
                         gid: galleryURL.pathComponents[2],
                         token: galleryURL.pathComponents[3],
                         title: galleryTitle,
@@ -234,7 +234,7 @@ struct Parser {
                       let (galleryTitle, galleryURL) = try? parseGalleryTitle(node: gl3eSiblingNode)
                 else { continue }
                 galleries.append(
-                    .init(
+                    Gallery(
                         gid: galleryURL.pathComponents[2],
                         token: galleryURL.pathComponents[3],
                         title: galleryTitle,
@@ -261,7 +261,7 @@ struct Parser {
                       let (galleryTitle, galleryURL) = try? parseGalleryTitle(node: link)
                 else { continue }
                 galleries.append(
-                    .init(
+                    Gallery(
                         gid: galleryURL.pathComponents[2],
                         token: galleryURL.pathComponents[3],
                         title: galleryTitle,
