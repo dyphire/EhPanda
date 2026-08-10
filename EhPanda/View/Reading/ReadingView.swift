@@ -561,6 +561,12 @@ private struct ImageContainer: View {
                         Button(action: reloadImage) {
                             Image(systemSymbol: .exclamationmarkArrowTriangle2Circlepath)
                         }
+                        .buttonStyle(PlainButtonStyle())
+                        .highPriorityGesture(
+                            TapGesture(count: 1).onEnded { _ in
+                                reloadImage()
+                            }
+                        )
                         .font(.system(size: 30, weight: .medium)).foregroundColor(.gray)
                         .opacity(loadingState == .loading ? 0 : 1)
                         ProgressView().opacity(loadingState == .loading ? 1 : 0)
@@ -568,6 +574,11 @@ private struct ImageContainer: View {
                 }
             }
             .frame(width: width, height: height)
+            .highPriorityGesture(
+                TapGesture(count: 1).onEnded { _ in
+                    reloadImage()
+                }
+            )
         }
     }
     private func reloadImage() {
