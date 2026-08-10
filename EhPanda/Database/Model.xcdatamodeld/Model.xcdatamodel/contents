@@ -23,6 +23,8 @@
         <attribute name="rating" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="ratingCount" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="sizeCount" attributeType="Float" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="favoriteTagIndex" attributeType="Integer 64" defaultValueString="-1" usesScalarValueType="YES"/>
+        <attribute name="favoriteTagName" optional="YES" attributeType="String"/>
         <attribute name="sizeType" attributeType="String" defaultValueString=""/>
         <attribute name="title" attributeType="String" defaultValueString=""/>
         <attribute name="torrentCount" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
@@ -39,6 +41,10 @@
         <attribute name="pageCount" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="postedDate" attributeType="Date" defaultDateTimeInterval="646585860" usesScalarValueType="NO"/>
         <attribute name="rating" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="hasRated" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="isExpunged" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="favoriteTagIndex" attributeType="Integer 64" defaultValueString="-1" usesScalarValueType="YES"/>
+        <attribute name="favoriteTagName" optional="YES" attributeType="String"/>
         <attribute name="title" attributeType="String" defaultValueString=""/>
         <attribute name="token" attributeType="String" defaultValueString=""/>
         <attribute name="uploader" optional="YES" attributeType="String"/>

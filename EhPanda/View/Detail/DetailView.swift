@@ -36,6 +36,7 @@ struct DetailView: View {
                     HeaderSection(
                         gallery: store.gallery,
                         galleryDetail: store.galleryDetail ?? .empty,
+                        favoriteIndex: store.pendingFavoriteIndex,
                         user: user,
                         displaysJapaneseTitle: setting.displaysJapaneseTitle,
                         showFullTitle: store.showsFullTitle,
@@ -285,8 +286,21 @@ private extension DetailView {
 
 // MARK: HeaderSection
 private struct HeaderSection: View {
+    static let favoriteColors: [Color] = [
+        Color(red: 158/255, green: 158/255, blue: 158/255),
+        Color(red: 252/255, green: 78/255, blue: 78/255),
+        Color(red: 252/255, green: 180/255, blue: 23/255),
+        Color(red: 221/255, green: 229/255, blue: 0/255),
+        Color(red: 23/255, green: 185/255, blue: 27/255),
+        Color(red: 54/255, green: 185/255, blue: 64/255),
+        Color(red: 104/255, green: 201/255, blue: 222/255),
+        Color(red: 80/255, green: 80/255, blue: 215/255),
+        Color(red: 151/255, green: 85/255, blue: 245/255),
+        Color(red: 254/255, green: 147/255, blue: 255/255),
+    ]
     private let gallery: Gallery
     private let galleryDetail: GalleryDetail
+    private let favoriteIndex: Int?
     private let user: User
     private let displaysJapaneseTitle: Bool
     private let showFullTitle: Bool
@@ -298,6 +312,7 @@ private struct HeaderSection: View {
 
     init(
         gallery: Gallery, galleryDetail: GalleryDetail,
+        favoriteIndex: Int?,
         user: User, displaysJapaneseTitle: Bool, showFullTitle: Bool,
         showFullTitleAction: @escaping () -> Void,
         favorAction: @escaping (Int) -> Void,
@@ -307,6 +322,7 @@ private struct HeaderSection: View {
     ) {
         self.gallery = gallery
         self.galleryDetail = galleryDetail
+        self.favoriteIndex = favoriteIndex
         self.user = user
         self.displaysJapaneseTitle = displaysJapaneseTitle
         self.showFullTitle = showFullTitle
@@ -364,6 +380,11 @@ private struct HeaderSection: View {
                     ZStack {
                         Button(action: unfavorAction) {
                             Image(systemSymbol: .heartFill)
+                                .foregroundStyle(
+                                    (favoriteIndex != nil && (0..<Self.favoriteColors.count).contains(favoriteIndex!))
+                                    ? Self.favoriteColors[favoriteIndex!]
+                                    : Color.accentColor
+                                )
                         }
                         .opacity(galleryDetail.isFavorited ? 1 : 0)
 
@@ -571,7 +592,7 @@ private struct ActionSection: View {
                 HStack {
                     RatingView(rating: Float(userRating) / 2)
                         .font(.system(size: 24))
-                        .foregroundStyle(.yellow)
+                        .foregroundStyle(galleryDetail.userRating > 0 ? Color.green : Color.yellow)
                         .gesture(
                             DragGesture(minimumDistance: 0)
                                 .onChanged(updateRatingAction)
@@ -676,10 +697,12 @@ private extension TagsSection {
                             text: translation?.displayValue ?? content.text,
                             imageURL: translation?.valueImageURL,
                             showsImages: showsImages,
-                            font: .subheadline, padding: padding, textColor: .primary,
-                            backgroundColor: backgroundColor
+                            font: .subheadline, padding: padding,
+                            textColor: content.textColor ?? .primary,
+                            backgroundColor: content.backgroundColor ?? backgroundColor
                         )
                     }
+                        .buttonStyle(.plain)
                     .contextMenu {
                         if let translation = translation,
                             let description = translation.descriptionPlainText,

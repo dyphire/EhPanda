@@ -27,6 +27,10 @@ struct Gallery: Identifiable, Codable, Equatable, Hashable {
             uploader: "",
             pageCount: 1,
             postedDate: .now,
+            hasRated: false,
+            isExpunged: false,
+            favoriteTagIndex: nil,
+            favoriteTagName: nil,
             coverURL: nil,
             galleryURL: nil
         )
@@ -41,6 +45,10 @@ struct Gallery: Identifiable, Codable, Equatable, Hashable {
         uploader: "Anonymous",
         pageCount: 1,
         postedDate: .now,
+        hasRated: true,
+        isExpunged: false,
+        favoriteTagIndex: nil,
+        favoriteTagName: nil,
         coverURL: URL(
             string: "https://github.com/"
             + "EhPanda-Team/Imageset/blob/"
@@ -80,6 +88,10 @@ struct Gallery: Identifiable, Codable, Equatable, Hashable {
     let category: Category
     var uploader: String?
     var pageCount: Int
+    var hasRated: Bool
+    var isExpunged: Bool
+    var favoriteTagIndex: Int?
+    var favoriteTagName: String?
     let postedDate: Date
     let coverURL: URL?
     let galleryURL: URL?
@@ -100,5 +112,8 @@ extension Gallery: DateFormattable, CustomStringConvertible {
     }
     var originalDate: Date {
         postedDate
+    }
+    var isFavorite: Bool {
+        favoriteTagIndex != nil || favoriteTagName != nil
     }
 }

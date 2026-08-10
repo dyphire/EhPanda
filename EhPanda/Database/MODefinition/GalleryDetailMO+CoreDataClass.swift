@@ -12,13 +12,16 @@ extension GalleryDetailMO: ManagedObjectProtocol {
         GalleryDetail(
             gid: gid, title: title, jpnTitle: jpnTitle, isFavorited: isFavorited,
             visibility: visibility?.toObject() ?? GalleryVisibility.yes,
-            rating: rating, userRating: userRating, ratingCount: Int(ratingCount),
+            rating: rating, hasRated: hasRated, userRating: userRating, ratingCount: Int(ratingCount),
             category: Category(rawValue: category).forceUnwrapped,
             language: Language(rawValue: language).forceUnwrapped,
             uploader: uploader, postedDate: postedDate,
             coverURL: coverURL, archiveURL: archiveURL, parentURL: parentURL,
             favoritedCount: Int(favoritedCount), pageCount: Int(pageCount),
             sizeCount: sizeCount, sizeType: sizeType,
+            favoriteTagIndex: favoriteTagIndex == -1 ? nil : Int(favoriteTagIndex),
+            favoriteTagName: favoriteTagName,
+            isExpunged: isExpunged,
             torrentCount: Int(torrentCount)
         )
     }
@@ -44,6 +47,10 @@ extension GalleryDetail: ManagedObjectConvertible {
         galleryDetailMO.ratingCount = Int64(ratingCount)
         galleryDetailMO.sizeCount = sizeCount
         galleryDetailMO.sizeType = sizeType
+        galleryDetailMO.favoriteTagIndex = Int64(favoriteTagIndex ?? -1)
+        galleryDetailMO.favoriteTagName = favoriteTagName
+        galleryDetailMO.hasRated = hasRated
+        galleryDetailMO.isExpunged = isExpunged
         galleryDetailMO.title = title
         galleryDetailMO.torrentCount = Int64(torrentCount)
         galleryDetailMO.uploader = uploader

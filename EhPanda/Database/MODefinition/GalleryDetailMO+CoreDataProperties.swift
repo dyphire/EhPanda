@@ -18,6 +18,8 @@ extension GalleryDetailMO: GalleryIdentifiable {
     @NSManaged public var jpnTitle: String?
     @NSManaged public var language: String
     @NSManaged public var favoritedCount: Int64
+    @NSManaged public var favoriteTagIndex: Int64
+    @NSManaged public var favoriteTagName: String?
     @NSManaged public var pageCount: Int64
     @NSManaged public var parentURL: URL?
     @NSManaged public var postedDate: Date

@@ -14,6 +14,8 @@ struct GalleryDetail: Codable, Equatable {
         postedDate: .now, coverURL: nil,
         favoritedCount: 0, pageCount: 0,
         sizeCount: 0, sizeType: "",
+        favoriteTagIndex: nil, favoriteTagName: nil,
+        hasRated: false, isExpunged: false,
         torrentCount: 0
     )
     static let preview = GalleryDetail(
@@ -38,6 +40,10 @@ struct GalleryDetail: Codable, Equatable {
         pageCount: 114,
         sizeCount: 514,
         sizeType: "MB",
+        favoriteTagIndex: 1,
+        favoriteTagName: "Favorites 1",
+        hasRated: true,
+        isExpunged: false,
         torrentCount: 101
     )
 
@@ -56,6 +62,7 @@ struct GalleryDetail: Codable, Equatable {
     var isFavorited: Bool
     var visibility: GalleryVisibility
     var rating: Float
+    var hasRated: Bool
     var userRating: Float
     var ratingCount: Int
     let category: Category
@@ -69,6 +76,9 @@ struct GalleryDetail: Codable, Equatable {
     var pageCount: Int
     var sizeCount: Float
     var sizeType: String
+    var favoriteTagIndex: Int?
+    var favoriteTagName: String?
+    var isExpunged: Bool
     var torrentCount: Int
 }
 

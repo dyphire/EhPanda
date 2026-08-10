@@ -279,6 +279,10 @@ extension DatabaseClient {
                 managedObject?.tags = gallery.tags.toData()
                 managedObject?.title = gallery.title
                 managedObject?.token = gallery.token
+                managedObject?.hasRated = gallery.hasRated
+                managedObject?.isExpunged = gallery.isExpunged
+                managedObject?.favoriteTagIndex = Int64(gallery.favoriteTagIndex ?? -1)
+                managedObject?.favoriteTagName = gallery.favoriteTagName
                 if let uploader = gallery.uploader {
                     managedObject?.uploader = uploader
                 }
@@ -317,6 +321,10 @@ extension DatabaseClient {
             managedObject?.title = detail.title
             managedObject?.torrentCount = Int64(detail.torrentCount)
             managedObject?.uploader = detail.uploader
+            managedObject?.favoriteTagIndex = Int64(detail.favoriteTagIndex ?? -1)
+            managedObject?.favoriteTagName = detail.favoriteTagName
+            managedObject?.isExpunged = detail.isExpunged
+            managedObject?.hasRated = detail.hasRated
         }
         if storedMO == nil {
             detail.toManagedObject(in: PersistenceController.shared.container.viewContext)

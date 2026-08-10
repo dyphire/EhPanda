@@ -46,6 +46,7 @@ struct DetailReducer {
         var galleryTags = [GalleryTag]()
         var galleryPreviewURLs = [Int: URL]()
         var galleryComments = [GalleryComment]()
+        var pendingFavoriteIndex: Int? = nil
 
         var readingState = ReadingReducer.State()
         var archivesState = ArchivesReducer.State()
@@ -285,6 +286,8 @@ struct DetailReducer {
                     state.galleryPreviewURLs = galleryState.previewURLs
                     state.galleryComments = galleryState.comments
                     state.userRating = Int(galleryDetail.userRating) * 2
+                    // clear optimistic pending index after real detail fetched
+                    state.pendingFavoriteIndex = nil
                     if let greeting = greeting {
                         effects.append(.send(.syncGreeting(greeting)))
                         if !greeting.gainedNothing && state.showsNewDawnGreeting {
@@ -316,6 +319,9 @@ struct DetailReducer {
                 }.cancellable(id: CancelID.rateGallery)
 
             case .favorGallery(let favIndex):
+                // optimistic update: set favorited and pending index for UI
+                state.galleryDetail?.isFavorited = true
+                state.pendingFavoriteIndex = favIndex
                 return .run { [state] send in
                     let response = await FavorGalleryRequest(
                         gid: state.gallery.id,
@@ -328,6 +334,9 @@ struct DetailReducer {
                 .cancellable(id: CancelID.favorGallery)
 
             case .unfavorGallery:
+                // optimistic update: clear favorited state and pending index for UI
+                state.galleryDetail?.isFavorited = false
+                state.pendingFavoriteIndex = nil
                 return .run { [galleryID = state.gallery.id] send in
                     let response = await UnfavorGalleryRequest(gid: galleryID).response()
                     await send(.anyGalleryOpsDone(response))

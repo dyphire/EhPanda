@@ -478,14 +478,15 @@ struct Parser {
             }
         }
 
-        var tmpGalleryDetail: GalleryDetail?
+            tmpGalleryDetail = GalleryDetail(
         var tmpGalleryState: GalleryState?
         for link in doc.xpath("//div [@class='gm']") {
             guard tmpGalleryDetail == nil, tmpGalleryState == nil,
                   let gd3Node = link.at_xpath("//div [@id='gd3']"),
                   let gd4Node = link.at_xpath("//div [@id='gd4']"),
                   let gd5Node = link.at_xpath("//div [@id='gd5']"),
-                  let gddNode = gd3Node.at_xpath("//div [@id='gdd']"),
+                hasRated: containsUserRating,
+                userRating: containsUserRating ? imgRating : 0.0,
                   let gdrNode = gd3Node.at_xpath("//div [@id='gdr']"),
                   let gdfNode = gd3Node.at_xpath("//div [@id='gdf']"),
                   let coverURL = try? parseCoverURL(node: link),
@@ -497,8 +498,14 @@ struct Parser {
                   let sizeCount = Float(infoPanel[4]),
                   let pageCount = Int(infoPanel[6]),
                   let favoritedCount = Int(infoPanel[7]),
-                  let language = Language(rawValue: infoPanel[3]),
-                  let engTitle = link.at_xpath("//h1 [@id='gn']")?.text,
+                favoriteTagIndex: favoriteTagIndex, favoriteTagName: favoriteTagName,
+                isExpunged: {
+                    switch visibility {
+                    case .no(let reason): return reason == "Expunged"
+                    default: return false
+                    }
+                }(),
+                torrentCount: arcAndTor.1
                   let uploader = try? parseUploader(node: gd3Node),
                   let (imgRating, textRating, containsUserRating) = try? parseRating(node: gdrNode),
                   let ratingCount = Int(gdrNode.at_xpath("//span [@id='rating_count']")?.text ?? ""),
@@ -512,6 +519,25 @@ struct Parser {
             let gjText = link.at_xpath("//h1 [@id='gj']")?.text
             let jpnTitle = gjText?.isEmpty != false ? nil : gjText
             let parentURLString = infoPanel[1].isValidURL ? infoPanel[1] : ""
+
+            // parse favorite tag index and name from #fav > .i style if present
+            var favoriteTagIndex: Int? = nil
+            var favoriteTagName: String? = nil
+            if let favStyle = gdfNode.at_xpath(".//div [@id='fav']//div [@class='i']")?["style"] ?? gdfNode.at_xpath(".//div [@class='i']")?["style"] {
+                let pattern = "-(\\d+)px"
+                if let regex = try? NSRegularExpression(pattern: pattern, options: []),
+                   let match = regex.firstMatch(in: favStyle, options: [], range: NSRange(location: 0, length: favStyle.utf16.count)),
+                   match.numberOfRanges >= 2,
+                   let range = Range(match.range(at: 1), in: favStyle) {
+                    let offsetStr = String(favStyle[range])
+                    if let offset = Int(offsetStr) {
+                        favoriteTagIndex = (offset - 2) / 19
+                    }
+                }
+                if favoriteTagIndex != nil {
+                    favoriteTagName = gdfNode.at_xpath("//a [@id='favoritelink']")?.text
+                }
+            }
 
             tmpGalleryDetail = GalleryDetail(
                 gid: gid,

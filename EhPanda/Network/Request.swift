@@ -389,7 +389,11 @@ struct GalleryReverseRequest: Request {
                 category: detail.category,
                 uploader: detail.uploader,
                 pageCount: detail.pageCount,
+                hasRated: detail.hasRated,
+                isExpunged: detail.isExpunged,
                 postedDate: detail.postedDate,
+                favoriteTagIndex: detail.favoriteTagIndex,
+                favoriteTagName: detail.favoriteTagName,
                 coverURL: detail.coverURL,
                 galleryURL: url
             )
