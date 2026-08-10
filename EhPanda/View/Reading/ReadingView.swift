@@ -568,6 +568,11 @@ private struct ImageContainer: View {
                 }
             }
             .frame(width: width, height: height)
+            .highPriorityGesture(
+                TapGesture(count: 1).onEnded { _ in
+                    reloadImage()
+                }
+            )
         }
     }
     private func reloadImage() {
