@@ -390,6 +390,10 @@ struct GalleryReverseRequest: Request {
                 category: detail.category,
                 uploader: detail.uploader,
                 pageCount: detail.pageCount,
+                hasRated: detail.userRating != 0,
+                favoriteTagIndex: nil,
+                favoriteTagName: nil,
+                isExpunged: false,
                 postedDate: detail.postedDate,
                 coverURL: detail.coverURL,
                 galleryURL: url
