@@ -26,11 +26,11 @@ struct Gallery: Identifiable, Codable, Equatable, Hashable {
             category: .doujinshi,
             uploader: "",
             pageCount: 1,
-            postedDate: .now,
             hasRated: false,
             isExpunged: false,
             favoriteTagIndex: nil,
             favoriteTagName: nil,
+            postedDate: .now,
             coverURL: nil,
             galleryURL: nil
         )
@@ -44,11 +44,11 @@ struct Gallery: Identifiable, Codable, Equatable, Hashable {
         category: .doujinshi,
         uploader: "Anonymous",
         pageCount: 1,
-        postedDate: .now,
         hasRated: true,
         isExpunged: false,
         favoriteTagIndex: nil,
         favoriteTagName: nil,
+        postedDate: .now,
         coverURL: URL(
             string: "https://github.com/"
             + "EhPanda-Team/Imageset/blob/"
