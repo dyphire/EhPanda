@@ -33,6 +33,10 @@ struct SearchRootReducer {
             detailState = .init(.init())
         }
 
+        func findGallery(gid: String) -> Gallery? {
+            historyGalleries.first(where: { $0.id == gid })
+        }
+
         mutating func appendHistoryKeywords(_ keywords: [String]) {
             guard !keywords.isEmpty else { return }
             var historyKeywords = historyKeywords
@@ -107,6 +111,9 @@ struct SearchRootReducer {
 
             case .setNavigation(let route):
                 state.route = route
+                if case .detail(let gid) = route {
+                    state.prefillDetailGalleryIfNeeded(gid: gid)
+                }
                 return route == nil
                 ? .merge(
                     .send(.clearSubStates),

@@ -64,6 +64,13 @@ struct HomeReducer {
             frontpageGalleries = Array(galleries.prefix(min(galleries.count, 25)))
                 .removeDuplicates(by: \.trimmedTitle)
         }
+
+        func findGallery(gid: String) -> Gallery? {
+            let galleries = popularGalleries
+                + frontpageGalleries
+                + toplistsGalleries.values.flatMap({ $0 })
+            return galleries.first(where: { $0.id == gid })
+        }
     }
 
     enum Action: BindableAction {
@@ -118,6 +125,9 @@ struct HomeReducer {
 
             case .setNavigation(let route):
                 state.route = route
+                if case .detail(let gid) = route {
+                    state.prefillDetailGalleryIfNeeded(gid: gid)
+                }
                 return route == nil ? .send(.clearSubStates) : .none
 
             case .clearSubStates:
@@ -270,3 +280,4 @@ struct HomeReducer {
         Scope(state: \.detailState.wrappedValue!, action: \.detail, child: DetailReducer.init)
     }
 }
+

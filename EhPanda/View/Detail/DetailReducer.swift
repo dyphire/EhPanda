@@ -238,14 +238,18 @@ struct DetailReducer {
                 return .merge(CancelID.allCases.map(Effect.cancel(id:)))
 
             case .fetchDatabaseInfos(let gid):
-                guard let gallery = databaseClient.fetchGallery(gid: gid) else { return .none }
-                state.gallery = gallery
+                if let gallery = databaseClient.fetchGallery(gid: gid) {
+                    state.gallery = gallery
+                } else if state.gallery.id != gid {
+                    return .none
+                }
                 if let detail = databaseClient.fetchGalleryDetail(gid: gid) {
                     state.galleryDetail = detail
                 }
+                let galleryID = state.gallery.id
                 return .merge(
                     .send(.saveGalleryHistory),
-                    .run { [galleryID = state.gallery.id] send in
+                    .run { [galleryID = galleryID] send in
                         guard let dbState = await databaseClient.fetchGalleryState(gid: galleryID) else { return }
                         await send(.fetchDatabaseInfosDone(dbState))
                     }
@@ -281,7 +285,10 @@ struct DetailReducer {
                     ]
                     state.apiKey = apiKey
                     state.galleryDetail = galleryDetail
-                    state.galleryTags = galleryState.tags
+                    state.galleryTags = mergeGalleryTagColors(
+                        detailTags: galleryState.tags,
+                        cachedTags: state.gallery.tags + state.galleryTags
+                    )
                     state.galleryPreviewURLs = galleryState.previewURLs
                     state.galleryComments = galleryState.comments
                     state.userRating = Int(galleryDetail.userRating) * 2
@@ -465,6 +472,32 @@ struct DetailReducer {
                 case: \.share,
                 hapticsClient: hapticsClient
             )
+    }
+
+    private func mergeGalleryTagColors(detailTags: [GalleryTag], cachedTags: [GalleryTag]) -> [GalleryTag] {
+        // Detail page tag HTML usually doesn't carry explicit color info.
+        // Use cached tag data from the gallery list / mytags color mapping source
+        // and apply those colors to detail tags when available.
+        let colorMap = cachedTags
+            .flatMap(\.contents)
+            .reduce(into: [String: GalleryTag.Content]()) { result, content in
+                result[content.id] = content
+            }
+
+        return detailTags.map { tag in
+            let mergedContents = tag.contents.map { content in
+                guard let existing = colorMap[content.id] else { return content }
+                return GalleryTag.Content(
+                    rawNamespace: content.rawNamespace,
+                    text: content.text,
+                    isVotedUp: content.isVotedUp,
+                    isVotedDown: content.isVotedDown,
+                    textColor: content.textColor ?? existing.textColor,
+                    backgroundColor: content.backgroundColor ?? existing.backgroundColor
+                )
+            }
+            return GalleryTag(rawNamespace: tag.rawNamespace, contents: mergedContents)
+        }
     }
 
     var body: some Reducer<State, Action> {

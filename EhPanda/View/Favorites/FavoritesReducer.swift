@@ -48,6 +48,10 @@ struct FavoritesReducer {
             detailState = .init(.init())
         }
 
+        func findGallery(gid: String) -> Gallery? {
+            rawGalleries.values.flatMap({ $0 }).first(where: { $0.id == gid })
+        }
+
         mutating func insertGalleries(index: Int, galleries: [Gallery]) {
             galleries.forEach { gallery in
                 if rawGalleries[index]?.contains(gallery) == false {
@@ -89,6 +93,9 @@ struct FavoritesReducer {
 
             case .setNavigation(let route):
                 state.route = route
+                if case .detail(let gid) = route {
+                    state.prefillDetailGalleryIfNeeded(gid: gid)
+                }
                 return route == nil ? .send(.clearSubStates) : .none
 
             case .setFavoritesIndex(let index):

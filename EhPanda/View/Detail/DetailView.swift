@@ -676,10 +676,12 @@ private extension TagsSection {
                             text: translation?.displayValue ?? content.text,
                             imageURL: translation?.valueImageURL,
                             showsImages: showsImages,
-                            font: .subheadline, padding: padding, textColor: .primary,
-                            backgroundColor: backgroundColor
+                            font: .subheadline, padding: padding,
+                            textColor: content.backgroundColor != nil ? content.textColor ?? .primary : .primary,
+                            backgroundColor: content.backgroundColor ?? backgroundColor
                         )
                     }
+                    .buttonStyle(.plain)
                     .contextMenu {
                         if let translation = translation,
                             let description = translation.descriptionPlainText,

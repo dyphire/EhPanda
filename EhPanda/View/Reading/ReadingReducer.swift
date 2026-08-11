@@ -253,16 +253,21 @@ struct ReadingReducer {
                 }
 
             case .retryAllFailedWebImages:
-                state.imageURLLoadingStates.forEach { (index, loadingState) in
-                    if case .failed = loadingState {
-                        state.imageURLLoadingStates[index] = .idle
+                let failedImageIndices = state.imageURLLoadingStates
+                    .filter { _, loadingState in
+                        if case .failed = loadingState { return true }
+                        return false
                     }
-                }
-                state.previewLoadingStates.forEach { (index, loadingState) in
-                    if case .failed = loadingState {
-                        state.previewLoadingStates[index] = .idle
+                    .map { $0.key }
+                failedImageIndices.forEach { state.imageURLLoadingStates[$0] = .idle }
+
+                let failedPreviewIndices = state.previewLoadingStates
+                    .filter { _, loadingState in
+                        if case .failed = loadingState { return true }
+                        return false
                     }
-                }
+                    .map { $0.key }
+                failedPreviewIndices.forEach { state.previewLoadingStates[$0] = .idle }
                 return .none
 
             case .copyImage(let imageURL):

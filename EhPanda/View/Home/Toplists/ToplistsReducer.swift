@@ -55,6 +55,10 @@ struct ToplistsReducer {
             detailState = .init(.init())
         }
 
+        func findGallery(gid: String) -> Gallery? {
+            galleries?.first(where: { $0.id == gid })
+        }
+
         mutating func insertGalleries(type: ToplistsType, galleries: [Gallery]) {
             galleries.forEach { gallery in
                 if rawGalleries[type]?.contains(gallery) == false {
@@ -107,6 +111,9 @@ struct ToplistsReducer {
 
             case .setNavigation(let route):
                 state.route = route
+                if case .detail(let gid) = route {
+                    state.prefillDetailGalleryIfNeeded(gid: gid)
+                }
                 return route == nil ? .send(.clearSubStates) : .none
 
             case .setToplistsType(let type):

@@ -27,6 +27,8 @@ env:
 jobs:
   Deploy:
     runs-on: macos-26
+    permissions:
+      contents: write
     if: github.event_name == 'workflow_dispatch'
     steps:
       - name: Checkout

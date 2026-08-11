@@ -5,6 +5,7 @@
 
 import SwiftUI
 import Foundation
+import ComposableArchitecture
 
 // MARK: Encodable
 extension Encodable {
@@ -240,6 +241,28 @@ extension Optional {
         return nil
     }
 }
+
+protocol GalleryDetailPrefillable {
+    var detailState: Heap<DetailReducer.State?> { get set }
+    func findGallery(gid: String) -> Gallery?
+}
+
+extension GalleryDetailPrefillable {
+    mutating func prefillDetailGalleryIfNeeded(gid: String) {
+        guard let gallery = findGallery(gid: gid) else { return }
+        detailState.wrappedValue?.gallery = gallery
+    }
+}
+
+extension HomeReducer.State: GalleryDetailPrefillable {}
+extension SearchRootReducer.State: GalleryDetailPrefillable {}
+extension SearchReducer.State: GalleryDetailPrefillable {}
+extension FavoritesReducer.State: GalleryDetailPrefillable {}
+extension PopularReducer.State: GalleryDetailPrefillable {}
+extension FrontpageReducer.State: GalleryDetailPrefillable {}
+extension ToplistsReducer.State: GalleryDetailPrefillable {}
+extension WatchedReducer.State: GalleryDetailPrefillable {}
+extension HistoryReducer.State: GalleryDetailPrefillable {}
 
 // MARK: Color
 extension Color {
