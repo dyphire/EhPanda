@@ -4,6 +4,7 @@
 //
 
 import UIKit
+import SwiftUI
 import Foundation
 
 struct Defaults {
@@ -72,6 +73,20 @@ struct Defaults {
     }
     struct Regex {
         static let tagSuggestion: NSRegularExpression? = try? .init(pattern: "(\\S+:\".+?\"|\".+?\"|\\S+:\\S+|\\S+)")
+    }
+    struct FavoriteColor {
+        static let colors: [Color] = [
+            Color(hex: "9e9e9e"),
+            Color(hex: "fc4e4e"),
+            Color(hex: "fcb417"),
+            Color(hex: "dde500"),
+            Color(hex: "17b91b"),
+            Color(hex: "36b940"),
+            Color(hex: "68c9de"),
+            Color(hex: "5050d7"),
+            Color(hex: "9755f5"),
+            Color(hex: "fe93ff"),
+        ]
     }
     struct URL {
         static var host: Foundation.URL { AppUtil.galleryHost == .exhentai ? exhentai : ehentai }

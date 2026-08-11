@@ -28,7 +28,11 @@ struct Gallery: Identifiable, Codable, Equatable, Hashable {
             pageCount: 1,
             postedDate: .now,
             coverURL: nil,
-            galleryURL: nil
+            galleryURL: nil,
+            isExpunged: false,
+            hasRated: false,
+            favoriteTagIndex: nil,
+            favoriteTagName: nil
         )
     }
     static let preview = Gallery(
@@ -46,7 +50,11 @@ struct Gallery: Identifiable, Codable, Equatable, Hashable {
             + "EhPanda-Team/Imageset/blob/"
             + "main/JPGs/2.jpg?raw=true"
         ),
-        galleryURL: nil
+        galleryURL: nil,
+        isExpunged: false,
+        hasRated: false,
+        favoriteTagIndex: nil,
+        favoriteTagName: nil
     )
 
     var trimmedTitle: String {
@@ -84,6 +92,13 @@ struct Gallery: Identifiable, Codable, Equatable, Hashable {
     let coverURL: URL?
     let galleryURL: URL?
     var lastOpenDate: Date?
+    var isExpunged: Bool = false
+    var hasRated: Bool = false
+    var favoriteTagIndex: Int?
+    var favoriteTagName: String?
+    var isFavorite: Bool {
+        favoriteTagIndex != nil || favoriteTagName != nil
+    }
 }
 
 extension Gallery: DateFormattable, CustomStringConvertible {

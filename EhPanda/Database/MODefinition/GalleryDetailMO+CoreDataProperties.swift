@@ -30,4 +30,6 @@ extension GalleryDetailMO: GalleryIdentifiable {
     @NSManaged public var torrentCount: Int64
     @NSManaged public var uploader: String
     @NSManaged public var visibility: Data?
+    @NSManaged public var favoriteTagIndex: Int64
+    @NSManaged public var favoriteTagName: String?
 }

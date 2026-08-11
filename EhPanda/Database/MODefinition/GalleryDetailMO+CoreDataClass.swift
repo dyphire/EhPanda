@@ -19,7 +19,9 @@ extension GalleryDetailMO: ManagedObjectProtocol {
             coverURL: coverURL, archiveURL: archiveURL, parentURL: parentURL,
             favoritedCount: Int(favoritedCount), pageCount: Int(pageCount),
             sizeCount: sizeCount, sizeType: sizeType,
-            torrentCount: Int(torrentCount)
+            torrentCount: Int(torrentCount),
+            favoriteTagIndex: favoriteTagIndex == -1 ? nil : Int(favoriteTagIndex),
+            favoriteTagName: favoriteTagName
         )
     }
 }
@@ -47,6 +49,8 @@ extension GalleryDetail: ManagedObjectConvertible {
         galleryDetailMO.title = title
         galleryDetailMO.torrentCount = Int64(torrentCount)
         galleryDetailMO.uploader = uploader
+        galleryDetailMO.favoriteTagIndex = Int64(favoriteTagIndex ?? -1)
+        galleryDetailMO.favoriteTagName = favoriteTagName
 
         return galleryDetailMO
     }

@@ -17,7 +17,11 @@ extension GalleryMO: ManagedObjectProtocol {
             uploader: uploader, pageCount: Int(pageCount),
             postedDate: postedDate,
             coverURL: coverURL, galleryURL: galleryURL,
-            lastOpenDate: lastOpenDate
+            lastOpenDate: lastOpenDate,
+            isExpunged: isExpunged,
+            hasRated: hasRated,
+            favoriteTagIndex: favoriteTagIndex == -1 ? nil : Int(favoriteTagIndex),
+            favoriteTagName: favoriteTagName
         )
     }
 }
@@ -29,7 +33,11 @@ extension Gallery: ManagedObjectConvertible {
         galleryMO.category = category.rawValue
         galleryMO.coverURL = coverURL
         galleryMO.galleryURL = galleryURL
+        galleryMO.hasRated = hasRated
+        galleryMO.isExpunged = isExpunged
         galleryMO.lastOpenDate = lastOpenDate
+        galleryMO.favoriteTagIndex = Int64(favoriteTagIndex ?? -1)
+        galleryMO.favoriteTagName = favoriteTagName
         galleryMO.pageCount = Int64(pageCount)
         galleryMO.postedDate = postedDate
         galleryMO.rating = rating

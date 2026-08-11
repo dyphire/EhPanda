@@ -64,6 +64,10 @@ struct GalleryThumbnailCell: View {
                     }
                 }
                 HStack(spacing: 10) {
+                    if gallery.isFavorite, let index = gallery.favoriteTagIndex {
+                        Image(systemSymbol: .heartFill)
+                            .foregroundStyle(Defaults.FavoriteColor.colors[index])
+                    }
                     if let language = gallery.language {
                         Text(language.value)
                     }

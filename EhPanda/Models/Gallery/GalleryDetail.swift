@@ -14,7 +14,8 @@ struct GalleryDetail: Codable, Equatable {
         postedDate: .now, coverURL: nil,
         favoritedCount: 0, pageCount: 0,
         sizeCount: 0, sizeType: "",
-        torrentCount: 0
+        torrentCount: 0,
+        favoriteTagIndex: nil, favoriteTagName: nil
     )
     static let preview = GalleryDetail(
         gid: "",
@@ -38,7 +39,8 @@ struct GalleryDetail: Codable, Equatable {
         pageCount: 114,
         sizeCount: 514,
         sizeType: "MB",
-        torrentCount: 101
+        torrentCount: 101,
+        favoriteTagIndex: nil, favoriteTagName: nil
     )
 
     var trimmedTitle: String {
@@ -70,6 +72,8 @@ struct GalleryDetail: Codable, Equatable {
     var sizeCount: Float
     var sizeType: String
     var torrentCount: Int
+    var favoriteTagIndex: Int?
+    var favoriteTagName: String?
 }
 
 extension GalleryDetail: DateFormattable {

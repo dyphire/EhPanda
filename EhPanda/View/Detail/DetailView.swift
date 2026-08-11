@@ -42,6 +42,7 @@ struct DetailView: View {
                         showFullTitleAction: { store.send(.toggleShowFullTitle) },
                         favorAction: { store.send(.favorGallery($0)) },
                         unfavorAction: { store.send(.unfavorGallery) },
+                        readingProgress: store.readingProgress,
                         navigateReadingAction: { store.send(.setNavigation(.reading())) },
                         navigateUploaderAction: {
                             if let uploader = store.galleryDetail?.uploader {
@@ -293,6 +294,7 @@ private struct HeaderSection: View {
     private let showFullTitleAction: () -> Void
     private let favorAction: (Int) -> Void
     private let unfavorAction: () -> Void
+    private let readingProgress: Int
     private let navigateReadingAction: () -> Void
     private let navigateUploaderAction: () -> Void
 
@@ -302,6 +304,7 @@ private struct HeaderSection: View {
         showFullTitleAction: @escaping () -> Void,
         favorAction: @escaping (Int) -> Void,
         unfavorAction: @escaping () -> Void,
+        readingProgress: Int,
         navigateReadingAction: @escaping () -> Void,
         navigateUploaderAction: @escaping () -> Void
     ) {
@@ -313,6 +316,7 @@ private struct HeaderSection: View {
         self.showFullTitleAction = showFullTitleAction
         self.favorAction = favorAction
         self.unfavorAction = unfavorAction
+        self.readingProgress = readingProgress
         self.navigateReadingAction = navigateReadingAction
         self.navigateUploaderAction = navigateUploaderAction
     }
@@ -320,6 +324,34 @@ private struct HeaderSection: View {
     private var title: String {
         let normalTitle = galleryDetail.title
         return displaysJapaneseTitle ? galleryDetail.jpnTitle ?? normalTitle : normalTitle
+    }
+
+    private var favoriteColor: Color {
+        let colors = Defaults.FavoriteColor.colors
+
+        func color(for index: Int?) -> Color? {
+            guard let index,
+                  index >= 0,
+                  index < colors.count
+            else {
+                return nil
+            }
+            return colors[index]
+        }
+
+        if let color = color(for: galleryDetail.favoriteTagIndex ?? gallery.favoriteTagIndex) {
+            return color
+        }
+
+        if let favoriteTagName = galleryDetail.favoriteTagName,
+           let favoriteCategories = user.favoriteCategories,
+           let index = favoriteCategories.first(where: { $0.value == favoriteTagName })?.key,
+           let color = color(for: index)
+        {
+            return color
+        }
+
+        return Color.accentColor
     }
 
     var body: some View {
@@ -366,6 +398,7 @@ private struct HeaderSection: View {
                             Image(systemSymbol: .heartFill)
                         }
                         .opacity(galleryDetail.isFavorited ? 1 : 0)
+                        .foregroundStyle(favoriteColor)
 
                         Menu {
                             ForEach(0..<10) { index in
@@ -377,17 +410,19 @@ private struct HeaderSection: View {
                             Image(systemSymbol: .heart)
                         }
                         .opacity(galleryDetail.isFavorited ? 0 : 1)
+                        .foregroundStyle(.tint)
                     }
                     .imageScale(.large)
-                    .foregroundStyle(.tint)
                     .buttonStyle(.glass(.regular.interactive()))
                     .disabled(!CookieUtil.didLogin)
 
                     Button(action: navigateReadingAction) {
-                        Text(L10n.Localizable.DetailView.Button.read)
+                        Text(readingProgress > 0 ? "P\(readingProgress)" : L10n.Localizable.DetailView.Button.read)
                             .bold().textCase(.uppercase).font(.headline)
                             .foregroundColor(.white).padding(.vertical, -2)
                             .padding(.horizontal, 2).lineLimit(1)
+                            .minimumScaleFactor(0.7)
+                            .frame(minWidth: 50)
                     }
                     .buttonStyle(.glassProminent)
                     .buttonBorderShape(.capsule)

@@ -28,7 +28,7 @@ struct Parser {
             }
             throw AppError.parseFailed
         }
-        func parseThumbnailPanel(node: XMLElement) throws -> (URL, Category, Float, Date, Int, String?) {
+        func parseThumbnailPanel(node: XMLElement) throws -> (URL, Category, Float, Date, Int, String?, Bool) {
             var tmpCoverURL: URL?
             var tmpCategory: Category?
             var tmpPublishedDate: Date?
@@ -70,7 +70,11 @@ struct Parser {
                   let publishedDate = tmpPublishedDate,
                   let pageCount = tmpPageCount
             else { throw AppError.parseFailed }
-            return (coverURL, category, rating, publishedDate, pageCount, uploader)
+            let hasRated = node.xpath(".//div[contains(@class, 'ir')]").contains {
+                guard let classes = $0.className?.split(separator: " ") else { return false }
+                return classes.contains("irb")
+            }
+            return (coverURL, category, rating, publishedDate, pageCount, uploader, hasRated)
         }
         func parseGalleryTitle(node: XMLElement) throws -> (String, URL) {
             func findTitle(glink: XMLElement) throws -> (String, URL) {
@@ -165,6 +169,32 @@ struct Parser {
             return uploader
         }
 
+        func parseIsExpunged(for node: XMLElement) -> Bool {
+            node.xpath(".//s").count > 0
+        }
+
+        func parseFavoriteInfo(for node: XMLElement) -> (tagIndex: Int?, tagName: String?) {
+            guard let postedDiv = node.at_xpath(".//div[@id][@style][@title][contains(@onclick, 'popUp')]") else { return (nil, nil) }
+            let title = postedDiv["title"]
+            let style = postedDiv["style"] ?? ""
+            let color = extractBorderColor(from: style)
+            let tagIndex = color.flatMap { favoriteTagIndexMap[$0] }
+            return (tagIndex, title)
+        }
+
+        func extractBorderColor(from style: String) -> String? {
+            guard let rangeA = style.range(of: "border-color:#"),
+                  let rangeB = style.range(of: ";") else { return nil }
+            let color = String(style[rangeA.upperBound..<rangeB.lowerBound])
+            return color.count == 3 ? color : nil
+        }
+
+        let favoriteTagIndexMap: [String: Int] = [
+            "000": 0, "f00": 1, "fa0": 2, "dd0": 3,
+            "080": 4, "9f4": 5, "4bf": 6, "00f": 7,
+            "508": 8, "e8e": 9
+        ]
+
         // MARK: Galleries (Minimal)
         func parseMinimalModeGalleries(doc: HTMLDocument, parsesTags: Bool) throws -> [Gallery] {
             var galleries = [Gallery]()
@@ -173,10 +203,12 @@ struct Parser {
                 let tags = (try? parseGalleryTags(node: gltmNode)) ?? []
                 guard let gl2mNode = link.at_xpath("//td [@class='gl2m']"),
                       let gl3mNode = link.at_xpath("//td [@class='gl3m glname']"),
-                      let (coverURL, category, rating, publishedDate, pageCount, _) =
+                      let (coverURL, category, rating, publishedDate, pageCount, _, hasRated) =
                         try? parseThumbnailPanel(node: gl2mNode),
                       let (galleryTitle, galleryURL) = try? parseGalleryTitle(node: gl3mNode)
                 else { continue }
+                let isExpunged = parseIsExpunged(for: link)
+                let (favoriteTagIndex, favoriteTagName) = parseFavoriteInfo(for: link)
                 galleries.append(
                     .init(
                         gid: galleryURL.pathComponents[2],
@@ -189,7 +221,11 @@ struct Parser {
                         pageCount: pageCount,
                         postedDate: publishedDate,
                         coverURL: coverURL,
-                        galleryURL: galleryURL
+                        galleryURL: galleryURL,
+                        isExpunged: isExpunged,
+                        hasRated: hasRated,
+                        favoriteTagIndex: favoriteTagIndex,
+                        favoriteTagName: favoriteTagName
                     )
                 )
             }
@@ -201,10 +237,12 @@ struct Parser {
             for link in doc.xpath("//tr") {
                 guard let gl2cNode = link.at_xpath("//td [@class='gl2c']"),
                       let gl3cNode = link.at_xpath("//td [@class='gl3c glname']"),
-                      let (coverURL, category, rating, publishedDate, pageCount, _) =
+                      let (coverURL, category, rating, publishedDate, pageCount, _, hasRated) =
                         try? parseThumbnailPanel(node: gl2cNode),
                       let (galleryTitle, galleryURL) = try? parseGalleryTitle(node: gl3cNode)
                 else { continue }
+                let isExpunged = parseIsExpunged(for: link)
+                let (favoriteTagIndex, favoriteTagName) = parseFavoriteInfo(for: link)
                 galleries.append(
                     .init(
                         gid: galleryURL.pathComponents[2],
@@ -217,7 +255,11 @@ struct Parser {
                         pageCount: pageCount,
                         postedDate: publishedDate,
                         coverURL: coverURL,
-                        galleryURL: galleryURL
+                        galleryURL: galleryURL,
+                        isExpunged: isExpunged,
+                        hasRated: hasRated,
+                        favoriteTagIndex: favoriteTagIndex,
+                        favoriteTagName: favoriteTagName
                     )
                 )
             }
@@ -229,10 +271,12 @@ struct Parser {
             var galleries = [Gallery]()
             for link in doc.xpath("//tr") {
                 guard let gl3eSiblingNode = link.at_xpath("//div [@class='gl3e']")?.nextSibling,
-                      let (coverURL, category, rating, publishedDate, pageCount, uploader) =
+                      let (coverURL, category, rating, publishedDate, pageCount, uploader, hasRated) =
                         try? parseThumbnailPanel(node: link),
                       let (galleryTitle, galleryURL) = try? parseGalleryTitle(node: gl3eSiblingNode)
                 else { continue }
+                let isExpunged = parseIsExpunged(for: link)
+                let (favoriteTagIndex, favoriteTagName) = parseFavoriteInfo(for: link)
                 galleries.append(
                     .init(
                         gid: galleryURL.pathComponents[2],
@@ -245,7 +289,11 @@ struct Parser {
                         pageCount: pageCount,
                         postedDate: publishedDate,
                         coverURL: coverURL,
-                        galleryURL: galleryURL
+                        galleryURL: galleryURL,
+                        isExpunged: isExpunged,
+                        hasRated: hasRated,
+                        favoriteTagIndex: favoriteTagIndex,
+                        favoriteTagName: favoriteTagName
                     )
                 )
             }
@@ -256,10 +304,12 @@ struct Parser {
             var galleries = [Gallery]()
             for link in doc.xpath("//div [@class='gl1t']") {
                 let gl6tNode = link.at_xpath("//div [@class='gl6t']")
-                guard let (coverURL, category, rating, publishedDate, pageCount, _) =
+                guard let (coverURL, category, rating, publishedDate, pageCount, _, hasRated) =
                         try? parseThumbnailPanel(node: link),
                       let (galleryTitle, galleryURL) = try? parseGalleryTitle(node: link)
                 else { continue }
+                let isExpunged = parseIsExpunged(for: link)
+                let (favoriteTagIndex, favoriteTagName) = parseFavoriteInfo(for: link)
                 galleries.append(
                     .init(
                         gid: galleryURL.pathComponents[2],
@@ -271,7 +321,11 @@ struct Parser {
                         pageCount: pageCount,
                         postedDate: publishedDate,
                         coverURL: coverURL,
-                        galleryURL: galleryURL
+                        galleryURL: galleryURL,
+                        isExpunged: isExpunged,
+                        hasRated: hasRated,
+                        favoriteTagIndex: favoriteTagIndex,
+                        favoriteTagName: favoriteTagName
                     )
                 )
             }
@@ -509,6 +563,11 @@ struct Parser {
             let isFavorited = gdfNode
                 .at_xpath("//a [@id='favoritelink']")?
                 .text?.contains("Add to Favorites") == false
+            var favoriteTagIndex: Int?
+            var favoriteTagName: String?
+            if let favoritelink = gdfNode.at_xpath(".//a[@id='favoritelink']") {
+                favoriteTagName = favoritelink.text
+            }
             let gjText = link.at_xpath("//h1 [@id='gj']")?.text
             let jpnTitle = gjText?.isEmpty != false ? nil : gjText
             let parentURLString = infoPanel[1].isValidURL ? infoPanel[1] : ""
@@ -533,7 +592,9 @@ struct Parser {
                 pageCount: pageCount,
                 sizeCount: sizeCount,
                 sizeType: infoPanel[5],
-                torrentCount: arcAndTor.1
+                torrentCount: arcAndTor.1,
+                favoriteTagIndex: favoriteTagIndex,
+                favoriteTagName: favoriteTagName
             )
             tmpGalleryState = GalleryState(
                 gid: gid,

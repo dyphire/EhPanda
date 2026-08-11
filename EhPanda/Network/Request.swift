@@ -391,7 +391,11 @@ struct GalleryReverseRequest: Request {
                 pageCount: detail.pageCount,
                 postedDate: detail.postedDate,
                 coverURL: detail.coverURL,
-                galleryURL: url
+                galleryURL: url,
+                isExpunged: false,
+                hasRated: false,
+                favoriteTagIndex: nil,
+                favoriteTagName: nil
             )
         } else {
             return nil

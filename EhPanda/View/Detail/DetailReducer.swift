@@ -47,6 +47,8 @@ struct DetailReducer {
         var galleryPreviewURLs = [Int: URL]()
         var galleryComments = [GalleryComment]()
 
+        var readingProgress = 0
+
         var readingState = ReadingReducer.State()
         var archivesState = ArchivesReducer.State()
         var torrentsState = TorrentsReducer.State()
@@ -98,7 +100,9 @@ struct DetailReducer {
 
         case rateGallery
         case favorGallery(Int)
+        case favorGalleryDone(Result<Any, AppError>, favIndex: Int)
         case unfavorGallery
+        case unfavorGalleryDone(Result<Any, AppError>)
         case postComment(URL)
         case voteTag(String, Int)
         case anyGalleryOpsDone(Result<Any, AppError>)
@@ -260,6 +264,7 @@ struct DetailReducer {
                 state.galleryTags = galleryState.tags
                 state.galleryPreviewURLs = galleryState.previewURLs
                 state.galleryComments = galleryState.comments
+                state.readingProgress = galleryState.readingProgress
                 return .send(.fetchGalleryDetail)
 
             case .fetchGalleryDetail:
@@ -330,16 +335,45 @@ struct DetailReducer {
                         favIndex: favIndex
                     )
                         .response()
-                    await send(.anyGalleryOpsDone(response))
+                    if case .success = response {
+                        await databaseClient.updateGallery(gid: state.gallery.id, key: "favoriteTagIndex", value: Int64(favIndex))
+                    }
+                    await send(.favorGalleryDone(response, favIndex: favIndex))
                 }
                 .cancellable(id: CancelID.favorGallery)
+
+            case .favorGalleryDone(let result, let favIndex):
+                if case .success = result {
+                    state.gallery.favoriteTagIndex = favIndex
+                    if var detail = state.galleryDetail {
+                        detail.favoriteTagIndex = favIndex
+                        state.galleryDetail = detail
+                    }
+                }
+                return .send(.anyGalleryOpsDone(result))
 
             case .unfavorGallery:
                 return .run { [galleryID = state.gallery.id] send in
                     let response = await UnfavorGalleryRequest(gid: galleryID).response()
-                    await send(.anyGalleryOpsDone(response))
+                    if case .success = response {
+                        await databaseClient.updateGallery(gid: galleryID, key: "favoriteTagIndex", value: Int64(-1))
+                        await databaseClient.updateGallery(gid: galleryID, key: "favoriteTagName", value: nil)
+                    }
+                    await send(.unfavorGalleryDone(response))
                 }
                 .cancellable(id: CancelID.unfavorGallery)
+
+            case .unfavorGalleryDone(let result):
+                if case .success = result {
+                    state.gallery.favoriteTagIndex = nil
+                    state.gallery.favoriteTagName = nil
+                    if var detail = state.galleryDetail {
+                        detail.favoriteTagIndex = nil
+                        detail.favoriteTagName = nil
+                        state.galleryDetail = detail
+                    }
+                }
+                return .send(.anyGalleryOpsDone(result))
 
             case .postComment(let galleryURL):
                 guard !state.commentContent.isEmpty else { return .none }
@@ -379,6 +413,7 @@ struct DetailReducer {
                 return .run(operation: { _ in hapticsClient.generateNotificationFeedback(.error) })
 
             case .reading(.onPerformDismiss):
+                state.readingProgress = state.readingState.readingProgress
                 return .send(.setNavigation(nil))
 
             case .reading:

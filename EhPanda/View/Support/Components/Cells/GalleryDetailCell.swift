@@ -50,7 +50,13 @@ struct GalleryDetailCell: View {
                     RatingView(rating: gallery.rating).font(.caption).foregroundStyle(.yellow)
                     Spacer()
                     HStack(spacing: 10) {
-                        Text(gallery.language?.value ?? "")
+                        if gallery.isFavorite, let index = gallery.favoriteTagIndex {
+                            Image(systemSymbol: .heartFill)
+                                .foregroundStyle(Defaults.FavoriteColor.colors[index])
+                        }
+                        if let language = gallery.language {
+                            Text(language.value)
+                        }
                         HStack(spacing: 2) {
                             Image(systemSymbol: .photoOnRectangleAngled)
                             Text(String(gallery.pageCount))
@@ -63,6 +69,7 @@ struct GalleryDetailCell: View {
                     Spacer()
                     Text(gallery.formattedDateString).lineLimit(1).font(.footnote)
                         .foregroundStyle(.secondary).minimumScaleFactor(0.75)
+                        .strikethrough(gallery.isExpunged)
                 }
                 .padding(.top, 1)
             }
