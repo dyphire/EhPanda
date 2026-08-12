@@ -114,6 +114,7 @@ private struct DetailList: View {
                 GalleryDetailCell(gallery: gallery, setting: setting, translateAction: translateAction)
             }
             .foregroundColor(.primary)
+            .listRowSeparator(.hidden)
             .onAppear {
                 if gallery == galleries.last {
                     fetchMoreAction?()
@@ -123,6 +124,7 @@ private struct DetailList: View {
                 FetchMoreFooter(loadingState: footerLoadingState, retryAction: fetchMoreAction)
             }
         }
+        .listStyle(.plain)
     }
 }
 

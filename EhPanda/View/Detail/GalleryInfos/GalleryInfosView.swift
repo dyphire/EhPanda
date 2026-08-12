@@ -91,27 +91,25 @@ struct GalleryInfosView: View {
     }
 
     var body: some View {
-        GeometryReader { proxy in
-            List(infos) { info in
-                HStack {
-                    HStack {
-                        Text(info.title)
-                        Spacer()
+        List(infos) { info in
+            HStack(alignment: .top) {
+                Text(info.title)
+                    .frame(minWidth: 80, alignment: .leading)
+                Spacer(minLength: 10)
+                Button {
+                    if let text = info.value {
+                        store.send(.copyText(text))
                     }
-                    .frame(width: proxy.size.width / 3)
-                    Spacer()
-                    Button {
-                        if let text = info.value {
-                            store.send(.copyText(text))
-                        }
-                    } label: {
-                        Text(info.value ?? L10n.Localizable.GalleryInfosView.Value.none)
-                            .lineLimit(3).font(.caption)
-                            .foregroundStyle(.tint)
-                    }
+                } label: {
+                    Text(info.value ?? L10n.Localizable.GalleryInfosView.Value.none)
+                        .lineLimit(3).font(.caption)
+                        .foregroundStyle(.tint)
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
+            .padding(.horizontal)
         }
+        .listStyle(.plain)
         .progressHUD(
             config: store.hudConfig,
             unwrapping: $store.route,

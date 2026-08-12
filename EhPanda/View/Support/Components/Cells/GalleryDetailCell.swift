@@ -30,7 +30,6 @@ struct GalleryDetailCell: View {
                 .defaultModifier().scaledToFit().frame(width: Defaults.ImageSize.rowW, height: Defaults.ImageSize.rowH)
             VStack(alignment: .leading, spacing: 5) {
                 Text(gallery.title).lineLimit(3).font(.headline).foregroundStyle(.primary)
-                    .fixedSize(horizontal: false, vertical: true)
                 Text(gallery.uploader ?? "").lineLimit(1).font(.subheadline).foregroundStyle(.secondary)
                 let tagContents = gallery.tagContents(maximum: setting.listTagsNumberMaximum)
                 if setting.showsTagsInList, !tagContents.isEmpty {
@@ -75,7 +74,7 @@ struct GalleryDetailCell: View {
             }
             .drawingGroup()
         }
-        .padding(.vertical, 5).padding(.leading, -10).padding(.trailing, -5)
+        .padding(.vertical, 5)
     }
 }
 

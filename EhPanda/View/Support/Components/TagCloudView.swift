@@ -15,7 +15,8 @@ where TagCell: View, Element: Equatable & Identifiable, ID == Element.ID {
     private let spacing: Double
     private let content: (Element) -> TagCell
 
-    @State private var totalHeight = CGFloat.zero
+    @State private var totalHeight: CGFloat = .zero
+    @State private var availableWidth: CGFloat = .zero
 
     init<Data: RandomAccessCollection>(
         data: Data, id: KeyPath<Element, ID> = \Element.id, spacing: Double = 4,
@@ -28,31 +29,21 @@ where TagCell: View, Element: Equatable & Identifiable, ID == Element.ID {
     }
 
     var body: some View {
-        VStack {
-            GeometryReader { geometry in
-                generateContent(in: geometry)
-            }
-        }
-        .frame(height: totalHeight)
-    }
-}
-
-private extension TagCloudView {
-    func generateContent(in proxy: GeometryProxy) -> some View {
-        ZStack(alignment: .topLeading) {
+        let cloud = Group {
             var width = CGFloat.zero
             var height = CGFloat.zero
-            ForEach(data, id: id) { content in
-                self.content(content)
+            ForEach(data, id: id) { element in
+                self.content(element)
                     .padding([.trailing, .bottom], spacing)
-                    .alignmentGuide(.leading, computeValue: { [proxyWidth = proxy.size.width] dimensions in
+                    .alignmentGuide(.leading, computeValue: { dimensions in
+                        let proxyWidth = max(availableWidth, 1)
                         if abs(width - dimensions.width) > proxyWidth {
                             width = 0
                             height -= dimensions.height
                         }
                         let result = width
-                        if content == data.last {
-                            width = 0 // last item
+                        if element == data.last {
+                            width = 0
                         } else {
                             width -= dimensions.width
                         }
@@ -60,24 +51,34 @@ private extension TagCloudView {
                     })
                     .alignmentGuide(.top, computeValue: { _ in
                         let result = height
-                        if content == data.last {
-                            height = 0 // last item
+                        if element == data.last {
+                            height = 0
                         }
                         return result
                     })
             }
         }
-        .background(viewHeightReader(binding: $totalHeight))
-    }
-
-    func viewHeightReader(binding: Binding<CGFloat>) -> some View {
-        GeometryReader { geometry -> Color in
-            let rect = geometry.frame(in: .local)
-            DispatchQueue.main.async {
-                binding.wrappedValue = rect.size.height
+        return cloud
+            .frame(height: totalHeight)
+        .background(
+            GeometryReader { proxy in
+                Color.clear
+                    .preference(key: SizePreferenceKey.self, value: proxy.size)
             }
-            return .clear
+        )
+        .onPreferenceChange(SizePreferenceKey.self) { size in
+            if availableWidth != size.width {
+                availableWidth = size.width
+            }
+            totalHeight = size.height
         }
+    }
+}
+
+private struct SizePreferenceKey: PreferenceKey {
+    static var defaultValue: CGSize = .zero
+    static func reduce(value: inout CGSize, nextValue: () -> CGSize) {
+        value = nextValue()
     }
 }
 
