@@ -187,6 +187,11 @@ struct HeaderSection: View {
             }
             .opacity(galleryDetail.isFavorited ? 1 : 0)
             .foregroundStyle(favoriteColor)
+            .contextMenu {
+                ForEach(0..<10) { index in
+                    Button(user.getFavoriteCategory(index: index)) { favorAction(index) }
+                }
+            }
             Menu {
                 ForEach(0..<10) { index in
                     Button(user.getFavoriteCategory(index: index)) { favorAction(index) }
