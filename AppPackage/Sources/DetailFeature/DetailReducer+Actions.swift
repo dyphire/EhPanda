@@ -16,6 +16,8 @@ extension DetailReducer {
                 return .none
 
             case .destination(.presented(.reading(.onPerformDismiss))):
+                @Shared(.galleryHistory) var galleryHistory
+                state.readingProgress = galleryHistory.readingProgress(gid: state.gallery.id)
                 return .send(.destination(.dismiss))
 
             case .destination:
