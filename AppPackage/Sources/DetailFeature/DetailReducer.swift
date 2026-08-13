@@ -178,6 +178,8 @@ public struct DetailReducer: Sendable {
         case postComment(URL)
         case voteTag(String, Int)
         case anyGalleryOpsDone(Result<Void, AppError>)
+        case applyWatchedTagColors
+        case applyWatchedTagColorsDone([GalleryTag])
     }
 
     @Dependency(\.downloadClient) var downloadClient
