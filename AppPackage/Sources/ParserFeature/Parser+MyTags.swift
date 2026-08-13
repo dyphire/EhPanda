@@ -36,10 +36,10 @@ extension Parser {
             let namespace = list.count == 2 && !list[0].isEmpty ? list[0] : "temp"
             let key = list.count == 2 ? list[1] : list[0]
 
-            let watched = div.at_xpath("div/label/input[@id='tagwatch_\(tagId)']")?["checked"] != nil
-            let hidden = div.at_xpath("div/label/input[@id='taghide_\(tagId)']")?["checked"] != nil
+            let watched = div.at_xpath(".//input[@id='tagwatch_\(tagId)']")?["checked"] != nil
+            let hidden = div.at_xpath(".//input[@id='taghide_\(tagId)']")?["checked"] != nil
             let backgroundColor: Color? = {
-                guard let input = div.at_xpath("div/input[@id='tagcolor_\(tagId)']"),
+                guard let input = div.at_xpath(".//input[@id='tagcolor_\(tagId)']"),
                       let value = input["value"],
                       !value.isEmpty
                 else {
@@ -49,7 +49,7 @@ extension Parser {
                 return Color(hex: value)
             }()
 
-            let weightString = div.at_xpath("div/input[@id='tagweight_\(tagId)']")?["value"] ?? "0"
+            let weightString = div.at_xpath(".//input[@id='tagweight_\(tagId)']")?["value"] ?? "0"
             let weight = Int(weightString) ?? 0
 
             return WatchedTag(

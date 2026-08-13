@@ -33,10 +33,7 @@ extension DetailReducer {
                     ]
                     state.apiKey = response.apiKey
                     state.galleryDetail = response.galleryDetail
-                    state.galleryTags = response.galleryState.tags
-                    let colorEffects: [Effect<Action>] = [
-                        .send(.applyWatchedTagColors)
-                    ]
+                    state.galleryTags = WatchedTagsSetting.applyWatchedTagColors(to: response.galleryState.tags)
                     state.galleryPreviewURLs = response.galleryState.previewURLs
                     state.galleryComments = response.galleryState.comments
                     if let config = response.galleryState.previewConfig {
@@ -69,7 +66,7 @@ extension DetailReducer {
                             }
                         }
                     }
-                    return .merge(effects + colorEffects)
+                    return .merge(effects)
                 case .failure(let error):
                     state.loadingState = .failed(error)
                 }
@@ -97,41 +94,6 @@ extension DetailReducer {
                 if case .success(let metadata) = result {
                     state.galleryVersionMetadata = metadata
                 }
-                return .none
-
-            case .applyWatchedTagColors:
-                guard !state.galleryTags.isEmpty else { return .none }
-                return .run { [tags = state.galleryTags] send in
-                    let lookup = await WatchedTagsSetting.shared.buildTagLookup()
-                    var tags = tags
-                    for index in tags.indices {
-                        var tag = tags[index]
-                        for contentIndex in tag.contents.indices {
-                            var content = tag.contents[contentIndex]
-                            if content.textColor != nil || content.backgroundColor != nil {
-                                tag.contents[contentIndex] = content
-                                continue
-                            }
-                            let lookupKey = "\(content.rawNamespace):\(content.text)"
-                            if let result = lookup[lookupKey] {
-                                let backgroundColor = result.tag.backgroundColor ?? result.tagSetBackgroundColor
-                                content.backgroundColor = backgroundColor ?? Color(hex: "3377FF")
-                                let resolvedBackground = content.backgroundColor
-                                content.textColor = backgroundColor == nil
-                                    ? Color(hex: "F1F1F1")
-                                    : (resolvedBackground?.isLightColor ?? false
-                                        ? Color(red: 0.035, green: 0.035, blue: 0.035)
-                                        : Color(hex: "F1F1F1"))
-                            }
-                            tag.contents[contentIndex] = content
-                        }
-                        tags[index] = tag
-                    }
-                    await send(.applyWatchedTagColorsDone(tags))
-                }
-
-            case .applyWatchedTagColorsDone(let tags):
-                state.galleryTags = tags
                 return .none
 
             default:
