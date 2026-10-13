@@ -3,7 +3,9 @@ import AppModels
 import Resources
 import AppTools
 import AppComponents
+import MangaTranslationFeature
 import SFSafeSymbols
+import SFSafeSymbolsExt
 
 // MARK: ControlPanel
 struct ControlPanel<G: Gesture>: View {
@@ -12,8 +14,13 @@ struct ControlPanel<G: Gesture>: View {
     @Binding private var sliderValue: Float
     @Binding private var setting: Setting
     @Binding private var enablesLiveText: Bool
+    @Binding private var enablesMangaTranslation: Bool
     @Binding private var autoPlayPolicy: AutoPlayPolicy
 
+    private let mangaTranslationPhase: MangaTranslationPhase
+    private let translatePageAction: () -> Void
+    private let toggleMangaTranslationVisibilityAction: () -> Void
+    private let navigateMangaTranslationSettingAction: () -> Void
     private let range: ClosedRange<Float>
     private let previewURLs: [Int: URL]
     private let dismissGesture: G
@@ -25,20 +32,29 @@ struct ControlPanel<G: Gesture>: View {
 
     init(
         showsPanel: Binding<Bool>, showsSliderPreview: Binding<Bool>, sliderValue: Binding<Float>,
-        setting: Binding<Setting>, enablesLiveText: Binding<Bool>, autoPlayPolicy: Binding<AutoPlayPolicy>,
+        setting: Binding<Setting>, enablesLiveText: Binding<Bool>, enablesMangaTranslation: Binding<Bool>,
+        mangaTranslationPhase: MangaTranslationPhase, autoPlayPolicy: Binding<AutoPlayPolicy>,
         range: ClosedRange<Float>, previewURLs: [Int: URL], dismissGesture: G,
         dismissAction: @escaping () -> Void,
         navigateSettingAction: @escaping () -> Void,
         reloadAllImagesAction: @escaping () -> Void,
         retryAllFailedImagesAction: @escaping () -> Void,
-        fetchPreviewURLsAction: @escaping (Int) -> Void
+        fetchPreviewURLsAction: @escaping (Int) -> Void,
+        translatePageAction: @escaping () -> Void,
+        toggleMangaTranslationVisibilityAction: @escaping () -> Void,
+        navigateMangaTranslationSettingAction: @escaping () -> Void
     ) {
         _showsPanel = showsPanel
         _showsSliderPreview = showsSliderPreview
         _sliderValue = sliderValue
         _setting = setting
         _enablesLiveText = enablesLiveText
+        _enablesMangaTranslation = enablesMangaTranslation
         _autoPlayPolicy = autoPlayPolicy
+        self.mangaTranslationPhase = mangaTranslationPhase
+        self.translatePageAction = translatePageAction
+        self.toggleMangaTranslationVisibilityAction = toggleMangaTranslationVisibilityAction
+        self.navigateMangaTranslationSettingAction = navigateMangaTranslationSettingAction
         self.range = range
         self.previewURLs = previewURLs
         self.dismissGesture = dismissGesture
@@ -59,11 +75,16 @@ struct ControlPanel<G: Gesture>: View {
                 title: title,
                 setting: $setting,
                 enablesLiveText: $enablesLiveText,
+                enablesMangaTranslation: $enablesMangaTranslation,
+                mangaTranslationPhase: mangaTranslationPhase,
                 autoPlayPolicy: $autoPlayPolicy,
                 dismissAction: dismissAction,
                 navigateSettingAction: navigateSettingAction,
                 reloadAllImagesAction: reloadAllImagesAction,
-                retryAllFailedImagesAction: retryAllFailedImagesAction
+                retryAllFailedImagesAction: retryAllFailedImagesAction,
+                translatePageAction: translatePageAction,
+                toggleMangaTranslationVisibilityAction: toggleMangaTranslationVisibilityAction,
+                navigateMangaTranslationSettingAction: navigateMangaTranslationSettingAction
             )
             .offset(y: showsPanel ? 0 : -50)
             Spacer()
@@ -87,32 +108,47 @@ struct ControlPanel<G: Gesture>: View {
 private struct UpperPanel: View {
     @Binding private var setting: Setting
     @Binding private var enablesLiveText: Bool
+    @Binding private var enablesMangaTranslation: Bool
     @Binding private var autoPlayPolicy: AutoPlayPolicy
 
+    private let mangaTranslationPhase: MangaTranslationPhase
     private let title: String
     private let dismissAction: () -> Void
     private let navigateSettingAction: () -> Void
     private let reloadAllImagesAction: () -> Void
     private let retryAllFailedImagesAction: () -> Void
+    private let translatePageAction: () -> Void
+    private let toggleMangaTranslationVisibilityAction: () -> Void
+    private let navigateMangaTranslationSettingAction: () -> Void
 
     init(
         title: String,
         setting: Binding<Setting>,
         enablesLiveText: Binding<Bool>,
+        enablesMangaTranslation: Binding<Bool>,
+        mangaTranslationPhase: MangaTranslationPhase,
         autoPlayPolicy: Binding<AutoPlayPolicy>,
         dismissAction: @escaping () -> Void,
         navigateSettingAction: @escaping () -> Void,
         reloadAllImagesAction: @escaping () -> Void,
-        retryAllFailedImagesAction: @escaping () -> Void
+        retryAllFailedImagesAction: @escaping () -> Void,
+        translatePageAction: @escaping () -> Void,
+        toggleMangaTranslationVisibilityAction: @escaping () -> Void,
+        navigateMangaTranslationSettingAction: @escaping () -> Void
     ) {
         self.title = title
         _setting = setting
         _enablesLiveText = enablesLiveText
+        _enablesMangaTranslation = enablesMangaTranslation
         _autoPlayPolicy = autoPlayPolicy
+        self.mangaTranslationPhase = mangaTranslationPhase
         self.dismissAction = dismissAction
         self.navigateSettingAction = navigateSettingAction
         self.reloadAllImagesAction = reloadAllImagesAction
         self.retryAllFailedImagesAction = retryAllFailedImagesAction
+        self.translatePageAction = translatePageAction
+        self.toggleMangaTranslationVisibilityAction = toggleMangaTranslationVisibilityAction
+        self.navigateMangaTranslationSettingAction = navigateMangaTranslationSettingAction
     }
 
     var body: some View {
@@ -144,6 +180,26 @@ private struct UpperPanel: View {
                     Image(systemSymbol: .viewfinderCircle)
                         .symbolVariant(enablesLiveText ? .fill : .none)
                         .font(.title2)
+                }
+
+                Button {
+                    enablesMangaTranslation.toggle()
+                } label: {
+                    Image(systemSymbol: .translate)
+                        .symbolVariant(enablesMangaTranslation ? .fill : .none)
+                        .symbolEffect(.pulse, options: .repeating, isActive: mangaTranslationPhase.isBusy)
+                        .font(.title2)
+                }
+                .contextMenu {
+                    Button(action: translatePageAction) {
+                        Label(.translateThisPage, systemSymbol: .playCircle)
+                    }
+                    Button(action: toggleMangaTranslationVisibilityAction) {
+                        Label(.toggleTranslationVisibility, systemSymbol: .eyeCircle)
+                    }
+                    Button(action: navigateMangaTranslationSettingAction) {
+                        Label(.mangaTranslationSetting, systemSymbol: .gear)
+                    }
                 }
 
                 if DeviceUtil.isLandscape && setting.readingDirection != .vertical {

@@ -8,6 +8,7 @@ import ComposableArchitecture
 import AppTools
 import ImageClient
 import AppComponents
+import MangaTranslationFeature
 import SFSafeSymbols
 import SFSafeSymbolsExt
 
@@ -53,6 +54,7 @@ struct HorizontalImageStack: View {
     private let originalImageURLs: [Int: URL]
     private let loadingStates: [Int: LoadingState]
     private let enablesLiveText: Bool
+    private let mangaTranslationHandler: MangaTranslationHandler
     private let fetchAction: (Int) -> Void
     private let refetchAction: (Int) -> Void
     private let prefetchAction: (Int) -> Void
@@ -67,6 +69,7 @@ struct HorizontalImageStack: View {
         index: Int, isDualPage: Bool, isActive: Bool, backgroundColor: Color,
         config: ImageStackConfig, imageURLs: [Int: URL], originalImageURLs: [Int: URL],
         loadingStates: [Int: LoadingState], enablesLiveText: Bool,
+        mangaTranslationHandler: MangaTranslationHandler,
         fetchAction: @escaping (Int) -> Void,
         refetchAction: @escaping (Int) -> Void, prefetchAction: @escaping (Int) -> Void,
         loadRetryAction: @escaping (Int) -> Void, loadSucceededAction: @escaping (Int) -> Void,
@@ -82,6 +85,7 @@ struct HorizontalImageStack: View {
         self.originalImageURLs = originalImageURLs
         self.loadingStates = loadingStates
         self.enablesLiveText = enablesLiveText
+        self.mangaTranslationHandler = mangaTranslationHandler
         self.fetchAction = fetchAction
         self.refetchAction = refetchAction
         self.prefetchAction = prefetchAction
@@ -113,6 +117,7 @@ struct HorizontalImageStack: View {
             isActive: isActive,
             backgroundColor: backgroundColor,
             enablesLiveText: enablesLiveText,
+            mangaTranslationHandler: mangaTranslationHandler,
             refetchAction: refetchAction,
             loadRetryAction: loadRetryAction,
             loadSucceededAction: loadSucceededAction,
@@ -180,6 +185,7 @@ struct ImageContainer: View {
     private let isActive: Bool
     private let backgroundColor: Color
     private let enablesLiveText: Bool
+    private let mangaTranslationHandler: MangaTranslationHandler
     private let refetchAction: (Int) -> Void
     private let loadRetryAction: (Int) -> Void
     private let loadSucceededAction: (Int) -> Void
@@ -194,6 +200,7 @@ struct ImageContainer: View {
         isActive: Bool,
         backgroundColor: Color,
         enablesLiveText: Bool,
+        mangaTranslationHandler: MangaTranslationHandler,
         refetchAction: @escaping (Int) -> Void,
         loadRetryAction: @escaping (Int) -> Void,
         loadSucceededAction: @escaping (Int) -> Void,
@@ -206,6 +213,7 @@ struct ImageContainer: View {
         self.isActive = isActive
         self.backgroundColor = backgroundColor
         self.enablesLiveText = enablesLiveText
+        self.mangaTranslationHandler = mangaTranslationHandler
         self.refetchAction = refetchAction
         self.loadRetryAction = loadRetryAction
         self.loadSucceededAction = loadSucceededAction
@@ -239,6 +247,14 @@ struct ImageContainer: View {
             image(url: imageURL).scaledToFit().overlay {
                 if enablesLiveText, let loadedImage {
                     LiveTextImageView(image: loadedImage, isEnabled: true)
+                } else if mangaTranslationHandler.isEnabled, let loadedImage,
+                    let translationResult = mangaTranslationHandler.result(for: index)
+                {
+                    MangaTranslationOverlay(
+                        result: translationResult,
+                        isVisible: mangaTranslationHandler.showTranslation,
+                        image: loadedImage
+                    )
                 }
             }
         } else {

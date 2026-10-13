@@ -177,6 +177,7 @@ public struct ReadingReducer: Sendable {
         case setOrientationPortrait(Bool)
         case onPerformDismiss
         case onAppear(String)
+        case mangaTranslationFailed(String)
 
         case onWebImageRetry(Int)
         case onWebImageSucceeded(Int)
