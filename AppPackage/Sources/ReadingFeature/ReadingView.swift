@@ -1,7 +1,6 @@
 import SwiftUI
 import Sharing
 import AppModels
-import OSLogExt
 import Observation
 import SFSafeSymbols
 import SwiftUIPager
@@ -11,8 +10,6 @@ import AnimatedImageFeature
 import SystemNotificationExt
 import AppComponents
 import ReadingSettingFeature
-
-private let logger = Logger(category: .init(describing: ReadingView.self))
 
 public struct ReadingView: View {
     @Environment(\.colorScheme) private var colorScheme
@@ -25,7 +22,7 @@ public struct ReadingView: View {
     let gid: String
     let blurRadius: Double
 
-    @State private var liveTextHandler = LiveTextHandler()
+    @State private var enablesLiveText = false
     @State private var autoPlayHandler = AutoPlayHandler()
     @State var gestureHandler = GestureHandler()
     @State private var pageHandler: PageHandler
@@ -91,7 +88,6 @@ public struct ReadingView: View {
     }
 
     public var body: some View {
-        @Bindable var bindableLiveTextHandler = liveTextHandler
         @Bindable var bindablePageHandler = pageHandler
 
         return changeTriggers(content: { content })
@@ -124,13 +120,11 @@ public struct ReadingView: View {
             .toast($store.scope(state: \.toast, action: \.toast))
 
             .animation(.linear(duration: 0.1), value: gestureHandler.offset)
-            .animation(.default, value: liveTextHandler.enablesLiveText)
-            .animation(.default, value: liveTextHandler.liveTextGroups)
+            .animation(.default, value: enablesLiveText)
             .animation(.default, value: gestureHandler.scale)
             .animation(.default, value: store.showsPanel)
             .statusBar(hidden: !store.showsPanel)
             .onDisappear {
-                liveTextHandler.cancelRequests()
                 setAutoPlayPolocy(.off)
             }
             .onAppear {
@@ -139,7 +133,6 @@ public struct ReadingView: View {
     }
 
     var content: some View {
-        @Bindable var bindableLiveTextHandler = liveTextHandler
         @Bindable var bindablePageHandler = pageHandler
 
         return ZStack {
@@ -189,7 +182,7 @@ public struct ReadingView: View {
                 showsPanel: $store.showsPanel,
                 showsSliderPreview: $store.showsSliderPreview,
                 sliderValue: $bindablePageHandler.sliderValue, setting: effectiveSettingBinding,
-                enablesLiveText: $bindableLiveTextHandler.enablesLiveText,
+                enablesLiveText: $enablesLiveText,
                 autoPlayPolicy: .init(get: { autoPlayHandler.policy }, set: { setAutoPlayPolocy($0) }),
                 range: 1...Float(store.gallery.pageCount),
                 previewURLs: displayPreviewURLs,
@@ -206,15 +199,6 @@ public struct ReadingView: View {
     @ViewBuilder
     private func changeTriggers<Content: View>(@ViewBuilder content: () -> Content) -> some View {
         pageAndAutoPlayTriggers(content: content)
-            // LiveText
-            .onChange(of: liveTextHandler.enablesLiveText) { _, newValue in
-                if newValue { store.webImageLoadSuccessIndices.forEach(analyzeImageForLiveText) }
-            }
-            .onChange(of: store.webImageLoadSuccessIndices) { _, newValue in
-                if liveTextHandler.enablesLiveText {
-                    newValue.forEach(analyzeImageForLiveText)
-                }
-            }
             // Orientation
             .onChange(of: effectiveSetting.enablesLandscape) { _, newValue in
                 store.send(.setOrientationPortrait(!newValue))
@@ -274,10 +258,7 @@ public struct ReadingView: View {
             imageURLs: displayImageURLs,
             originalImageURLs: displayOriginalImageURLs,
             loadingStates: store.imageURLLoadingStates,
-            enablesLiveText: liveTextHandler.enablesLiveText,
-            liveTextGroups: liveTextHandler.liveTextGroups,
-            focusedLiveTextGroup: liveTextHandler.focusedLiveTextGroup,
-            liveTextTapAction: liveTextHandler.setFocusedLiveTextGroup,
+            enablesLiveText: enablesLiveText,
             fetchAction: { store.send(.fetchImageURLs($0)) },
             refetchAction: { store.send(.refetchImageURLs($0)) },
             prefetchAction: { store.send(.prefetchImages($0, effectiveSetting.prefetchLimit)) },
@@ -305,63 +286,6 @@ extension ReadingView {
         autoPlayHandler.setPolicy(policy, updatePageAction: {
             page.update(.next)
         })
-    }
-    func analyzeImageForLiveText(index: Int) {
-        guard liveTextHandler.liveTextGroups[index] == nil else {
-            return
-        }
-        guard let imageURL = displayImageURLs[index] else {
-            logger.debug("analyzeImageForLiveText URL not found, index: \(index, privacy: .public)")
-            return
-        }
-        if imageURL.isFileURL {
-            analyzeLocalImage(at: imageURL, index: index)
-            return
-        }
-        Task {
-            await analyzeCachedImageData(
-                cacheKeys: imageURL.imageCacheKeys,
-                index: index
-            )
-        }
-    }
-
-    /// Runs Live Text over a downloaded page file. Animated images are skipped by design
-    /// (Live Text scans still images only), so a single non-animating frame is never lifted
-    /// out of an animation.
-    private func analyzeLocalImage(at imageURL: URL, index: Int) {
-        guard let data = try? Data(contentsOf: imageURL),
-              !data.isAnimatedImageData,
-              let image = data.decodedImage,
-              let cgImage = image.cgImage
-        else {
-            logger.debug("analyzeImageForLiveText local image not found, index: \(index, privacy: .public)")
-            return
-        }
-
-        liveTextHandler.analyzeImage(
-            cgImage, size: image.size, index: index, recognitionLanguages:
-                store.language?.codes
-        )
-    }
-
-    /// Runs Live Text over a remote page's cached bytes, read from the owned `DataCache`
-    /// (the reader's cache, not Kingfisher's). Animated images are skipped by design
-    /// (Live Text scans still images only).
-    private func analyzeCachedImageData(cacheKeys: [String], index: Int) async {
-        guard let data = await DataCache.shared.data(forKeys: cacheKeys),
-              !data.isAnimatedImageData,
-              let image = data.decodedImage,
-              let cgImage = image.cgImage
-        else {
-            logger.debug("analyzeImageForLiveText image not found, index: \(index, privacy: .public)")
-            return
-        }
-
-        liveTextHandler.analyzeImage(
-            cgImage, size: image.size, index: index, recognitionLanguages:
-                store.language?.codes
-        )
     }
 }
 

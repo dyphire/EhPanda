@@ -53,9 +53,6 @@ struct HorizontalImageStack: View {
     private let originalImageURLs: [Int: URL]
     private let loadingStates: [Int: LoadingState]
     private let enablesLiveText: Bool
-    private let liveTextGroups: [Int: [LiveTextGroup]]
-    private let focusedLiveTextGroup: LiveTextGroup?
-    private let liveTextTapAction: (LiveTextGroup) -> Void
     private let fetchAction: (Int) -> Void
     private let refetchAction: (Int) -> Void
     private let prefetchAction: (Int) -> Void
@@ -70,8 +67,6 @@ struct HorizontalImageStack: View {
         index: Int, isDualPage: Bool, isActive: Bool, backgroundColor: Color,
         config: ImageStackConfig, imageURLs: [Int: URL], originalImageURLs: [Int: URL],
         loadingStates: [Int: LoadingState], enablesLiveText: Bool,
-        liveTextGroups: [Int: [LiveTextGroup]], focusedLiveTextGroup: LiveTextGroup?,
-        liveTextTapAction: @escaping (LiveTextGroup) -> Void,
         fetchAction: @escaping (Int) -> Void,
         refetchAction: @escaping (Int) -> Void, prefetchAction: @escaping (Int) -> Void,
         loadRetryAction: @escaping (Int) -> Void, loadSucceededAction: @escaping (Int) -> Void,
@@ -87,9 +82,6 @@ struct HorizontalImageStack: View {
         self.originalImageURLs = originalImageURLs
         self.loadingStates = loadingStates
         self.enablesLiveText = enablesLiveText
-        self.liveTextGroups = liveTextGroups
-        self.focusedLiveTextGroup = focusedLiveTextGroup
-        self.liveTextTapAction = liveTextTapAction
         self.fetchAction = fetchAction
         self.refetchAction = refetchAction
         self.prefetchAction = prefetchAction
@@ -121,9 +113,6 @@ struct HorizontalImageStack: View {
             isActive: isActive,
             backgroundColor: backgroundColor,
             enablesLiveText: enablesLiveText,
-            liveTextGroups: liveTextGroups[index] ?? [],
-            focusedLiveTextGroup: focusedLiveTextGroup,
-            liveTextTapAction: liveTextTapAction,
             refetchAction: refetchAction,
             loadRetryAction: loadRetryAction,
             loadSucceededAction: loadSucceededAction,
@@ -135,7 +124,9 @@ struct HorizontalImageStack: View {
             }
             prefetchAction(index)
         }
-        .contextMenu { contextMenuItems(index: index) }
+        // Long-press is VisionKit's text-selection gesture while Live Text is on, so
+        // the page context menu (also long-press) steps aside until it is turned off.
+        .liveTextAwareContextMenu(isSuppressed: enablesLiveText) { contextMenuItems(index: index) }
     }
     @ViewBuilder private func contextMenuItems(index: Int) -> some View {
         Button {
@@ -189,13 +180,12 @@ struct ImageContainer: View {
     private let isActive: Bool
     private let backgroundColor: Color
     private let enablesLiveText: Bool
-    private let liveTextGroups: [LiveTextGroup]
-    private let focusedLiveTextGroup: LiveTextGroup?
-    private let liveTextTapAction: (LiveTextGroup) -> Void
     private let refetchAction: (Int) -> Void
     private let loadRetryAction: (Int) -> Void
     private let loadSucceededAction: (Int) -> Void
     private let loadFailedAction: (Int) -> Void
+
+    @State private var loadedImage: UIImage?
 
     init(
         index: Int, imageURL: URL?,
@@ -204,9 +194,6 @@ struct ImageContainer: View {
         isActive: Bool,
         backgroundColor: Color,
         enablesLiveText: Bool,
-        liveTextGroups: [LiveTextGroup],
-        focusedLiveTextGroup: LiveTextGroup?,
-        liveTextTapAction: @escaping (LiveTextGroup) -> Void,
         refetchAction: @escaping (Int) -> Void,
         loadRetryAction: @escaping (Int) -> Void,
         loadSucceededAction: @escaping (Int) -> Void,
@@ -219,9 +206,6 @@ struct ImageContainer: View {
         self.isActive = isActive
         self.backgroundColor = backgroundColor
         self.enablesLiveText = enablesLiveText
-        self.liveTextGroups = liveTextGroups
-        self.focusedLiveTextGroup = focusedLiveTextGroup
-        self.liveTextTapAction = liveTextTapAction
         self.refetchAction = refetchAction
         self.loadRetryAction = loadRetryAction
         self.loadSucceededAction = loadSucceededAction
@@ -244,6 +228,7 @@ struct ImageContainer: View {
             url: url,
             isActive: isActive,
             placeholder: { progress in placeholder(progress) },
+            onStillImageChange: { loadedImage = $0 },
             onSucceeded: { loadSucceededAction(index) },
             onFailed: { loadFailedAction(index) }
         )
@@ -251,14 +236,11 @@ struct ImageContainer: View {
 
     var body: some View {
         if loadingState == .idle {
-            image(url: imageURL).scaledToFit().overlay(
-                LiveTextView(
-                    liveTextGroups: liveTextGroups,
-                    focusedLiveTextGroup: focusedLiveTextGroup,
-                    tapAction: liveTextTapAction
-                )
-                .opacity(enablesLiveText ? 1 : 0)
-            )
+            image(url: imageURL).scaledToFit().overlay {
+                if enablesLiveText, let loadedImage {
+                    LiveTextImageView(image: loadedImage, isEnabled: true)
+                }
+            }
         } else {
             ZStack {
                 backgroundColor
@@ -298,6 +280,7 @@ private struct ByteRoutedReaderImage<Placeholder: View>: View {
     let url: URL?
     let isActive: Bool
     @ViewBuilder let placeholder: (Progress?) -> Placeholder
+    let onStillImageChange: (UIImage?) -> Void
     let onSucceeded: () -> Void
     let onFailed: () -> Void
 
@@ -325,6 +308,7 @@ private struct ByteRoutedReaderImage<Placeholder: View>: View {
         stillImage = nil
         animatedData = nil
         progress = nil
+        onStillImageChange(nil)
         guard let url else { return }
         let downloadProgress = Progress(totalUnitCount: Self.progressUnitCount)
         progress = downloadProgress
@@ -344,6 +328,26 @@ private struct ByteRoutedReaderImage<Placeholder: View>: View {
         } else {
             stillImage = asset.image
         }
+        onStillImageChange(asset.isAnimated ? nil : asset.image)
         onSucceeded()
+    }
+}
+
+// MARK: ContextMenuSuppression
+private extension View {
+    /// Applies a context menu unless suppressed. Used to yield long-press to
+    /// VisionKit text selection while Live Text is enabled on the page.
+    @ViewBuilder
+    func liveTextAwareContextMenu(
+        isSuppressed: Bool,
+        @ViewBuilder menu: @escaping () -> some View
+    ) -> some View {
+        if isSuppressed {
+            self
+        } else {
+            contextMenu {
+                menu()
+            }
+        }
     }
 }

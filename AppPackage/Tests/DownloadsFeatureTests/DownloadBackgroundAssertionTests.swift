@@ -73,7 +73,7 @@ struct DownloadBackgroundAssertionTests: DownloadFeatureTestCase {
         // token *before* awaiting the MainActor `end` hop. Wait on `endCount` (the later
         // of the two) rather than the token so the assertion below can't observe the
         // in-between window where the token is already nil but `end` hasn't run yet.
-        try await waitUntil {
+        try await waitUntil(timeout: .seconds(5)) {
             context.spy.endCount == 1
         }
         #expect(context.spy.beginCount == 1)
