@@ -88,6 +88,7 @@ enum Module: String {
     case imageClient = "ImageClient"
     case libraryClient = "LibraryClient"
     case logsClient = "LogsClient"
+    case mangaTranslationFeature = "MangaTranslationFeature"
     case networkingFeature = "NetworkingFeature"
     case openCCExt = "OpenCCExt"
     case osLogExt = "OSLogExt"
@@ -567,6 +568,7 @@ let targets: [PackageDescription.Target] = [
         dependencies: [
             .module(.appModels),
             .module(.appTools),
+            .module(.mangaTranslationFeature),
             .module(.resources),
             .targetDependency(.composableArchitecture),
             .targetDependency(.sharing)
@@ -757,6 +759,7 @@ let targets: [PackageDescription.Target] = [
             .module(.downloadClient),
             .module(.hapticsClient),
             .module(.imageClient),
+            .module(.mangaTranslationFeature),
             .module(.networkingFeature),
             .module(.osLogExt),
             .module(.readingSettingFeature),
@@ -795,6 +798,22 @@ let targets: [PackageDescription.Target] = [
             .targetDependency(.sdWebImageWebPCoder),
             .targetDependency(.uiImageColors)
         ],
+        plugins: swiftLintPlugins
+    ),
+    .target(
+        module: .mangaTranslationFeature,
+        dependencies: [
+            .module(.appModels),
+            .module(.appTools),
+            .module(.imageClient),
+            .module(.osLogExt),
+            .module(.resources),
+            .module(.sfSafeSymbolsExt),
+            .targetDependency(.composableArchitecture),
+            .targetDependency(.sfSafeSymbols),
+            .targetDependency(.sharing)
+        ],
+        resources: [.process(.resources)],
         plugins: swiftLintPlugins
     ),
     .target(

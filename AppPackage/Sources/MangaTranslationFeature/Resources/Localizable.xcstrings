@@ -1,0 +1,3845 @@
+{
+ "sourceLanguage": "en",
+ "strings": {
+  "action_completed": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Übersetzung abgeschlossen"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Translation completed"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻訳が完了しました"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "번역 완료"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻译完成"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻譯完成"
+     }
+    }
+   }
+  },
+  "action_detecting": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Text wird erkannt…"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Detecting text…"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "テキストを検出中…"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "텍스트 감지 중…"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "正在检测文字…"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "正在偵測文字…"
+     }
+    }
+   }
+  },
+  "action_preparing_models": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Modelle werden vorbereitet…"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Preparing models…"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "モデルを準備中…"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "모델 준비 중…"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "正在准备模型…"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "正在準備模型…"
+     }
+    }
+   }
+  },
+  "action_recognizing": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Text wird gelesen…"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Recognizing text…"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "テキストを認識中…"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "텍스트 인식 중…"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "正在识别文字…"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "正在辨識文字…"
+     }
+    }
+   }
+  },
+  "action_translate_page": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Seite übersetzen"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Translate Page"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "ページを翻訳"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "페이지 번역"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻译此页"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻譯此頁"
+     }
+    }
+   }
+  },
+  "action_translating": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Übersetzung läuft…"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Translating…"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻訳中…"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "번역 중…"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "正在翻译…"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "正在翻譯…"
+     }
+    }
+   }
+  },
+  "add_provider": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Anbieter hinzufügen"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Add Provider"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "プロバイダーを追加"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "제공업체 추가"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "添加服务"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "新增服務"
+     }
+    }
+   }
+  },
+  "api_key": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "API-Schlüssel"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "API Key"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "API キー"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "API 키"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "API 密钥"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "API 金鑰"
+     }
+    }
+   }
+  },
+  "api_section_footer": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Gib die API-Basis-URL ein, einschließlich /v1 falls erforderlich (z. B. https://api.openai.com/v1). Die Endpunkte /models und /chat/completions werden unter dieser URL aufgerufen. Basis-URL, API-Schlüssel und Modell sind erforderlich."
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Enter the API root, including /v1 when required (for example, https://api.openai.com/v1). The /models and /chat/completions endpoints are called under this URL. Base URL, API Key, and Model are required."
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "必要に応じて /v1 を含む API のルート URL を入力してください（例：https://api.openai.com/v1）。この URL の下で /models と /chat/completions が呼び出されます。ベース URL、API キー、モデルは必須です。"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "필요한 경우 /v1을 포함한 API 루트를 입력하세요(예: https://api.openai.com/v1). 이 URL 아래에서 /models 및 /chat/completions 엔드포인트가 호출됩니다. 기본 URL, API 키, 모델은 필수입니다."
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "输入 API 根地址，需要时包含 /v1（例如 https://api.openai.com/v1）。/models 和 /chat/completions 端点会在该地址下被调用。Base URL、API Key 和模型为必填项。"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "輸入 API 根位址，需要時包含 /v1（例如 https://api.openai.com/v1）。/models 和 /chat/completions 端點會在該位址下被呼叫。Base URL、API Key 和模型為必填項。"
+     }
+    }
+   }
+  },
+  "available_models": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Verfügbare Modelle"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Available Models"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "利用可能なモデル"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "사용 가능한 모델"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "可用模型"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "可用模型"
+     }
+    }
+   }
+  },
+  "base_url": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Basis-URL"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Base URL"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "ベース URL"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "기본 URL"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "基础 URL"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "基礎 URL"
+     }
+    }
+   }
+  },
+  "cancel": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Abbrechen"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Cancel"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "キャンセル"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "취소"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "取消"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "取消"
+     }
+    }
+   }
+  },
+  "catalog_footer": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Der Standardkatalog wird empfohlen. Eigene Kataloge müssen HTTPS verwenden."
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "The default catalog is recommended. Custom catalogs must use HTTPS."
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "デフォルトのカタログを推奨します。カスタムカタログは HTTPS を使用する必要があります。"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "기본 카탈로그를 권장합니다. 사용자 지정 카탈로그는 HTTPS를 사용해야 합니다."
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "建议使用默认目录。自定义目录必须使用 HTTPS。"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "建議使用預設目錄。自訂目錄必須使用 HTTPS。"
+     }
+    }
+   }
+  },
+  "catalog_section": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Katalog"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Catalog"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "カタログ"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "카탈로그"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "目录"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "目錄"
+     }
+    }
+   }
+  },
+  "catalog_url": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Katalog-URL"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Catalog URL"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "カタログ URL"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "카탈로그 URL"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "目录 URL"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "目錄 URL"
+     }
+    }
+   }
+  },
+  "clear": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Löschen"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Clear"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "削除"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "지우기"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "清除"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "清除"
+     }
+    }
+   }
+  },
+  "clear_cache_confirmation": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Zwischengespeicherte Seitenübersetzungen werden gelöscht und bei Bedarf neu übersetzt."
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Cached page translations will be deleted and re-translated on demand."
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "キャッシュされたページ翻訳は削除され、必要に応じて再翻訳されます。"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "캐시된 페이지 번역이 삭제되고 필요할 때 다시 번역됩니다."
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "已缓存的页面翻译将被删除，并在需要时重新翻译。"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "已快取的頁面翻譯將被刪除，並在需要時重新翻譯。"
+     }
+    }
+   }
+  },
+  "clear_translation_cache": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Übersetzungscache löschen"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Clear Translation Cache"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻訳キャッシュを削除"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "번역 캐시 지우기"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "清除翻译缓存"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "清除翻譯快取"
+     }
+    }
+   }
+  },
+  "custom_base_url": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Eigene Basis-URL"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Custom Base URL"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "カスタムベース URL"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "사용자 지정 기본 URL"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "自定义 Base URL"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "自訂 Base URL"
+     }
+    }
+   }
+  },
+  "default_on_device": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Standard · Auf dem Gerät"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Default · On-device"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "デフォルト · オンデバイス"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "기본값 · 기기 내"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "默认 · 设备端"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "預設 · 裝置端"
+     }
+    }
+   }
+  },
+  "default_source_language": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Standard-Quellsprache"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Default Source Language"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "デフォルトの原文言語"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "기본 원문 언어"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "默认原文语言"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "預設原文語言"
+     }
+    }
+   }
+  },
+  "delete": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Löschen"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Delete"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "削除"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "삭제"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "删除"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "刪除"
+     }
+    }
+   }
+  },
+  "delete_model": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Modell löschen"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Delete Model"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "モデルを削除"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "모델 삭제"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "删除模型"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "刪除模型"
+     }
+    }
+   }
+  },
+  "delete_provider": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Anbieter löschen"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Delete Provider"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "プロバイダーを削除"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "제공업체 삭제"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "删除服务"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "刪除服務"
+     }
+    }
+   }
+  },
+  "detection_capability": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Erkennung"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Detection"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "検出"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "감지"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "检测"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "偵測"
+     }
+    }
+   }
+  },
+  "detection_model": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Erkennungsmodell"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Detection Model"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "検出モデル"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "감지 모델"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "检测模型"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "偵測模型"
+     }
+    }
+   }
+  },
+  "direction_auto": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Automatisch"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Auto"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "自動"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "자동"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "自动"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "自動"
+     }
+    }
+   }
+  },
+  "direction_horizontal": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Horizontal"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Horizontal"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "横書き"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "가로"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "横排"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "橫排"
+     }
+    }
+   }
+  },
+  "direction_vertical": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Vertikal"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Vertical"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "縦書き"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "세로"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "竖排"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "直排"
+     }
+    }
+   }
+  },
+  "display_name": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Anzeigename"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Display Name"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "表示名"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "표시 이름"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "显示名称"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "顯示名稱"
+     }
+    }
+   }
+  },
+  "download_and_use": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Laden & verwenden"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Download & Use"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "ダウンロードして使用"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "다운로드 후 사용"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "下载并使用"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "下載並使用"
+     }
+    }
+   }
+  },
+  "downloaded_footer": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Geladene Modelle bleiben verfügbar, wenn sich der Katalog ändert."
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Downloaded models remain available when the catalog changes."
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "ダウンロード済みのモデルはカタログが変わっても利用できます。"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "다운로드된 모델은 카탈로그가 변경되어도 계속 사용할 수 있습니다."
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "目录更新后，已下载的模型仍可使用。"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "目錄更新後，已下載的模型仍可使用。"
+     }
+    }
+   }
+  },
+  "downloaded_section": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Geladen"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Downloaded"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "ダウンロード済み"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "다운로드됨"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "已下载"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "已下載"
+     }
+    }
+   }
+  },
+  "edit": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Bearbeiten"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Edit"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "編集"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "편집"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "编辑"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "編輯"
+     }
+    }
+   }
+  },
+  "edit_provider": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Anbieter bearbeiten"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Edit Provider"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "プロバイダーを編集"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "제공업체 편집"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "编辑服务"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "編輯服務"
+     }
+    }
+   }
+  },
+  "endpoint_custom": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Benutzerdefiniert"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Custom"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "カスタム"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "사용자 지정"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "自定义"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "自訂"
+     }
+    }
+   }
+  },
+  "error_title": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Fehler"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Error"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "エラー"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "오류"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "错误"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "錯誤"
+     }
+    }
+   }
+  },
+  "fetch_models": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Modelle abrufen"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Fetch Models"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "モデルを取得"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "모델 가져오기"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "获取模型"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "取得模型"
+     }
+    }
+   }
+  },
+  "include_metadata": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Galerie-Metadaten einbeziehen"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Include Gallery Metadata"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "ギャラリーのメタデータを含める"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "갤러리 메타데이터 포함"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "附带画廊元数据"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "附加畫廊中繼資料"
+     }
+    }
+   }
+  },
+  "include_metadata_caption": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Titel, Autoren und Tags dem Prompt hinzufügen, um Namen und Ton zu verbessern."
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Add title, authors, and tags to the prompt to improve names and tone."
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "タイトル、作者、タグをプロンプトに追加し、名前や口調の精度を高めます。"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "제목, 작가, 태그를 프롬프트에 추가하여 이름과 어조를 개선합니다."
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "在提示词中加入标题、作者和标签，以改善人名与语气。"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "在提示詞中加入標題、作者和標籤，以改善人名與語氣。"
+     }
+    }
+   }
+  },
+  "language_none": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Keine"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "None"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "なし"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "없음"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "无"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "無"
+     }
+    }
+   }
+  },
+  "languages_footer": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Die Sprachmetadaten der Galerie haben Vorrang. Die Standard-Quellsprache gilt nur, wenn keine Metadaten vorhanden sind."
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Gallery language metadata is used first. The default source language applies only when metadata is missing."
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "ギャラリーの言語メタデータが優先されます。デフォルトの原文言語はメタデータがない場合にのみ適用されます。"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "갤러리 언어 메타데이터가 우선 적용됩니다. 기본 원문 언어는 메타데이터가 없을 때만 적용됩니다."
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "优先使用画廊的语言元数据。仅当元数据缺失时才使用默认原文语言。"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "優先使用畫廊的語言中繼資料。僅當中繼資料缺失時才使用預設原文語言。"
+     }
+    }
+   }
+  },
+  "languages_section": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Sprachen"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Languages"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "言語"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "언어"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "语言"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "語言"
+     }
+    }
+   }
+  },
+  "loading_models": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Modelle werden geladen…"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Loading Models…"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "モデルを読み込み中…"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "모델 불러오는 중…"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "正在加载模型…"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "正在載入模型…"
+     }
+    }
+   }
+  },
+  "manga_error_authentication": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Der Übersetzungsdienst hat den API-Schlüssel abgelehnt."
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "The translation service rejected the API key."
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻訳サービスが API キーを拒否しました。"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "번역 서비스가 API 키를 거부했습니다."
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻译服务拒绝了 API Key。"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻譯服務拒絕了 API Key。"
+     }
+    }
+   }
+  },
+  "manga_error_inference": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Die Texterkennung auf dem Gerät ist fehlgeschlagen."
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "On-device text detection failed."
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "デバイス上のテキスト検出に失敗しました。"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "기기 내 텍스트 감지에 실패했습니다."
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "设备端文字检测失败。"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "裝置端文字偵測失敗。"
+     }
+    }
+   }
+  },
+  "manga_error_invalid_response": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Der Übersetzungsdienst hat eine ungültige Antwort zurückgegeben."
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "The translation service returned an invalid response."
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻訳サービスから無効な応答が返されました。"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "번역 서비스가 잘못된 응답을 반환했습니다."
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻译服务返回了无效的响应。"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻譯服務返回了無效的回應。"
+     }
+    }
+   }
+  },
+  "manga_error_language_pack_required": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Lade das benötigte Sprachpaket in den Einstellungen herunter, um zu übersetzen."
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Download the required language pack in Settings to translate."
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻訳するには設定で必要な言語パックをダウンロードしてください。"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "번역하려면 설정에서 필요한 언어 팩을 다운로드하세요."
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "请先在系统设置中下载所需的语言包再进行翻译。"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "請先在系統設定中下載所需的語言套件再進行翻譯。"
+     }
+    }
+   }
+  },
+  "manga_error_model_preparation": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Die Übersetzungsmodelle konnten nicht vorbereitet werden."
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Failed to prepare the translation models."
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻訳モデルの準備に失敗しました。"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "번역 모델을 준비하지 못했습니다."
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻译模型准备失败。"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻譯模型準備失敗。"
+     }
+    }
+   }
+  },
+  "manga_error_network": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Beim Übersetzen ist ein Netzwerkfehler aufgetreten."
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "A network error occurred while translating."
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻訳中にネットワークエラーが発生しました。"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "번역 중 네트워크 오류가 발생했습니다."
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻译过程中发生网络错误。"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻譯過程中發生網路錯誤。"
+     }
+    }
+   }
+  },
+  "manga_error_no_text": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Auf dieser Seite wurde kein Text gefunden."
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "No text was found on this page."
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "このページにテキストが見つかりませんでした。"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "이 페이지에서 텍스트를 찾지 못했습니다."
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "此页面未检测到文字。"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "此頁面未偵測到文字。"
+     }
+    }
+   }
+  },
+  "manga_error_not_configured": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Der Übersetzungsdienst ist nicht konfiguriert."
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Translation service is not configured."
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻訳サービスが設定されていません。"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "번역 서비스가 설정되지 않았습니다."
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻译服务尚未配置。"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻譯服務尚未設定。"
+     }
+    }
+   }
+  },
+  "manga_error_offline": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Die Comic-Übersetzung benötigt für diese Galerie eine Online-Verbindung."
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Manga translation requires an online connection for this gallery."
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "このギャラリーの翻訳にはオンライン接続が必要です。"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "이 갤러리를 번역하려면 온라인 연결이 필요합니다."
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻译此画廊需要网络连接。"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻譯此畫廊需要網路連線。"
+     }
+    }
+   }
+  },
+  "manga_error_rate_limited": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Das Ratenlimit des Übersetzungsdienstes wurde erreicht."
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "The translation service rate limit was reached."
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻訳サービスのレート制限に達しました。"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "번역 서비스 요청 한도에 도달했습니다."
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "已达到翻译服务的频率限制。"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "已達到翻譯服務的頻率限制。"
+     }
+    }
+   }
+  },
+  "manga_error_timeout": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Zeitüberschreitung bei der Übersetzungsanfrage."
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "The translation request timed out."
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻訳リクエストがタイムアウトしました。"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "번역 요청 시간이 초과되었습니다."
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻译请求超时。"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻譯請求逾時。"
+     }
+    }
+   }
+  },
+  "manga_error_unavailable": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Der Übersetzungsdienst ist nicht verfügbar."
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "The translation service is unavailable."
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻訳サービスは現在利用できません。"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "번역 서비스를 사용할 수 없습니다."
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻译服务暂不可用。"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻譯服務暫時無法使用。"
+     }
+    }
+   }
+  },
+  "manga_error_unsupported_language_pair": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Dieses Sprachenpaar wird vom Übersetzungsdienst nicht unterstützt."
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "This language pair is not supported by the translation service."
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "この言語ペアは翻訳サービスでサポートされていません。"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "이 언어 쌍은 번역 서비스에서 지원되지 않습니다."
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻译服务不支持此语言对。"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻譯服務不支援此語言組合。"
+     }
+    }
+   }
+  },
+  "manga_error_unsupported_model": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Das ausgewählte Modell wird nicht unterstützt."
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "The selected model is not supported."
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "選択されたモデルはサポートされていません。"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "선택한 모델은 지원되지 않습니다."
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "不支持所选模型。"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "不支援所選模型。"
+     }
+    }
+   }
+  },
+  "manga_translation": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Comic-Übersetzung"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Manga Translation"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "漫画翻訳"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "만화 번역"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "漫画翻译"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "漫畫翻譯"
+     }
+    }
+   }
+  },
+  "model": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Modell"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Model"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "モデル"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "모델"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "模型"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "模型"
+     }
+    }
+   }
+  },
+  "model_catalog_invalid": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Die Katalogantwort war ungültig."
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "The model catalog response was invalid."
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "モデルカタログの応答が無効でした。"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "모델 카탈로그 응답이 올바르지 않습니다."
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "模型目录的响应无效。"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "模型目錄的回應無效。"
+     }
+    }
+   }
+  },
+  "model_roles_footer": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Verwende ein Modell für beide Rollen oder kombiniere ein Erkennungsmodell mit einem anderen Texterkennungsmodell."
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Use one model for both roles, or mix a detection model with a different recognition model."
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "1 つのモデルを両方の役割に使うか、検出モデルと別の認識モデルを組み合わせられます。"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "하나의 모델을 두 역할에 사용하거나, 감지 모델과 다른 인식 모델을 조합할 수 있습니다."
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "检测与识别可使用同一个模型，也可分别选择不同模型。"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "偵測與辨識可使用同一個模型，也可分別選擇不同模型。"
+     }
+    }
+   }
+  },
+  "model_section_footer": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Gib die genaue Modell-ID ein, die dein Anbieter erwartet, oder nutze „Modelle abrufen“, nachdem du Basis-URL und API-Schlüssel eingegeben hast."
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Enter the exact model ID expected by your provider, or use Fetch Models after filling in the Base URL and API Key."
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "プロバイダーが要求する正確なモデル ID を入力するか、ベース URL と API キーを入力後に「モデルを取得」を使用してください。"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "제공업체가 요구하는 정확한 모델 ID를 입력하거나, 기본 URL과 API 키를 입력한 후 '모델 가져오기'를 사용하세요."
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "输入服务要求的确切模型 ID，或在填写 Base URL 和 API Key 后使用“获取模型”。"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "輸入服務要求的確切模型 ID，或在填寫 Base URL 和 API Key 後使用「取得模型」。"
+     }
+    }
+   }
+  },
+  "model_version": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "%#@version@"
+     },
+     "substitutions": {
+      "version": {
+       "argNum": 1,
+       "formatSpecifier": "lld",
+       "variations": {
+        "plural": {
+         "one": {
+          "stringUnit": {
+           "state": "translated",
+           "value": "Version %arg"
+          }
+         },
+         "other": {
+          "stringUnit": {
+           "state": "translated",
+           "value": "Version %arg"
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "%#@version@"
+     },
+     "substitutions": {
+      "version": {
+       "argNum": 1,
+       "formatSpecifier": "lld",
+       "variations": {
+        "plural": {
+         "one": {
+          "stringUnit": {
+           "state": "translated",
+           "value": "Version %arg"
+          }
+         },
+         "other": {
+          "stringUnit": {
+           "state": "translated",
+           "value": "Version %arg"
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "%#@version@"
+     },
+     "substitutions": {
+      "version": {
+       "argNum": 1,
+       "formatSpecifier": "lld",
+       "variations": {
+        "plural": {
+         "other": {
+          "stringUnit": {
+           "state": "translated",
+           "value": "バージョン %arg"
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "%#@version@"
+     },
+     "substitutions": {
+      "version": {
+       "argNum": 1,
+       "formatSpecifier": "lld",
+       "variations": {
+        "plural": {
+         "other": {
+          "stringUnit": {
+           "state": "translated",
+           "value": "버전 %arg"
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "%#@version@"
+     },
+     "substitutions": {
+      "version": {
+       "argNum": 1,
+       "formatSpecifier": "lld",
+       "variations": {
+        "plural": {
+         "other": {
+          "stringUnit": {
+           "state": "translated",
+           "value": "版本 %arg"
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "%#@version@"
+     },
+     "substitutions": {
+      "version": {
+       "argNum": 1,
+       "formatSpecifier": "lld",
+       "variations": {
+        "plural": {
+         "other": {
+          "stringUnit": {
+           "state": "translated",
+           "value": "版本 %arg"
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "no_additional_models": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Keine weiteren Modelle im Katalog"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "No additional models in the catalog"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "カタログに追加のモデルはありません"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "카탈로그에 추가 모델 없음"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "目录中没有更多模型"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "目錄中沒有更多模型"
+     }
+    }
+   }
+  },
+  "no_models_downloaded": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Keine Modelle geladen"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "No models downloaded"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "モデルがダウンロードされていません"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "다운로드된 모델 없음"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "尚未下载模型"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "尚未下載模型"
+     }
+    }
+   }
+  },
+  "no_models_returned": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Keine Modelle zurückgegeben"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "No models returned"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "モデルが返されませんでした"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "반환된 모델 없음"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "未返回模型"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "未返回模型"
+     }
+    }
+   }
+  },
+  "no_providers_configured": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Keine Anbieter konfiguriert"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "No providers configured"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "プロバイダーが設定されていません"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "설정된 제공업체 없음"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "未配置翻译服务"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "未設定翻譯服務"
+     }
+    }
+   }
+  },
+  "not_configured": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Nicht konfiguriert"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Not Configured"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "未設定"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "설정 안 함"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "未配置"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "未設定"
+     }
+    }
+   }
+  },
+  "not_selected": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Nicht ausgewählt"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Not Selected"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "未選択"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "선택 안 함"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "未选择"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "未選擇"
+     }
+    }
+   }
+  },
+  "ok": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "OK"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "OK"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "OK"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "OK"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "OK"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "OK"
+     }
+    }
+   }
+  },
+  "openai_compatible_api": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "OpenAI-kompatible API"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "OpenAI-Compatible API"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "OpenAI 互換 API"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "OpenAI 호환 API"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "OpenAI 兼容 API"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "OpenAI 相容 API"
+     }
+    }
+   }
+  },
+  "privacy_provider_metadata": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "OCR-Text und Galerie-Metadaten werden an den Anbieter gesendet; Seitenbilder werden niemals hochgeladen."
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "OCR text and gallery metadata are sent to the provider; page images are never uploaded."
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "OCR テキストとギャラリーのメタデータはプロバイダーに送信されます。ページ画像がアップロードされることはありません。"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "OCR 텍스트와 갤러리 메타데이터는 제공업체로 전송되며, 페이지 이미지는 절대 업로드되지 않습니다."
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "OCR 文本和画廊元数据会发送给服务提供商；页面图像绝不会被上传。"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "OCR 文字和畫廊中繼資料會傳送給服務提供商；頁面圖像絕不會上傳。"
+     }
+    }
+   }
+  },
+  "privacy_provider_text_only": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Nur OCR-Text wird an den Anbieter gesendet; Seitenbilder werden niemals hochgeladen."
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Only OCR text is sent to the provider; page images are never uploaded."
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "OCR テキストのみがプロバイダーに送信されます。ページ画像がアップロードされることはありません。"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "OCR 텍스트만 제공업체로 전송되며, 페이지 이미지는 절대 업로드되지 않습니다."
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "仅 OCR 文本会发送给服务提供商；页面图像绝不会被上传。"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "僅 OCR 文字會傳送給服務提供商；頁面圖像絕不會上傳。"
+     }
+    }
+   }
+  },
+  "privacy_system": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Erkennung und Übersetzung laufen auf dem Gerät. Seitenbilder verlassen das Gerät niemals."
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Recognition and translation run on device. Page images never leave the device."
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "認識と翻訳はデバイス上で実行されます。ページ画像がデバイスから送信されることはありません。"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "인식과 번역이 기기에서 실행됩니다. 페이지 이미지는 기기를 벗어나지 않습니다."
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "识别与翻译均在设备上运行。页面图像绝不会离开设备。"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "辨識與翻譯均在裝置上執行。頁面圖像絕不會離開裝置。"
+     }
+    }
+   }
+  },
+  "privacy_unconfigured": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Konfiguriere einen LLM-Anbieter, um die Übersetzung zu aktivieren. Seitenbilder verlassen das Gerät niemals."
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Configure an LLM provider to enable translation. Page images never leave the device."
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻訳を有効にするには LLM プロバイダーを設定してください。ページ画像がデバイスから送信されることはありません。"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "번역을 사용하려면 LLM 제공업체를 설정하세요. 페이지 이미지는 기기를 벗어나지 않습니다."
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "配置 LLM 服务以启用翻译。页面图像绝不会离开设备。"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "設定 LLM 服務以啟用翻譯。頁面圖像絕不會離開裝置。"
+     }
+    }
+   }
+  },
+  "providers_footer": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "LLM-Anbieter erhalten nur OCR-Text und optionale Galerie-Metadaten. Systemübersetzung und Seitenbilder bleiben auf dem Gerät."
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "LLM providers receive only OCR text and optional gallery metadata. System Translation and page images stay on device."
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "LLM プロバイダーに送信されるのは OCR テキストと任意のギャラリーメタデータのみです。システム翻訳とページ画像はデバイス内にとどまります。"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "LLM 제공업체는 OCR 텍스트와 선택적 갤러리 메타데이터만 받습니다. 시스템 번역과 페이지 이미지는 기기에 남습니다."
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "LLM 服务仅接收 OCR 文本和可选的画廊元数据。系统翻译与页面图像都留在设备上。"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "LLM 服務僅接收 OCR 文字和可選的畫廊中繼資料。系統翻譯與頁面圖像都留在裝置上。"
+     }
+    }
+   }
+  },
+  "providers_section": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Anbieter"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Providers"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "プロバイダー"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "제공업체"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻译服务"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻譯服務"
+     }
+    }
+   }
+  },
+  "recognition_capability": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Texterkennung"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Recognition"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "認識"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "인식"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "识别"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "辨識"
+     }
+    }
+   }
+  },
+  "recognition_model": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Texterkennungsmodell"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Recognition Model"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "認識モデル"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "인식 모델"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "识别模型"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "辨識模型"
+     }
+    }
+   }
+  },
+  "refresh_catalog": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Katalog aktualisieren"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Refresh Catalog"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "カタログを更新"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "카탈로그 새로고침"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "刷新目录"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "重新整理目錄"
+     }
+    }
+   }
+  },
+  "reset_to_default": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Zurücksetzen"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Reset to Default"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "デフォルトに戻す"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "기본값으로 재설정"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "重置为默认"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "重置為預設"
+     }
+    }
+   }
+  },
+  "save": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Sichern"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Save"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "保存"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "저장"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "保存"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "儲存"
+     }
+    }
+   }
+  },
+  "system_language": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Systemsprache (%@)"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "System Language (%@)"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "システムの言語（%@）"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "시스템 언어（%@）"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "系统语言（%@）"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "系統語言（%@）"
+     }
+    }
+   }
+  },
+  "system_translation": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Systemübersetzung"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "System Translation"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "システム翻訳"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "시스템 번역"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "系统翻译"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "系統翻譯"
+     }
+    }
+   }
+  },
+  "target_language": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Zielsprache"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Target Language"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻訳先の言語"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "대상 언어"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "目标语言"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "目標語言"
+     }
+    }
+   }
+  },
+  "test_provider": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Anbieter testen"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Test Provider"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "プロバイダーをテスト"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "제공업체 테스트"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "测试服务"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "測試服務"
+     }
+    }
+   }
+  },
+  "text_direction": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Textrichtung"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Text Direction"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "文字の方向"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "텍스트 방향"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "文字方向"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "文字方向"
+     }
+    }
+   }
+  },
+  "translation_providers": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Übersetzungsanbieter"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Translation Providers"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻訳プロバイダー"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "번역 제공업체"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻译服务"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻譯服務"
+     }
+    }
+   }
+  },
+  "translation_section": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Übersetzung"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Translation"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻訳"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "번역"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻译"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻譯"
+     }
+    }
+   }
+  },
+  "unknown": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Unbekannt"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Unknown"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "不明"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "알 수 없음"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "未知"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "未知"
+     }
+    }
+   }
+  }
+ },
+ "version": "1.0"
+}

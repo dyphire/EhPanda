@@ -7,6 +7,7 @@ import SwiftUIPager
 import ComposableArchitecture
 import AppTools
 import AnimatedImageFeature
+import MangaTranslationFeature
 import SystemNotificationExt
 import AppComponents
 import ReadingSettingFeature
@@ -23,6 +24,8 @@ public struct ReadingView: View {
     let blurRadius: Double
 
     @State private var enablesLiveText = false
+    @State private var mangaTranslationHandler = MangaTranslationHandler()
+    @State private var showsMangaTranslationSettings = false
     @State private var autoPlayHandler = AutoPlayHandler()
     @State var gestureHandler = GestureHandler()
     @State private var pageHandler: PageHandler
@@ -117,6 +120,15 @@ public struct ReadingView: View {
                     .accentColor(effectiveSetting.accentColor)
                     .autoBlur(radius: blurRadius)
             }
+            .sheet(isPresented: $showsMangaTranslationSettings) {
+                mangaTranslationHandler.refreshConfiguration()
+            } content: {
+                NavigationStack {
+                    MangaTranslationSettingsView()
+                }
+                .accentColor(effectiveSetting.accentColor)
+                .autoBlur(radius: blurRadius)
+            }
             .toast($store.scope(state: \.toast, action: \.toast))
 
             .animation(.linear(duration: 0.1), value: gestureHandler.offset)
@@ -125,11 +137,101 @@ public struct ReadingView: View {
             .animation(.default, value: store.showsPanel)
             .statusBar(hidden: !store.showsPanel)
             .onDisappear {
+                mangaTranslationHandler.cancelAll()
                 setAutoPlayPolocy(.off)
             }
             .onAppear {
+                mangaTranslationHandler.setContext(
+                    gid: gid,
+                    pageCount: store.gallery.pageCount,
+                    isOffline: store.state.isOffline,
+                    metadata: Self.mangaTranslationMetadata(
+                        gallery: store.gallery, language: store.state.language
+                    ),
+                    imageURLForIndex: { index in displayImageURLs[index] },
+                    onFailure: { failure in
+                        store.send(.mangaTranslationFailed(failure.description))
+                    }
+                )
                 store.send(.onAppear(gid))
             }
+    }
+
+    private var liveTextBinding: Binding<Bool> {
+        Binding(
+            get: { enablesLiveText },
+            set: { newValue in
+                enablesLiveText = newValue
+                // Live Text and the translation overlay cannot analyze the same page.
+                if newValue {
+                    mangaTranslationHandler.setEnabled(false)
+                }
+            }
+        )
+    }
+
+    private var mangaTranslationBinding: Binding<Bool> {
+        Binding(
+            get: { mangaTranslationHandler.isEnabled },
+            set: { newValue in
+                mangaTranslationHandler.setEnabled(newValue)
+                if newValue {
+                    enablesLiveText = false
+                    _ = MangaModelMemoryWarningObserver.shared
+                    configureDefaultMangaModelsIfNeeded()
+                    mangaTranslationHandler.syncQueue(currentIndex: currentPageNumber)
+                }
+            }
+        )
+    }
+
+    private var currentPageNumber: Int {
+        pageHandler.mapFromPager(
+            index: page.index, pageCount: store.gallery.pageCount, setting: effectiveSetting
+        )
+    }
+
+    private func configureDefaultMangaModelsIfNeeded() {
+        guard MangaModelLibrary.selectedArchive(for: .detector) == nil
+            || MangaModelLibrary.selectedArchive(for: .recognizer) == nil
+        else { return }
+        Task {
+            do {
+                let catalog = try await ModelCatalogService.fetch()
+                for role in MangaModelRole.allCases
+                where MangaModelLibrary.selectedArchive(for: role) == nil {
+                    if let archive = catalog.models(for: .mangaOCR)
+                        .first(where: { MangaModelSet.supports($0, for: role) })
+                    {
+                        MangaModelLibrary.select(archive, for: role)
+                    }
+                }
+            } catch {
+                store.send(.mangaTranslationFailed(error.localizedDescription))
+            }
+        }
+    }
+
+    static func mangaTranslationMetadata(
+        gallery: Gallery,
+        language: Language?
+    ) -> MangaTranslationMetadata {
+        func tagTexts(namespaces: [String], excluding: Bool = false) -> [String] {
+            gallery.tags
+                .filter { namespaces.contains($0.rawNamespace) != excluding }
+                .flatMap(\.contents)
+                .map(\.text)
+        }
+        let artistNamespaces = ["artist", "group"]
+        return MangaTranslationMetadata(
+            seriesTitle: gallery.titleJpn ?? gallery.title,
+            bookTitle: "",
+            authors: tagTexts(namespaces: artistNamespaces),
+            genres: tagTexts(namespaces: artistNamespaces, excluding: true),
+            sourceLanguage: language.flatMap {
+                $0.abbreviation == "N/A" ? nil : $0.abbreviation.lowercased()
+            }
+        )
     }
 
     var content: some View {
@@ -182,7 +284,9 @@ public struct ReadingView: View {
                 showsPanel: $store.showsPanel,
                 showsSliderPreview: $store.showsSliderPreview,
                 sliderValue: $bindablePageHandler.sliderValue, setting: effectiveSettingBinding,
-                enablesLiveText: $enablesLiveText,
+                enablesLiveText: liveTextBinding,
+                enablesMangaTranslation: mangaTranslationBinding,
+                mangaTranslationPhase: mangaTranslationHandler.phase,
                 autoPlayPolicy: .init(get: { autoPlayHandler.policy }, set: { setAutoPlayPolocy($0) }),
                 range: 1...Float(store.gallery.pageCount),
                 previewURLs: displayPreviewURLs,
@@ -191,7 +295,10 @@ public struct ReadingView: View {
                 navigateSettingAction: { store.send(.presentReadingSetting) },
                 reloadAllImagesAction: { store.send(.reloadAllWebImages) },
                 retryAllFailedImagesAction: { store.send(.retryAllFailedWebImages) },
-                fetchPreviewURLsAction: { store.send(.fetchPreviewURLs($0)) }
+                fetchPreviewURLsAction: { store.send(.fetchPreviewURLs($0)) },
+                translatePageAction: { mangaTranslationHandler.translatePage(currentPageNumber) },
+                toggleMangaTranslationVisibilityAction: { mangaTranslationHandler.toggleVisibility() },
+                navigateMangaTranslationSettingAction: { showsMangaTranslationSettings = true }
             )
         }
     }
@@ -215,6 +322,11 @@ public struct ReadingView: View {
                 )
                 pageHandler.sliderValue = .init(newValue)
                 store.send(.syncReadingProgress(.init(newValue)))
+                mangaTranslationHandler.syncQueue(currentIndex: newValue)
+            }
+            .onChange(of: store.forceRefreshID) { _, _ in
+                mangaTranslationHandler.cancelAll()
+                mangaTranslationHandler.syncQueue(currentIndex: currentPageNumber)
             }
             .onChange(of: pageHandler.sliderValue) { _, newValue in
                 if !store.showsSliderPreview {
@@ -234,6 +346,8 @@ public struct ReadingView: View {
             .onChange(of: store.destination != nil) { _, isPresented in
                 if isPresented {
                     setAutoPlayPolocy(.off)
+                } else {
+                    mangaTranslationHandler.refreshConfiguration()
                 }
             }
     }
@@ -259,6 +373,7 @@ public struct ReadingView: View {
             originalImageURLs: displayOriginalImageURLs,
             loadingStates: store.imageURLLoadingStates,
             enablesLiveText: enablesLiveText,
+            mangaTranslationHandler: mangaTranslationHandler,
             fetchAction: { store.send(.fetchImageURLs($0)) },
             refetchAction: { store.send(.refetchImageURLs($0)) },
             prefetchAction: { store.send(.prefetchImages($0, effectiveSetting.prefetchLimit)) },

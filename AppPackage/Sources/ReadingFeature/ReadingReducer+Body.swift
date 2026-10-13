@@ -86,6 +86,10 @@ extension ReadingReducer {
                 flushReadingProgress(state)
                 return .run(operation: { _ in await hapticsClient.generateFeedback(.light) })
 
+            case .mangaTranslationFailed(let message):
+                state.toast = .error(caption: message)
+                return .none
+
             case .onAppear(let gid):
                 var effects: [Effect<Action>] = [
                     .send(.observeDownloads(gid)),

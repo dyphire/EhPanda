@@ -191,6 +191,10 @@ struct AboutView: View {
             text: .Constant.acknowledgementEhTagTranslationDatabase
         ),
         .init(
+            urlString: String(localized: .Constant.acknowledgementKmreaderLink),
+            text: .Constant.acknowledgementKmreader
+        ),
+        .init(
             urlString: String(localized: .Constant.acknowledgementTcaLink),
             text: .Constant.acknowledgementTca
         )

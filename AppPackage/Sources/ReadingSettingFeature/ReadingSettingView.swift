@@ -4,6 +4,7 @@ import Sharing
 import Resources
 import AppTools
 import ComposableArchitecture
+import MangaTranslationFeature
 
 public struct ReadingSettingView: View {
     // The reading-setting editor is shared by the Setting tab and the reader sheet. Rather than hold
@@ -56,6 +57,13 @@ public struct ReadingSettingView: View {
                     labelContent: .doubleTapScaleFactor,
                     minFactor: 1.5, maxFactor: 5
                 )
+            }
+            Section {
+                NavigationLink {
+                    MangaTranslationSettingsView()
+                } label: {
+                    Text(.mangaTranslation)
+                }
             }
         }
         .navigationTitle(.reading)

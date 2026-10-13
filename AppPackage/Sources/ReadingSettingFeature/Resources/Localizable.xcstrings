@@ -1,334 +1,375 @@
 {
-  "sourceLanguage": "en",
-  "strings": {
-    "direction": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Direction"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Leserichtung"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "方向"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "방향"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "方向"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "翻頁方向"
-          }
-        }
-      }
+ "sourceLanguage": "en",
+ "strings": {
+  "direction": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Leserichtung"
+     }
     },
-    "double_tap_scale_factor": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Double tap scale factor"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Doppel-Tap Skalierungsfaktor"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ダブルタップスケール係数"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "더블 탭 확대 비율"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "双击缩放系数"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "雙擊縮放值"
-          }
-        }
-      }
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Direction"
+     }
     },
-    "enables_landscape": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Enables landscape"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Querformat aktivieren"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "横向きを有効"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "가로 화면 사용하기"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "启用横屏"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "啟用橫向顯示"
-          }
-        }
-      }
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "方向"
+     }
     },
-    "maximum_scale_factor": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Maximum scale factor"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Maximaler Skalierungsfaktor"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "最大スケール係数"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "최대 확대 비율"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "最大缩放系数"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "縮放上限"
-          }
-        }
-      }
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "방향"
+     }
     },
-    "preload_limit": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Preload limit"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Vorausladen"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "プリロード上限数"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "페이지 미리 로딩"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "预加载数量上限"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "預先載入頁數"
-          }
-        }
-      }
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "方向"
+     }
     },
-    "reading": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reading"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Am Lesen"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "閲覧"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "읽기"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "阅读"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "閱讀設定"
-          }
-        }
-      }
-    },
-    "reading_appearance": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Appearance"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Oberfläche"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "外観"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "외관"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "外观"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "外觀"
-          }
-        }
-      }
-    },
-    "separator_height": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Separator height"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Höhe der Teilung"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "仕切りの高さ"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "페이지 간 여백 두께"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "分隔线高度"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "頁間分隔高度"
-          }
-        }
-      }
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "翻頁方向"
+     }
     }
+   }
   },
-  "version": "1.0"
+  "double_tap_scale_factor": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Doppel-Tap Skalierungsfaktor"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Double tap scale factor"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "ダブルタップスケール係数"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "더블 탭 확대 비율"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "双击缩放系数"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "雙擊縮放值"
+     }
+    }
+   }
+  },
+  "enables_landscape": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Querformat aktivieren"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Enables landscape"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "横向きを有効"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "가로 화면 사용하기"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "启用横屏"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "啟用橫向顯示"
+     }
+    }
+   }
+  },
+  "manga_translation": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Comic-Übersetzung"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Manga Translation"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "漫画翻訳"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "만화 번역"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "漫画翻译"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "漫畫翻譯"
+     }
+    }
+   }
+  },
+  "maximum_scale_factor": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Maximaler Skalierungsfaktor"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Maximum scale factor"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "最大スケール係数"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "최대 확대 비율"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "最大缩放系数"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "縮放上限"
+     }
+    }
+   }
+  },
+  "preload_limit": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Vorausladen"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Preload limit"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "プリロード上限数"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "페이지 미리 로딩"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "预加载数量上限"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "預先載入頁數"
+     }
+    }
+   }
+  },
+  "reading": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Am Lesen"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Reading"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "閲覧"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "읽기"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "阅读"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "閱讀設定"
+     }
+    }
+   }
+  },
+  "reading_appearance": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Oberfläche"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Appearance"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "外観"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "외관"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "外观"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "外觀"
+     }
+    }
+   }
+  },
+  "separator_height": {
+   "extractionState": "manual",
+   "localizations": {
+    "de": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Höhe der Teilung"
+     }
+    },
+    "en": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "Separator height"
+     }
+    },
+    "ja": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "仕切りの高さ"
+     }
+    },
+    "ko": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "페이지 간 여백 두께"
+     }
+    },
+    "zh-Hans": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "分隔线高度"
+     }
+    },
+    "zh-Hant": {
+     "stringUnit": {
+      "state": "translated",
+      "value": "頁間分隔高度"
+     }
+    }
+   }
+  }
+ },
+ "version": "1.0"
 }
