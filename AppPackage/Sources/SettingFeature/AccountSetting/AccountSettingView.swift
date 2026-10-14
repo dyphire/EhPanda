@@ -43,7 +43,8 @@ struct AccountSettingView: View {
             CookieSection(
                 ehCookiesState: $store.ehCookiesState,
                 exCookiesState: $store.exCookiesState,
-                copyAction: { store.send(.copyCookies($0)) }
+                copyAction: { store.send(.copyCookies($0)) },
+                submitAction: { store.send(.cookiesSubmitted($0)) }
             )
         }
         .toast($store.scope(state: \.toast, action: \.toast))
@@ -123,30 +124,33 @@ private struct CookieSection: View {
     @Binding private var ehCookiesState: CookiesState
     @Binding private var exCookiesState: CookiesState
     private let copyAction: (GalleryHost) -> Void
+    private let submitAction: (GalleryHost) -> Void
 
     init(
         ehCookiesState: Binding<CookiesState>,
         exCookiesState: Binding<CookiesState>,
-        copyAction: @escaping (GalleryHost) -> Void
+        copyAction: @escaping (GalleryHost) -> Void,
+        submitAction: @escaping (GalleryHost) -> Void
     ) {
         _ehCookiesState = ehCookiesState
         _exCookiesState = exCookiesState
         self.copyAction = copyAction
+        self.submitAction = submitAction
     }
 
     var body: some View {
         Section(GalleryHost.ehentai.rawValue) {
-            CookieRow(cookieState: $ehCookiesState.memberID)
-            CookieRow(cookieState: $ehCookiesState.passHash)
+            CookieRow(cookieState: $ehCookiesState.memberID, submitAction: { submitAction(.ehentai) })
+            CookieRow(cookieState: $ehCookiesState.passHash, submitAction: { submitAction(.ehentai) })
             Button(.copyCookies) {
                 copyAction(.ehentai)
             }
             .foregroundStyle(.tint).font(.subheadline)
         }
         Section(GalleryHost.exhentai.rawValue) {
-            CookieRow(cookieState: $exCookiesState.igneous)
-            CookieRow(cookieState: $exCookiesState.memberID)
-            CookieRow(cookieState: $exCookiesState.passHash)
+            CookieRow(cookieState: $exCookiesState.igneous, submitAction: { submitAction(.exhentai) })
+            CookieRow(cookieState: $exCookiesState.memberID, submitAction: { submitAction(.exhentai) })
+            CookieRow(cookieState: $exCookiesState.passHash, submitAction: { submitAction(.exhentai) })
             Button(.copyCookies) {
                 copyAction(.exhentai)
             }
@@ -158,9 +162,11 @@ private struct CookieSection: View {
 // MARK: CookieRow
 private struct CookieRow: View {
     @Binding private var cookieState: CookieState
+    private let submitAction: () -> Void
 
-    init(cookieState: Binding<CookieState>) {
+    init(cookieState: Binding<CookieState>, submitAction: @escaping () -> Void) {
         _cookieState = cookieState
+        self.submitAction = submitAction
     }
 
     var body: some View {
@@ -168,9 +174,11 @@ private struct CookieRow: View {
             Text(cookieState.key)
             Spacer()
             TextField(cookieState.value.placeholder, text: $cookieState.editingText)
-                .submitLabel(.done).disableAutocorrection(true)
+                .submitLabel(.done)
+                .disableAutocorrection(true)
                 .multilineTextAlignment(.trailing)
                 .textInputAutocapitalization(.none)
+                .onSubmit(submitAction)
             Image(systemSymbol: cookieState.value.isInvalid ? .xmarkCircle : .checkmarkCircle)
                 .foregroundStyle(cookieState.value.isInvalid ? .red : .green)
         }

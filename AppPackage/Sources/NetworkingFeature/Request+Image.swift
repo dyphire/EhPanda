@@ -36,6 +36,10 @@ public struct MPVKeysRequest: Request {
     public var urlSession: URLSession = .shared
     public var allowsCellular = true
 
+    public var authenticationRecoveryPolicy: RequestAuthenticationRecoveryPolicy {
+        .exHentai(for: mpvURL)
+    }
+
     public var publisher: AnyPublisher<(String, [Int: String]), AppError> {
         urlSession.dataTaskPublisher(
             for: urlRequest(url: mpvURL, allowsCellular: allowsCellular)
@@ -65,6 +69,10 @@ public struct ThumbnailURLsRequest: Request {
     public var urlSession: URLSession = .shared
     public var allowsCellular = true
 
+    public var authenticationRecoveryPolicy: RequestAuthenticationRecoveryPolicy {
+        .exHentai(for: galleryURL)
+    }
+
     public var publisher: AnyPublisher<[Int: URL], AppError> {
         urlSession.dataTaskPublisher(
             for: urlRequest(
@@ -93,6 +101,10 @@ public struct GalleryNormalImageURLsRequest: Request {
     public let thumbnailURLs: [Int: URL]
     public var urlSession: URLSession = .shared
     public var allowsCellular = true
+
+    public var authenticationRecoveryPolicy: RequestAuthenticationRecoveryPolicy {
+        thumbnailURLs.values.first.map(RequestAuthenticationRecoveryPolicy.exHentai(for:)) ?? .disabled
+    }
 
     public var publisher: AnyPublisher<([Int: URL], [Int: URL]), AppError> {
         thumbnailURLs.publisher
@@ -169,6 +181,10 @@ public struct GalleryNormalImageURLRefetchRequest: Request {
     public let storedImageURL: URL
     public var urlSession: URLSession = .shared
     public var allowsCellular = true
+
+    public var authenticationRecoveryPolicy: RequestAuthenticationRecoveryPolicy {
+        .exHentai(for: galleryURL)
+    }
 
     public var publisher: AnyPublisher<([Int: URL], HTTPURLResponse?), AppError> {
         storedThumbnailURL()

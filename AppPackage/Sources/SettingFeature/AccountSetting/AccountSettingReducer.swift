@@ -5,6 +5,7 @@ import ComposableArchitecture
 import HapticsClient
 import ClipboardClient
 import CookieClient
+import NetworkingFeature
 import UserDefaultsClient
 import AppTools
 import AppComponents
@@ -48,12 +49,14 @@ public struct AccountSettingReducer: Sendable {
         case logoutButtonTapped
         case onLogoutConfirmButtonTapped
         case loadCookies
+        case cookiesSubmitted(GalleryHost)
         case copyCookies(GalleryHost)
         case galleryHostChanged(GalleryHost)
     }
 
     @Dependency(\.clipboardClient) private var clipboardClient
     @Dependency(\.cookieClient) private var cookieClient
+    @Dependency(\.cookieRefreshClient) private var cookieRefreshClient
     @Dependency(\.hapticsClient) private var hapticsClient
     @Dependency(\.userDefaultsClient) private var userDefaultsClient
 
@@ -108,12 +111,25 @@ public struct AccountSettingReducer: Sendable {
                 return .none
 
             case .onLogoutConfirmButtonTapped:
-                return .send(.loadCookies)
+                return .run { send in
+                    cookieClient.clearAll()
+                    await cookieClient.clearWebCookies()
+                    await send(.loadCookies)
+                }
 
             case .loadCookies:
                 state.ehCookiesState = cookieClient.loadCookiesState(host: .ehentai)
                 state.exCookiesState = cookieClient.loadCookiesState(host: .exhentai)
                 return .none
+
+            case .cookiesSubmitted(let host):
+                return .run { send in
+                    cookieClient.prepareAuthentication()
+                    if host == .exhentai, cookieClient.shouldFetchIgneous {
+                        _ = await cookieRefreshClient.refresh()
+                    }
+                    await send(.loadCookies)
+                }
 
             case .copyCookies(let host):
                 state.toast = .copiedToClipboardSucceeded

@@ -35,6 +35,7 @@ extension Defaults.URL {
     public static var api: Foundation.URL { host.appendingPathComponent("api.php") }
     public static var myTags: Foundation.URL { host.appendingPathComponent("mytags") }
     public static var uConfig: Foundation.URL { host.appendingPathComponent("uconfig.php") }
+    public static let exUConfig: Foundation.URL = exhentai.appendingPathComponent("uconfig.php")
     public static var galleryPopups: Foundation.URL { host.appendingPathComponent("gallerypopups.php") }
     public static var galleryTorrents: Foundation.URL { host.appendingPathComponent("gallerytorrents.php") }
     public static var popular: Foundation.URL { host.appendingPathComponent("popular") }

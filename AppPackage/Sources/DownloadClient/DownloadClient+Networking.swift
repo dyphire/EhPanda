@@ -3,6 +3,7 @@ import Foundation
 import AppModels
 import UniformTypeIdentifiers
 import AnimatedImageFeature
+import NetworkingFeature
 
 private let logger = Logger(category: .init(describing: DownloadCoordinator.self))
 
@@ -24,6 +25,19 @@ extension DownloadCoordinator {
     public func downloadResponse(
         for request: URLRequest,
         retriesRequest: Bool = true
+    ) async throws -> (URL, URLResponse) {
+        let operation = {
+            try await self.validatedDownloadResponse(for: request, retriesRequest: retriesRequest)
+        }
+        guard request.url?.isExHentai == true else {
+            return try await operation()
+        }
+        return try await cookieRefreshClient.perform(operation: operation)
+    }
+
+    private func validatedDownloadResponse(
+        for request: URLRequest,
+        retriesRequest: Bool
     ) async throws -> (URL, URLResponse) {
         let performRequest = {
             try await self.rawDownloadResponse(for: request)
@@ -134,10 +148,25 @@ extension DownloadCoordinator {
         context: DownloadPageTaskContext,
         retriesRequest: Bool = true
     ) async throws -> DownloadPageTransfer {
+        let operation = {
+            try await self.validatedPageDownloadResponse(
+                for: request, context: context, retriesRequest: retriesRequest
+            )
+        }
+        guard request.url?.isExHentai == true else {
+            return try await operation()
+        }
+        return try await cookieRefreshClient.perform(operation: operation)
+    }
+
+    private func validatedPageDownloadResponse(
+        for request: URLRequest,
+        context: DownloadPageTaskContext,
+        retriesRequest: Bool
+    ) async throws -> DownloadPageTransfer {
         let performRequest = {
             try await self.rawPageDownloadResponse(
-                for: request,
-                context: context
+                for: request, context: context
             )
         }
 

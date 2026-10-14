@@ -8,22 +8,25 @@ private let logger = Logger(category: .init(describing: WebView.self))
 
 struct WebView: UIViewControllerRepresentable {
     private let url: URL
-    private let loginDoneAction: (() -> Void)?
+    private let cookiesAction: (([LoginReducer.ImportedCookie]) -> Void)?
 
-    init(url: URL, loginDoneAction: (() -> Void)? = nil) {
+    init(url: URL, cookiesAction: (([LoginReducer.ImportedCookie]) -> Void)? = nil) {
         self.url = url
-        self.loginDoneAction = loginDoneAction
+        self.cookiesAction = cookiesAction
     }
 
     final class Coodinator: NSObject, WKNavigationDelegate, WKUIDelegate {
         private var parent: WebView
+        private var didStartCookieImport = false
 
         init(parent: WebView) {
             self.parent = parent
         }
 
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-            guard parent.url.absoluteString == Defaults.URL.webLogin.absoluteString, let webViewURL = webView.url,
+            guard !didStartCookieImport,
+                  parent.url.absoluteString == Defaults.URL.webLogin.absoluteString,
+                  let webViewURL = webView.url,
                   let queryItems = URLComponents(url: webViewURL, resolvingAgainstBaseURL: false)?.queryItems,
                   queryItems.contains(where: { queryItem in
                     queryItem.name == Defaults.URL.Component.Key.code.rawValue
@@ -31,12 +34,13 @@ struct WebView: UIViewControllerRepresentable {
                   })
             else { return }
 
-            webView.configuration.websiteDataStore.httpCookieStore.getAllCookies { cookies in
-                cookies.forEach { HTTPCookieStorage.shared.setCookie($0) }
-            }
-
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
-                self?.parent.loginDoneAction?()
+            webView.configuration.websiteDataStore.httpCookieStore.getAllCookies { [weak self] cookies in
+                guard let self, !didStartCookieImport else { return }
+                didStartCookieImport = true
+                let importedCookies = cookies.map(LoginReducer.ImportedCookie.init(cookie:))
+                DispatchQueue.main.async {
+                    self.parent.cookiesAction?(importedCookies)
+                }
             }
         }
 

@@ -69,8 +69,8 @@ struct LoginView: View {
         }
         .synchronize($store.focusedField, $focusedField)
         .sheet(item: $store.destination.webView, id: \.absoluteString) { url in
-            WebView(url: url.wrappedValue) {
-                store.send(.loginDone(.success(nil)))
+            WebView(url: url.wrappedValue) { cookies in
+                store.send(.webViewCookiesReceived(cookies))
             }
             .ignoresSafeArea(edges: .bottom)
             .autoBlur(radius: blurRadius)

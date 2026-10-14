@@ -5,6 +5,8 @@ import Testing
 import UIKit
 import AppTools
 import ImageClient
+import CookieClient
+import NetworkingFeature
 @testable import AppFeature
 
 @Suite(.serialized)
@@ -297,6 +299,101 @@ struct ReaderImageDataTests {
         let asset = await task.value
 
         #expect(asset == nil)
+    }
+
+    @Test
+    func testExAuthenticationFailureRefreshesCookieAndRefetchesImage() async throws {
+        let (cache, rootURL) = makeIsolatedDataCache()
+        defer { try? FileManager.default.removeItem(at: rootURL) }
+        let url = try #require(URL(string: "https://exhentai.org/s/sample/1.jpg"))
+        let placeholderData = try fixtureData(resource: "Kokomade", pathExtension: "jpg")
+        let realImageData = try makePNGData()
+        let requestCount = UncheckedBox(0)
+        let (session, sessionID) = makeStubbedSession()
+        defer { SharedSessionStubURLProtocol.removeHandler(for: sessionID) }
+        SharedSessionStubURLProtocol.setHandler(for: sessionID) { _ in
+            requestCount.value += 1
+            let data = requestCount.value == 1 ? placeholderData : realImageData
+            return (try makeHTTPResponse(url: url, statusCode: 200), data)
+        }
+
+        let refreshCookieClient = CookieClient.testing(
+            memberID: "4172984",
+            passHash: "pass-hash"
+        )
+        let refreshCount = UncheckedBox(0)
+        let refreshClient = CookieRefreshClient.live(cookieClient: refreshCookieClient) { _ in
+            refreshCount.value += 1
+            let response = try #require(HTTPURLResponse(
+                url: Defaults.URL.exUConfig,
+                statusCode: 200,
+                httpVersion: nil,
+                headerFields: [
+                    "Set-Cookie": "\(Defaults.Cookie.igneous)=reader-token; path=/; max-age=3600"
+                ]
+            ))
+            return (Data("uconfig".utf8), response)
+        }
+
+        let data = try await ImageClient.readerImageData(
+            url: url,
+            dataCache: cache,
+            urlSession: session,
+            cookieRefreshClient: refreshClient
+        )
+
+        #expect(data == realImageData)
+        #expect(requestCount.value == 2)
+        #expect(refreshCount.value == 1)
+        #expect(refreshCookieClient.hasValidExAuthentication)
+        #expect(await cache.data(forKeys: url.imageCacheKeys) == realImageData)
+    }
+
+    @Test
+    func testFailedExCookieRefreshDoesNotReplayReaderImageRequest() async throws {
+        let (cache, rootURL) = makeIsolatedDataCache()
+        defer { try? FileManager.default.removeItem(at: rootURL) }
+        let url = try #require(URL(string: "https://exhentai.org/s/sample/1.jpg"))
+        let placeholderData = try fixtureData(resource: "Kokomade", pathExtension: "jpg")
+        let requestCount = UncheckedBox(0)
+        let (session, sessionID) = makeStubbedSession()
+        defer { SharedSessionStubURLProtocol.removeHandler(for: sessionID) }
+        SharedSessionStubURLProtocol.setHandler(for: sessionID) { _ in
+            requestCount.value += 1
+            return (try makeHTTPResponse(url: url, statusCode: 200), placeholderData)
+        }
+
+        let refreshCount = UncheckedBox(0)
+        let refreshClient = CookieRefreshClient.live(
+            cookieClient: CookieClient.testing(memberID: "4172984", passHash: "pass-hash")
+        ) { _ in
+            refreshCount.value += 1
+            let response = try #require(HTTPURLResponse(
+                url: Defaults.URL.exUConfig,
+                statusCode: 200,
+                httpVersion: nil,
+                headerFields: nil
+            ))
+            return (Data("uconfig".utf8), response)
+        }
+
+        do {
+            _ = try await ImageClient.readerImageData(
+                url: url,
+                dataCache: cache,
+                urlSession: session,
+                cookieRefreshClient: refreshClient
+            )
+            Issue.record("Expected readerImageData to preserve the authentication error")
+        } catch let error as AppError {
+            #expect(error == .authenticationRequired)
+        } catch {
+            Issue.record("Unexpected error: \(error)")
+        }
+
+        #expect(requestCount.value == 1)
+        #expect(refreshCount.value == 1)
+        #expect(await cache.data(forKeys: url.imageCacheKeys) == nil)
     }
 
     private func fixtureData(resource: String, pathExtension: String) throws -> Data {

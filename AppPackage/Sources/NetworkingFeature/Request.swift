@@ -6,10 +6,54 @@ import ComposableArchitecture
 import AppTools
 import ParserFeature
 
+public enum RequestAuthenticationRecoveryPolicy: Equatable, Sendable {
+    case disabled
+    case refreshExHentai
+}
+
+public extension RequestAuthenticationRecoveryPolicy {
+    static func exHentai(for url: URL) -> Self {
+        url.isExHentai ? .refreshExHentai : .disabled
+    }
+
+    static var currentHost: Self {
+        .exHentai(for: Defaults.URL.host)
+    }
+}
+
+public extension URL {
+    var isExHentai: Bool {
+        guard let host = host?.lowercased() else { return false }
+        return host == "exhentai.org" || host.hasSuffix(".exhentai.org")
+    }
+}
+
 public protocol Request {
     associatedtype Response: Sendable
 
     var publisher: AnyPublisher<Response, AppError> { get }
+    var authenticationRecoveryPolicy: RequestAuthenticationRecoveryPolicy { get }
+}
+
+public extension Request {
+    var authenticationRecoveryPolicy: RequestAuthenticationRecoveryPolicy { .disabled }
+}
+
+private struct RequestAuthenticationRecoveryRunner {
+    @Dependency(\.cookieRefreshClient) private var cookieRefreshClient
+
+    func send<RequestType: Request>(
+        _ request: RequestType
+    ) async -> Result<RequestType.Response, AppError> {
+        let publisher = request.publisher
+        let execute = {
+            await publisher.receive(on: DispatchQueue.main).async()
+        }
+        guard request.authenticationRecoveryPolicy == .refreshExHentai else {
+            return await execute()
+        }
+        return await cookieRefreshClient.response(from: execute)
+    }
 }
 
 private struct ResponseParsingError: Error {
@@ -19,7 +63,7 @@ private struct ResponseParsingError: Error {
 
 extension Request {
     public func response() async -> Result<Response, AppError> {
-        await publisher.receive(on: DispatchQueue.main).async()
+        await RequestAuthenticationRecoveryRunner().send(self)
     }
 
     public func urlRequest(
@@ -143,8 +187,23 @@ extension Request {
 }
 
 extension Publisher {
-    public func genericRetry() -> Publishers.Retry<Self> {
-        retry(3)
+    public func genericRetry() -> AnyPublisher<Output, Failure> {
+        retry(3).eraseToAnyPublisher()
+    }
+}
+
+extension Publisher where Failure == AppError {
+    public func genericRetry() -> AnyPublisher<Output, AppError> {
+        func retried(_ attempts: Int) -> AnyPublisher<Output, AppError> {
+            self.catch { error -> AnyPublisher<Output, AppError> in
+                guard error.isRetryable, attempts < 3 else {
+                    return Fail(error: error).eraseToAnyPublisher()
+                }
+                return retried(attempts + 1)
+            }
+            .eraseToAnyPublisher()
+        }
+        return retried(0)
     }
 
     public func async() async -> Result<Output, AppError> where Output: Sendable, Failure == AppError {
@@ -285,6 +344,8 @@ public struct UserInfoRequest: Request {
 
 public struct FavoriteCategoriesRequest: Request {
     public init() {}
+
+    public var authenticationRecoveryPolicy: RequestAuthenticationRecoveryPolicy { .currentHost }
 
     public var publisher: AnyPublisher<[Int: String], AppError> {
         URLSession.shared.dataTaskPublisher(for: Defaults.URL.uConfig)

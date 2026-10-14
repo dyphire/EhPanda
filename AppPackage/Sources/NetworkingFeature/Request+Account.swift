@@ -40,20 +40,10 @@ public struct LoginRequest: Request {
     }
 }
 
-public struct IgneousRequest: Request {
-    public init() {}
-
-    public var publisher: AnyPublisher<HTTPURLResponse, AppError> {
-        URLSession.shared.dataTaskPublisher(for: Defaults.URL.exhentai)
-            .genericRetry()
-            .compactMap { $0.response as? HTTPURLResponse }
-            .mapError(mapAppError)
-            .eraseToAnyPublisher()
-    }
-}
-
 public struct VerifyEhProfileRequest: Request {
     public init() {}
+
+    public var authenticationRecoveryPolicy: RequestAuthenticationRecoveryPolicy { .currentHost }
 
     public var publisher: AnyPublisher<VerifyEhProfileResponse, AppError> {
         URLSession.shared.dataTaskPublisher(for: Defaults.URL.uConfig)
@@ -108,6 +98,8 @@ public struct EhProfileRequest: Request {
 
 public struct EhSettingRequest: Request {
     public init() {}
+
+    public var authenticationRecoveryPolicy: RequestAuthenticationRecoveryPolicy { .currentHost }
 
     public var publisher: AnyPublisher<EhSetting, AppError> {
         URLSession.shared.dataTaskPublisher(for: Defaults.URL.uConfig)

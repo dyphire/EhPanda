@@ -17,6 +17,8 @@ public struct SearchGalleriesRequest: Request {
     public let keyword: String
     public let filter: Filter
 
+    public var authenticationRecoveryPolicy: RequestAuthenticationRecoveryPolicy { .currentHost }
+
     public var publisher: AnyPublisher<GalleriesResult, AppError> {
         URLSession.shared.dataTaskPublisher(
             for: URLUtil.searchList(keyword: keyword, filter: filter)
@@ -51,6 +53,8 @@ public struct MoreSearchGalleriesRequest: Request {
     public let filter: Filter
     public let lastID: String
 
+    public var authenticationRecoveryPolicy: RequestAuthenticationRecoveryPolicy { .currentHost }
+
     public var publisher: AnyPublisher<GalleriesResult, AppError> {
         URLSession.shared.dataTaskPublisher(
             for: URLUtil.moreSearchList(keyword: keyword, filter: filter, lastID: lastID)
@@ -79,6 +83,10 @@ public struct DateSeekGalleriesRequest: Request {
     }
     public let url: URL
 
+    public var authenticationRecoveryPolicy: RequestAuthenticationRecoveryPolicy {
+        .exHentai(for: url)
+    }
+
     public var publisher: AnyPublisher<GalleriesResult, AppError> {
         URLSession.shared.dataTaskPublisher(for: url)
             .genericRetry()
@@ -104,6 +112,8 @@ public struct FrontpageGalleriesRequest: Request {
         self.filter = filter
     }
     public let filter: Filter
+
+    public var authenticationRecoveryPolicy: RequestAuthenticationRecoveryPolicy { .currentHost }
 
     public var publisher: AnyPublisher<GalleriesResult, AppError> {
         URLSession.shared.dataTaskPublisher(for: URLUtil.frontpageList(filter: filter))
@@ -134,6 +144,8 @@ public struct MoreFrontpageGalleriesRequest: Request {
     public let filter: Filter
     public let lastID: String
 
+    public var authenticationRecoveryPolicy: RequestAuthenticationRecoveryPolicy { .currentHost }
+
     public var publisher: AnyPublisher<GalleriesResult, AppError> {
         URLSession.shared.dataTaskPublisher(for: URLUtil.moreFrontpageList(filter: filter, lastID: lastID))
             .genericRetry()
@@ -160,6 +172,8 @@ public struct PopularGalleriesRequest: Request {
     }
     public let filter: Filter
 
+    public var authenticationRecoveryPolicy: RequestAuthenticationRecoveryPolicy { .currentHost }
+
     public var publisher: AnyPublisher<[Gallery], AppError> {
         URLSession.shared.dataTaskPublisher(for: URLUtil.popularList(filter: filter))
             .genericRetry()
@@ -180,6 +194,8 @@ public struct WatchedGalleriesRequest: Request {
     }
     public let filter: Filter
     public let keyword: String
+
+    public var authenticationRecoveryPolicy: RequestAuthenticationRecoveryPolicy { .currentHost }
 
     public var publisher: AnyPublisher<GalleriesResult, AppError> {
         URLSession.shared.dataTaskPublisher(for: URLUtil.watchedList(filter: filter, keyword: keyword))
@@ -212,6 +228,8 @@ public struct MoreWatchedGalleriesRequest: Request {
     public let filter: Filter
     public let lastID: String
     public let keyword: String
+
+    public var authenticationRecoveryPolicy: RequestAuthenticationRecoveryPolicy { .currentHost }
 
     public var publisher: AnyPublisher<GalleriesResult, AppError> {
         URLSession.shared.dataTaskPublisher(
@@ -246,6 +264,8 @@ public struct FavoritesGalleriesRequest: Request {
     public let favIndex: Int
     public let keyword: String
     public var sortOrder: FavoritesSortOrder?
+
+    public var authenticationRecoveryPolicy: RequestAuthenticationRecoveryPolicy { .currentHost }
 
     public var publisher: AnyPublisher<FavoritesGalleriesResult, AppError> {
         URLSession.shared.dataTaskPublisher(
@@ -284,6 +304,8 @@ public struct MoreFavoritesGalleriesRequest: Request {
     public let lastID: String
     public var lastTimestamp: String
     public let keyword: String
+
+    public var authenticationRecoveryPolicy: RequestAuthenticationRecoveryPolicy { .currentHost }
 
     public var publisher: AnyPublisher<FavoritesGalleriesResult, AppError> {
         URLSession.shared.dataTaskPublisher(

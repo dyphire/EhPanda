@@ -1,4 +1,5 @@
 import SwiftUI
+import Foundation
 import AppModels
 import ComposableArchitecture
 import HapticsClient
@@ -25,6 +26,45 @@ public struct LoginReducer: Sendable {
         case password
     }
 
+    public struct ImportedCookie: Equatable, Sendable {
+        public let domain: String
+        public let path: String
+        public let name: String
+        public let value: String
+        public let expiresDate: Date?
+        public let isSessionOnly: Bool
+        public let isSecure: Bool
+
+        public init(cookie: HTTPCookie) {
+            domain = cookie.domain
+            path = cookie.path
+            name = cookie.name
+            value = cookie.value
+            expiresDate = cookie.expiresDate
+            isSessionOnly = cookie.isSessionOnly
+            isSecure = cookie.isSecure
+        }
+
+        func httpCookie() -> HTTPCookie? {
+            var properties: [HTTPCookiePropertyKey: Any] = [
+                .domain: domain,
+                .path: path,
+                .name: name,
+                .value: value
+            ]
+            if let expiresDate {
+                properties[.expires] = expiresDate
+            }
+            if isSessionOnly {
+                properties[.discard] = "TRUE"
+            }
+            if isSecure {
+                properties[.secure] = "TRUE"
+            }
+            return HTTPCookie(properties: properties)
+        }
+    }
+
     @ObservableState
     public struct State: Equatable, Sendable {
         @Presents public var destination: Destination.State?
@@ -48,6 +88,8 @@ public struct LoginReducer: Sendable {
         case presentWebView(URL)
 
         case login
+        case webViewCookiesReceived([ImportedCookie])
+        case loginCookiesImported(Bool)
         case loginDone(Result<HTTPURLResponse?, AppError>)
     }
 
@@ -78,23 +120,43 @@ public struct LoginReducer: Sendable {
                 state.loginState = .loading
                 return .merge(
                     .run(operation: { _ in await hapticsClient.generateFeedback(.soft) }),
-                    .run { [state] send in
-                        let response = await LoginRequest(username: state.username, password: state.password).response()
-                        await send(.loginDone(response))
+                    .run { [username = state.username, password = state.password] send in
+                        let result = await LoginRequest(username: username, password: password).response()
+                        switch result {
+                        case .success(let response):
+                            let imported = response.map { cookieClient.importCredentials(response: $0) } ?? false
+                            cookieClient.prepareAuthentication()
+                            await send(.loginCookiesImported(imported))
+                        case .failure(let error):
+                            await send(.loginDone(.failure(error)))
+                        }
                     }
                     .cancellable(id: CancelID.login)
                 )
 
+            case .webViewCookiesReceived(let importedCookies):
+                return .run { send in
+                    let cookies = importedCookies.compactMap { $0.httpCookie() }
+                    let imported = cookieClient.importWebViewCookies(cookies)
+                    cookieClient.prepareAuthentication()
+                    await send(.loginCookiesImported(imported))
+                }
+
+            case .loginCookiesImported:
+                let result: Result<HTTPURLResponse?, AppError> = cookieClient.didLogin
+                    ? .success(nil)
+                    : .failure(.unknown)
+                return .send(.loginDone(result))
+
             case .loginDone(let result):
                 state.destination = nil
                 var effects = [Effect<Action>]()
-                if cookieClient.didLogin {
+                if case .success = result, cookieClient.didLogin {
                     state.loginState = .idle
                     effects.append(.run(operation: { _ in
                         logger.notice("Login succeeded.")
                         await hapticsClient.generateNotificationFeedback(.success)
                     }))
-                    // Pop this login screen off the Setting stack now that we're signed in.
                     effects.append(.run { _ in await dismiss() })
                 } else {
                     state.loginState = .failed(.unknown)
@@ -102,9 +164,6 @@ public struct LoginReducer: Sendable {
                         logger.notice("Login failed.")
                         await hapticsClient.generateNotificationFeedback(.error)
                     }))
-                }
-                if case .success(let response) = result, let response = response {
-                    effects.append(.run(operation: { _ in cookieClient.setCredentials(response: response) }))
                 }
                 return .merge(effects)
             }

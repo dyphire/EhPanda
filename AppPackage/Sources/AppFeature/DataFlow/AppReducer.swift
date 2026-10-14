@@ -197,6 +197,7 @@ struct AppReducer {
                                 igneous: loginCookies.igneous
                             )
                         }
+                        cookieClient.prepareAuthentication()
                         await send(.setting(.loadUserSettings))
                     }
                 )
@@ -331,9 +332,7 @@ struct AppReducer {
                 return effects.isEmpty ? .none : .merge(effects)
 
             case .setting(.igneousRefreshed):
-                guard state.isAwaitingIgneousForLaunchAutomation,
-                      !shouldDelayLaunchAutomationUntilIgneous(state: state)
-                else { return .none }
+                guard state.isAwaitingIgneousForLaunchAutomation else { return .none }
                 state.isAwaitingIgneousForLaunchAutomation = false
                 return .send(.runLaunchAutomation)
 

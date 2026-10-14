@@ -434,6 +434,7 @@ let targets: [PackageDescription.Target] = [
         dependencies: [
             .module(.appModels),
             .module(.appTools),
+            .module(.cookieClient),
             .module(.osLogExt),
             .module(.parserFeature),
             .targetDependency(.composableArchitecture),
@@ -782,6 +783,8 @@ let targets: [PackageDescription.Target] = [
             .module(.appModels),
             .module(.animatedImageFeature),
             .module(.appTools),
+            .module(.networkingFeature),
+            .module(.parserFeature),
             .targetDependency(.composableArchitecture)
         ],
         plugins: swiftLintPlugins
@@ -923,8 +926,10 @@ let targets: [PackageDescription.Target] = [
         module: .settingFeatureTests,
         dependencies: [
             .module(.appModels),
+            .module(.appTools),
             .module(.cookieClient),
             .module(.fileClient),
+            .module(.networkingFeature),
             .module(.hapticsClient),
             .module(.logsClient),
             .module(.settingFeature),
@@ -947,7 +952,10 @@ let targets: [PackageDescription.Target] = [
         module: .networkingFeatureTests,
         dependencies: [
             .module(.appModels),
-            .module(.networkingFeature)
+            .module(.appTools),
+            .module(.cookieClient),
+            .module(.networkingFeature),
+            .targetDependency(.composableArchitecture)
         ],
         plugins: swiftLintPlugins
     ),

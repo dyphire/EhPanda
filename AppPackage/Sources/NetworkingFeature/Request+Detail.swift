@@ -42,6 +42,10 @@ public struct GalleryDetailRequest: Request {
     public var urlSession: URLSession = .shared
     public var allowsCellular = true
 
+    public var authenticationRecoveryPolicy: RequestAuthenticationRecoveryPolicy {
+        .exHentai(for: galleryURL)
+    }
+
     public var publisher: AnyPublisher<GalleryDetailResponse, AppError> {
         urlSession.dataTaskPublisher(
             for: urlRequest(
@@ -123,6 +127,8 @@ public struct GalleryVersionMetadataRequest: Request {
         self.urlSession = urlSession
     }
 
+    public var authenticationRecoveryPolicy: RequestAuthenticationRecoveryPolicy { .currentHost }
+
     public var publisher: AnyPublisher<DownloadVersionMetadata, AppError> {
         guard let gid = Int(gid) else {
             return Fail(error: AppError.notFound)
@@ -149,6 +155,10 @@ public struct GalleryReverseRequest: Request {
     }
     public let url: URL
     public let isGalleryImageURL: Bool
+
+    public var authenticationRecoveryPolicy: RequestAuthenticationRecoveryPolicy {
+        .exHentai(for: url)
+    }
 
     public func getGallery(from detail: GalleryDetail?, and url: URL) -> Gallery? {
         if let detail = detail {
@@ -224,6 +234,10 @@ public struct GalleryArchiveRequest: Request {
     }
     public let archiveURL: URL
 
+    public var authenticationRecoveryPolicy: RequestAuthenticationRecoveryPolicy {
+        .exHentai(for: archiveURL)
+    }
+
     public var publisher: AnyPublisher<GalleryArchiveResponse, AppError> {
         URLSession.shared.dataTaskPublisher(for: archiveURL)
             .genericRetry()
@@ -254,6 +268,10 @@ public struct GalleryArchiveFundsRequest: Request {
     }
     public let gid: String
     public let galleryURL: URL
+
+    public var authenticationRecoveryPolicy: RequestAuthenticationRecoveryPolicy {
+        .exHentai(for: galleryURL)
+    }
 
     public var publisher: AnyPublisher<(String, String), AppError> {
         archiveURL(url: galleryURL)
@@ -299,11 +317,13 @@ public struct GalleryTorrentsRequest: Request {
     public let gid: String
     public let token: String
 
+    public var authenticationRecoveryPolicy: RequestAuthenticationRecoveryPolicy { .currentHost }
+
     public var publisher: AnyPublisher<[GalleryTorrent], AppError> {
         URLSession.shared.dataTaskPublisher(for: URLUtil.galleryTorrents(gid: gid, token: token))
             .genericRetry()
             .tryMap { try htmlDocument(data: $0.data) }
-            .map(Parser.parseGalleryTorrents)
+            .tryMap { try parseResponse(doc: $0, Parser.parseGalleryTorrents) }
             .mapError(mapAppError)
             .eraseToAnyPublisher()
     }
@@ -319,6 +339,10 @@ public struct GalleryPreviewURLsRequest: Request {
     }
     public let galleryURL: URL
     public let pageNum: Int
+
+    public var authenticationRecoveryPolicy: RequestAuthenticationRecoveryPolicy {
+        .exHentai(for: galleryURL)
+    }
 
     public var publisher: AnyPublisher<[Int: URL], AppError> {
         URLSession.shared.dataTaskPublisher(for: URLUtil.detailPage(url: galleryURL, pageNum: pageNum))

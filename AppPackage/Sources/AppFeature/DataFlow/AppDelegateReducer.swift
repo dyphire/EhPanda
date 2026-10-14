@@ -8,7 +8,6 @@ import AppDelegateClient
 import LibraryClient
 import DownloadClient
 import BackgroundProcessingClient
-import CookieClient
 import OSLogExt
 
 private let logger = Logger(category: .init(describing: AppDelegateReducer.self))
@@ -23,7 +22,6 @@ struct AppDelegateReducer {
     }
 
     @Dependency(\.libraryClient) private var libraryClient
-    @Dependency(\.cookieClient) private var cookieClient
 
     var body: some Reducer<State, Action> {
         Reduce { _, action in
@@ -37,11 +35,7 @@ struct AppDelegateReducer {
                         @Shared(.galleryHistory) var galleryHistory
                         $galleryHistory.withLock { $0.pruneToHistoryCap() }
                     },
-                    .run(operation: { _ in libraryClient.initializeWebImage() }),
-                    .run(operation: { _ in cookieClient.removeYay() }),
-                    .run(operation: { _ in cookieClient.syncExCookies() }),
-                    .run(operation: { _ in cookieClient.ignoreOffensive() }),
-                    .run(operation: { _ in cookieClient.fulfillAnotherHostField() })
+                    .run(operation: { _ in libraryClient.initializeWebImage() })
                 )
             }
         }

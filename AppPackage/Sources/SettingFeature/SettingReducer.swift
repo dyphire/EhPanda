@@ -100,7 +100,7 @@ public struct SettingReducer: Sendable {
         case loadUserSettingsDone
         case createDefaultEhProfile
         case fetchIgneous
-        case fetchIgneousDone(Result<HTTPURLResponse, AppError>)
+        case fetchIgneousDone(Bool)
         case fetchUserInfo
         case fetchUserInfoDone(Result<User, AppError>)
         case fetchGreeting
@@ -120,6 +120,7 @@ public struct SettingReducer: Sendable {
     @Dependency(\.userDefaultsClient) var userDefaultsClient
     @Dependency(\.libraryClient) var libraryClient
     @Dependency(\.cookieClient) var cookieClient
+    @Dependency(\.cookieRefreshClient) var cookieRefreshClient
     @Dependency(\.fileClient) var fileClient
     @Dependency(\.dfClient) var dfClient
 

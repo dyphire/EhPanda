@@ -20,6 +20,8 @@ public struct MyTagsRequest: Request {
     public let urlSession: URLSession
     public let allowsCellular: Bool
 
+    public var authenticationRecoveryPolicy: RequestAuthenticationRecoveryPolicy { .currentHost }
+
     public var publisher: AnyPublisher<MyTagsResponse, AppError> {
         guard var components = URLComponents(
             url: Defaults.URL.myTags, resolvingAgainstBaseURL: true

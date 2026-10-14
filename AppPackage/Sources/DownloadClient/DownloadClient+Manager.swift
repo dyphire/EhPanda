@@ -1,6 +1,7 @@
 import Foundation
 import AppModels
 import LibraryClient
+import NetworkingFeature
 
 public typealias ScheduledDownloadOperation = @Sendable () async -> Void
 
@@ -299,6 +300,7 @@ public actor DownloadCoordinator {
     public let backgroundTaskStore: DownloadBackgroundTaskStore
     public let backgroundTaskClient: BackgroundTaskClient
     public let storedCookiesProvider: @Sendable (URL) -> [HTTPCookie]
+    public let cookieRefreshClient: CookieRefreshClient
     public let libraryClient: LibraryClient
     /// Supplies the latest runtime settings immediately before a queued download starts.
     ///
@@ -352,6 +354,7 @@ public actor DownloadCoordinator {
         storedCookiesProvider: @escaping @Sendable (URL) -> [HTTPCookie] = {
             HTTPCookieStorage.shared.cookies(for: $0) ?? []
         },
+        cookieRefreshClient: CookieRefreshClient = .noop,
         libraryClient: LibraryClient = .live,
         downloadOptionsProvider: @escaping @Sendable () async -> DownloadRequestOptions = {
             DownloadRequestOptions()
@@ -369,6 +372,7 @@ public actor DownloadCoordinator {
         )
         self.backgroundTaskClient = backgroundTaskClient
         self.storedCookiesProvider = storedCookiesProvider
+        self.cookieRefreshClient = cookieRefreshClient
         self.libraryClient = libraryClient
         self.downloadOptionsProvider = downloadOptionsProvider
         self.adPageVerdictsProvider = adPageVerdictsProvider

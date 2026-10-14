@@ -111,6 +111,8 @@ public struct GalleriesMetadataRequest: Request {
         self.urlSession = urlSession
     }
 
+    public var authenticationRecoveryPolicy: RequestAuthenticationRecoveryPolicy { .currentHost }
+
     public var publisher: AnyPublisher<[Gallery], AppError> {
         let order = gidList.map(\.gid)
         let chunks = gidList.chunked(into: 25)

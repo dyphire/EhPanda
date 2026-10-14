@@ -5,6 +5,8 @@ import Combine
 import ComposableArchitecture
 import AppTools
 import AnimatedImageFeature
+import NetworkingFeature
+import ParserFeature
 
 public struct ImageClient: Sendable {
     public struct ImageAsset: Sendable {
@@ -23,6 +25,7 @@ public struct ImageClient: Sendable {
     public let saveImageDataToPhotoLibrary: @Sendable (Data) async -> Bool
     public var dataCache: DataCache = .shared
     public var urlSession: URLSession = .shared
+    public var cookieRefreshClient: CookieRefreshClient = .noop
 }
 
 extension ImageClient {
@@ -33,7 +36,10 @@ extension ImageClient {
                     for url in urls {
                         group.addTask {
                             _ = try? await ImageClient.readerImageData(
-                                url: url, dataCache: .shared, urlSession: .shared
+                                url: url,
+                                dataCache: .shared,
+                                urlSession: .shared,
+                                cookieRefreshClient: .live
                             )
                         }
                     }
@@ -42,7 +48,8 @@ extension ImageClient {
         },
         saveImageDataToPhotoLibrary: { data in
             await Self.saveImageDataToPhotoLibrary(data)
-        }
+        },
+        cookieRefreshClient: .live
     )
 
     public static func saveImageDataToPhotoLibrary(_ data: Data) async -> Bool {
@@ -61,7 +68,10 @@ extension ImageClient {
     public func fetchImageAsset(url: URL) async -> Result<ImageAsset, Error> {
         do {
             let data = try await Self.readerImageData(
-                url: url, dataCache: dataCache, urlSession: urlSession
+                url: url,
+                dataCache: dataCache,
+                urlSession: urlSession,
+                cookieRefreshClient: cookieRefreshClient
             )
             guard let image = data.decodedImage else {
                 return .failure(AppError.parseFailed)
@@ -77,7 +87,11 @@ extension ImageClient {
         onProgress: (@MainActor @Sendable (Double) -> Void)? = nil
     ) async -> ImageAsset? {
         guard let data = try? await Self.readerImageData(
-            url: url, dataCache: dataCache, urlSession: urlSession, onProgress: onProgress
+            url: url,
+            dataCache: dataCache,
+            urlSession: urlSession,
+            onProgress: onProgress,
+            cookieRefreshClient: cookieRefreshClient
         ), let image = data.decodedImage else {
             return nil
         }
@@ -88,7 +102,8 @@ extension ImageClient {
         url: URL,
         dataCache: DataCache,
         urlSession: URLSession,
-        onProgress: (@MainActor @Sendable (Double) -> Void)? = nil
+        onProgress: (@MainActor @Sendable (Double) -> Void)? = nil,
+        cookieRefreshClient: CookieRefreshClient = .noop
     ) async throws -> Data {
         if url.isFileURL {
             return try Data(contentsOf: url)
@@ -103,6 +118,28 @@ extension ImageClient {
             }
             try? await dataCache.removeData(forKeys: cacheKeys)
         }
+        let operation = {
+            try await Self.downloadValidatedReaderData(
+                url: url,
+                dataCache: dataCache,
+                urlSession: urlSession,
+                onProgress: onProgress,
+                cacheKeys: cacheKeys
+            )
+        }
+        if url.isExHentai {
+            return try await cookieRefreshClient.perform(operation: operation)
+        }
+        return try await operation()
+    }
+
+    private static func downloadValidatedReaderData(
+        url: URL,
+        dataCache: DataCache,
+        urlSession: URLSession,
+        onProgress: (@MainActor @Sendable (Double) -> Void)?,
+        cacheKeys: [String]
+    ) async throws -> Data {
         let data = try await downloadReaderData(
             url: url, urlSession: urlSession, onProgress: onProgress
         )
@@ -115,6 +152,10 @@ extension ImageClient {
         // Only cache decodable image bytes so a 200 carrying an HTML/error body
         // (e.g. an unexpected notice page) can't poison the key until expiry.
         guard data.decodedImage != nil else {
+            let content = String(decoding: data, as: UTF8.self)
+            if let error = Parser.parseResponseError(content: content) {
+                throw error
+            }
             throw AppError.parseFailed
         }
         // Store under the primary key only. Reads check the stable alias first and
@@ -162,8 +203,20 @@ extension ImageClient {
     private static func validateReaderResponse(_ response: URLResponse) throws {
         guard let httpResponse = response as? HTTPURLResponse,
               (200..<300).contains(httpResponse.statusCode) else {
+            if let httpResponse = response as? HTTPURLResponse,
+               httpResponse.statusCode == 401 || isAuthenticationURL(httpResponse.url) {
+                throw AppError.authenticationRequired
+            }
             throw AppError.networkingFailed
         }
+        if isAuthenticationURL(httpResponse.url) {
+            throw AppError.authenticationRequired
+        }
+    }
+
+    private static func isAuthenticationURL(_ url: URL?) -> Bool {
+        guard let path = url?.path.lowercased() else { return false }
+        return path.contains("bounce_login.php") || path.hasSuffix("/kokomade.jpg")
     }
 }
 

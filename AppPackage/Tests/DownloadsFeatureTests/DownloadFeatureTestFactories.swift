@@ -4,6 +4,7 @@ import Testing
 import AppTools
 import DownloadClient
 import AppLaunchAutomationClient
+import NetworkingFeature
 @testable import AppFeature
 
 // MARK: - Sample Data Factories
@@ -284,6 +285,7 @@ extension DownloadFeatureTestCase {
         downloadOptionsProvider: @escaping @Sendable () async -> DownloadRequestOptions = {
             DownloadRequestOptions()
         },
+        cookieRefreshClient: CookieRefreshClient = .noop,
         taskRunner: DownloadTaskRunner = .init()
     ) -> (DownloadStore, DownloadCoordinator) {
         let configuration = URLSessionConfiguration.ephemeral
@@ -298,6 +300,7 @@ extension DownloadFeatureTestCase {
             storage: storage,
             urlSession: URLSession(configuration: configuration),
             downloadOptionsProvider: downloadOptionsProvider,
+            cookieRefreshClient: cookieRefreshClient,
             taskRunner: taskRunner
         )
         return (storage, manager)

@@ -76,24 +76,19 @@ extension SettingReducer {
                 }
 
             case .fetchIgneous:
-                guard cookieClient.didLogin else { return .none }
+                guard cookieClient.hasExCredentials else { return .none }
                 return .run { send in
-                    let response = await IgneousRequest().response()
-                    await send(.fetchIgneousDone(response))
+                    let refreshed = await cookieRefreshClient.refresh()
+                    await send(.fetchIgneousDone(refreshed))
                 }
 
-            case .fetchIgneousDone(let result):
-                if case .success(let response) = result {
-                    return .run { send in
-                        logger.notice("Igneous token refreshed.")
-                        cookieClient.setCredentials(response: response)
-                        await send(.igneousRefreshed)
-                    }
+            case .fetchIgneousDone(let refreshed):
+                if refreshed {
+                    logger.notice("Igneous token refreshed.")
+                } else {
+                    logger.notice("Igneous refresh failed.")
                 }
-                return .merge(
-                    .run { _ in logger.notice("Igneous refresh failed.") },
-                    .send(.igneousRefreshed)
-                )
+                return .send(.igneousRefreshed)
 
             case .fetchUserInfo:
                 guard cookieClient.didLogin else { return .none }
@@ -189,13 +184,8 @@ extension SettingReducer {
                 }
                 return .none
 
-            // Login is a top-level stack element; it self-dismisses on success while Setting runs
-            // the post-login setup.
-            case .path(.element(id: _, action: .login(.loginDone))):
+            case .path(.element(id: _, action: .login(.loginDone(.success)))):
                 return .merge(
-                    .run(operation: { _ in cookieClient.removeYay() }),
-                    .run(operation: { _ in cookieClient.syncExCookies() }),
-                    .run(operation: { _ in cookieClient.fulfillAnotherHostField() }),
                     .run { _ in await WatchedTagsSetting.shared.clearOnlineTagSets() },
                     .send(.fetchIgneous),
                     .send(.fetchUserInfo),
@@ -206,7 +196,6 @@ extension SettingReducer {
             case .path(.element(id: _, action: .account(.onLogoutConfirmButtonTapped))):
                 state.$user.withLock { $0 = User() }
                 return .merge(
-                    .run(operation: { _ in cookieClient.clearAll() }),
                     .run { _ in await WatchedTagsSetting.shared.clearOnlineTagSets() },
                     .run(operation: { _ in await libraryClient.removeAllCachedImages() }),
                     .run { _ in logger.notice("Logged out.") }

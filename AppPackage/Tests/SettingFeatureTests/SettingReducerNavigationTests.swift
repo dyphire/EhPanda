@@ -191,6 +191,7 @@ struct SettingReducerNavigationTests {
     func loginDoneRunsPostLoginFetchCascade() async throws {
         let store = TestStore(initialState: .init(), reducer: SettingReducer.init) {
             $0.cookieClient = .noop
+            $0.cookieRefreshClient = .noop
             $0.hapticsClient = .noop
         }
         store.exhaustivity = .off
@@ -216,10 +217,7 @@ struct SettingReducerNavigationTests {
         }
         store.exhaustivity = .off
 
-        let response = try #require(
-            HTTPURLResponse(url: .mock, statusCode: 200, httpVersion: nil, headerFields: nil)
-        )
-        await store.send(.fetchIgneousDone(.success(response)))
+        await store.send(.fetchIgneousDone(true))
         await store.receive(\.igneousRefreshed)
     }
 
@@ -228,7 +226,7 @@ struct SettingReducerNavigationTests {
         let store = TestStore(initialState: .init(), reducer: SettingReducer.init)
         store.exhaustivity = .off
 
-        await store.send(.fetchIgneousDone(.failure(.notFound)))
+        await store.send(.fetchIgneousDone(false))
         await store.receive(\.igneousRefreshed)
     }
 }

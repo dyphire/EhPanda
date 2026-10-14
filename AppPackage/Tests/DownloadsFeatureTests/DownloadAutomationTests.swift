@@ -218,6 +218,7 @@ struct DownloadAutomationTests: DownloadFeatureTestCase {
                 $0.applicationClient = .noop
                 $0.userDefaultsClient = .noop
                 $0.appDelegateClient = .noop
+                $0.cookieRefreshClient = .noop
                 $0.libraryClient = .noop
                 $0.fileClient = .noop
                 $0.dfClient = .noop
@@ -283,15 +284,7 @@ struct DownloadAutomationTests: DownloadFeatureTestCase {
         #expect(store.state.didRunLaunchAutomation == false)
         #expect(store.state.isAwaitingIgneousForLaunchAutomation)
 
-        let response = try #require(HTTPURLResponse(
-            url: Defaults.URL.exhentai,
-            statusCode: 200,
-            httpVersion: nil,
-            headerFields: [
-                "Set-Cookie": "\(Defaults.Cookie.igneous)=test-igneous"
-            ]
-        ))
-        await store.send(.setting(.fetchIgneousDone(.success(response))))
+        await store.send(.setting(.fetchIgneousDone(true)))
         await store.receive(\.runLaunchAutomation) {
             $0.didRunLaunchAutomation = true
             $0.isAwaitingIgneousForLaunchAutomation = false
@@ -300,7 +293,7 @@ struct DownloadAutomationTests: DownloadFeatureTestCase {
 
     @MainActor
     @Test
-    func testLoadUserSettingsKeepsExLaunchAutomationDeferredWhenIgneousFetchFails() async {
+    func testLoadUserSettingsRunsExLaunchAutomationAfterFailedIgneousFetch() async {
         let cookieClient = CookieClient.testing(
             memberID: "4172984",
             passHash: "pass-hash",
@@ -341,9 +334,11 @@ struct DownloadAutomationTests: DownloadFeatureTestCase {
         #expect(store.state.didRunLaunchAutomation == false)
         #expect(store.state.isAwaitingIgneousForLaunchAutomation)
 
-        await store.send(.setting(.fetchIgneousDone(.failure(.networkingFailed))))
+        await store.send(.setting(.fetchIgneousDone(false)))
         await store.receive(\.setting.igneousRefreshed)
-        #expect(store.state.didRunLaunchAutomation == false)
-        #expect(store.state.isAwaitingIgneousForLaunchAutomation)
+        await store.receive(\.runLaunchAutomation) {
+            $0.didRunLaunchAutomation = true
+            $0.isAwaitingIgneousForLaunchAutomation = false
+        }
     }
 }
