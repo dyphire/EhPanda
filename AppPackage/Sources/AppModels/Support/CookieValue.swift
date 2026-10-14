@@ -12,7 +12,7 @@ public struct CookieValue: Equatable, Sendable {
     }
 
     public var isInvalid: Bool {
-        !localizedString.isEmpty && !rawValue.isEmpty
+        !localizedString.isEmpty
     }
     public var placeholder: String {
         localizedString.isEmpty ? rawValue : localizedString

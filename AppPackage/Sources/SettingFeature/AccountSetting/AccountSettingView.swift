@@ -44,7 +44,8 @@ struct AccountSettingView: View {
                 ehCookiesState: $store.ehCookiesState,
                 exCookiesState: $store.exCookiesState,
                 copyAction: { store.send(.copyCookies($0)) },
-                submitAction: { store.send(.cookiesSubmitted($0)) }
+                submitAction: { store.send(.cookiesSubmitted($0)) },
+                importAction: { store.send(.importCookiesFromClipboard) }
             )
         }
         .toast($store.scope(state: \.toast, action: \.toast))
@@ -125,17 +126,20 @@ private struct CookieSection: View {
     @Binding private var exCookiesState: CookiesState
     private let copyAction: (GalleryHost) -> Void
     private let submitAction: (GalleryHost) -> Void
+    private let importAction: () -> Void
 
     init(
         ehCookiesState: Binding<CookiesState>,
         exCookiesState: Binding<CookiesState>,
         copyAction: @escaping (GalleryHost) -> Void,
-        submitAction: @escaping (GalleryHost) -> Void
+        submitAction: @escaping (GalleryHost) -> Void,
+        importAction: @escaping () -> Void
     ) {
         _ehCookiesState = ehCookiesState
         _exCookiesState = exCookiesState
         self.copyAction = copyAction
         self.submitAction = submitAction
+        self.importAction = importAction
     }
 
     var body: some View {
@@ -155,6 +159,11 @@ private struct CookieSection: View {
                 copyAction(.exhentai)
             }
             .foregroundStyle(.tint).font(.subheadline)
+        }
+        Section {
+            Button(.importCookiesFromClipboard, action: importAction)
+                .foregroundStyle(.tint)
+                .font(.subheadline)
         }
     }
 }

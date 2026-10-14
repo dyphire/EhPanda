@@ -50,6 +50,8 @@ public struct AccountSettingReducer: Sendable {
         case onLogoutConfirmButtonTapped
         case loadCookies
         case cookiesSubmitted(GalleryHost)
+        case importCookiesFromClipboard
+        case importCookiesFromClipboardDone(Bool)
         case copyCookies(GalleryHost)
         case galleryHostChanged(GalleryHost)
     }
@@ -113,7 +115,6 @@ public struct AccountSettingReducer: Sendable {
             case .onLogoutConfirmButtonTapped:
                 return .run { send in
                     cookieClient.clearAll()
-                    await cookieClient.clearWebCookies()
                     await send(.loadCookies)
                 }
 
@@ -130,6 +131,26 @@ public struct AccountSettingReducer: Sendable {
                     }
                     await send(.loadCookies)
                 }
+
+            case .importCookiesFromClipboard:
+                return .run { send in
+                    let imported = clipboardClient.text().map { text in
+                        cookieClient.importCookieString(text)
+                    } ?? false
+                    if imported {
+                        cookieClient.prepareAuthentication()
+                        if cookieClient.shouldFetchIgneous {
+                            _ = await cookieRefreshClient.refresh()
+                        }
+                    }
+                    await send(.importCookiesFromClipboardDone(imported))
+                }
+
+            case .importCookiesFromClipboardDone(let imported):
+                state.toast = imported
+                    ? .importedCookiesFromClipboardSucceeded
+                    : .invalidClipboardCookies
+                return imported ? .send(.loadCookies) : .none
 
             case .copyCookies(let host):
                 state.toast = .copiedToClipboardSucceeded
@@ -158,3 +179,13 @@ public struct AccountSettingReducer: Sendable {
 
 extension AccountSettingReducer.Destination.State: Equatable, Sendable {}
 extension AccountSettingReducer.Destination.Action: Equatable, Sendable {}
+
+private extension AppAlertState where Action == Never {
+    static var importedCookiesFromClipboardSucceeded: Self {
+        .success(caption: .importedCookiesFromClipboard)
+    }
+
+    static var invalidClipboardCookies: Self {
+        .error(caption: .invalidClipboardCookies)
+    }
+}

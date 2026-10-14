@@ -6,6 +6,7 @@ import AppTools
 import AppModels
 import CookieClient
 import UserDefaultsClient
+@testable import ClipboardClient
 @testable import NetworkingFeature
 @testable import SettingFeature
 
@@ -86,5 +87,55 @@ struct AccountSettingReducerTests {
         await store.send(.cookiesSubmitted(.ehentai))
         await store.receive(\.loadCookies)
         #expect(refreshCalls.withLock { $0 } == 0)
+    }
+
+    @Test
+    func importCookiesFromClipboardParsesAndStoresCookieString() async {
+        let cookieClient = CookieClient.testing()
+        let clipboardClient = ClipboardClient(
+            url: { nil },
+            text: {
+                "ipb_member_id=4172984; ipb_pass_hash=pass-hash; igneous=igneous-token"
+            },
+            changeCount: { 0 },
+            saveText: { _ in },
+            saveImage: { _, _ in },
+            saveImageData: { _ in false }
+        )
+        let store = TestStore(initialState: .init(), reducer: AccountSettingReducer.init) {
+            $0.cookieClient = cookieClient
+            $0.cookieRefreshClient = .noop
+            $0.clipboardClient = clipboardClient
+            $0.userDefaultsClient = .noop
+        }
+
+        await store.send(.importCookiesFromClipboard)
+        await store.receive(\.importCookiesFromClipboardDone, true)
+        await store.receive(\.loadCookies)
+
+        #expect(cookieClient.getCookie(Defaults.URL.ehentai, Defaults.Cookie.ipbMemberId).rawValue == "4172984")
+        #expect(cookieClient.getCookie(Defaults.URL.exhentai, Defaults.Cookie.igneous).rawValue == "igneous-token")
+        #expect(store.state.toast != nil)
+    }
+
+    @Test
+    func invalidClipboardCookieStringShowsFailureToast() async {
+        let store = TestStore(initialState: .init(), reducer: AccountSettingReducer.init) {
+            $0.cookieClient = .testing()
+            $0.cookieRefreshClient = .noop
+            $0.clipboardClient = ClipboardClient(
+                url: { nil },
+                text: { "foo=bar; unrelated=value" },
+                changeCount: { 0 },
+                saveText: { _ in },
+                saveImage: { _, _ in },
+                saveImageData: { _ in false }
+            )
+            $0.userDefaultsClient = .noop
+        }
+
+        await store.send(.importCookiesFromClipboard)
+        await store.receive(\.importCookiesFromClipboardDone, false)
+        #expect(store.state.toast != nil)
     }
 }
