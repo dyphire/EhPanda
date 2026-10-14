@@ -231,7 +231,8 @@ private extension DownloadPageStatus {
     static let inspectorSummaryOrder: [Self] = [
         .downloaded,
         .pending,
-        .failed
+        .failed,
+        .skipped
     ]
 
     func summaryTitle(count: Int) -> LocalizedStringResource {
@@ -242,6 +243,8 @@ private extension DownloadPageStatus {
             return .downloaded(count: count)
         case .failed:
             return .failed(count: count)
+        case .skipped:
+            return .skipped(count: count)
         }
     }
 
@@ -250,6 +253,7 @@ private extension DownloadPageStatus {
         case .pending: .clock
         case .downloaded: .checkmarkCircle
         case .failed: .exclamationmarkCircle
+        case .skipped: .eyeSlash
         }
     }
 
@@ -258,6 +262,7 @@ private extension DownloadPageStatus {
         case .pending: .primary
         case .downloaded: .green
         case .failed: .red
+        case .skipped: .orange
         }
     }
 }

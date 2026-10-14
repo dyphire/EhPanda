@@ -1,5 +1,6 @@
 import SwiftUI
 import AppModels
+import Sharing
 import TagTranslationFeature
 import Resources
 import Kingfisher
@@ -305,6 +306,10 @@ extension TagsSection {
 
 // MARK: PreviewsSection
 struct PreviewsSection: View {
+    @SharedReader(.setting) private var setting
+    @SharedReader(.adPageVerdictCache) private var verdictCache
+
+    let gid: String
     let pageCount: Int
     let previewURLs: [Int: URL]
     let navigatePreviewsAction: () -> Void
@@ -312,6 +317,14 @@ struct PreviewsSection: View {
 
     private var width: CGFloat { Defaults.ImageSize.previewAvgW }
     private var height: CGFloat { width / Defaults.ImageSize.previewAspect }
+
+    // Read-only mirror of the shared verdict cache: this strip never triggers detection
+    // itself (it shows the head of the gallery, while ads cluster at the tail), it only
+    // blurs pages another surface already flagged.
+    private var adPageIndices: Set<Int> {
+        guard setting.detectsAdPagesEnabled else { return [] }
+        return verdictCache.displayAdIndices(gid: gid, pageCount: pageCount)
+    }
 
     var body: some View {
         SubSection(
@@ -324,7 +337,10 @@ struct PreviewsSection: View {
                         Button {
                             navigateReadingAction(index)
                         } label: {
-                            PreviewImageView(originalURL: previewURL)
+                            PreviewImageView(
+                                originalURL: previewURL,
+                                isBlurred: adPageIndices.contains(index)
+                            )
                                 .frame(width: width, height: height)
                         }
                     }

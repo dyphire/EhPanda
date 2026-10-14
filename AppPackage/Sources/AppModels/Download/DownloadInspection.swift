@@ -4,6 +4,9 @@ public enum DownloadPageStatus: String, Equatable, CaseIterable, Sendable {
     case pending
     case downloaded
     case failed
+    // A page ad-detection skipped on purpose (manifest carries the sentinel): not pending
+    // work, not a failure, and deliberately absent from the downloaded files.
+    case skipped
 }
 
 public struct DownloadPageInspection: Equatable, Identifiable, Sendable {

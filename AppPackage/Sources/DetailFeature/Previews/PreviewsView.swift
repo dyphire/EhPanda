@@ -43,7 +43,10 @@ struct PreviewsView: View {
                             store.send(.updateReadingProgress(index))
                             store.send(.openReading(index))
                         } label: {
-                            PreviewImageView(originalURL: displayPreviewURLs[index])
+                            PreviewImageView(
+                                originalURL: displayPreviewURLs[index],
+                                isBlurred: store.adPageIndices.contains(index)
+                            )
                         }
                         Text(index, format: .number)
                             .font(DeviceUtil.isPadWidth ? .callout : .caption)
@@ -53,6 +56,7 @@ struct PreviewsView: View {
                         if displayPreviewURLs[index] == nil && (index - 1) % 10 == 0 {
                             store.send(.fetchPreviewURLs(index))
                         }
+                        store.send(.detectAdPage(index))
                     }
                 }
             }

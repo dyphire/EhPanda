@@ -157,6 +157,13 @@ public struct Setting: Codable, Equatable, Sendable, SchemaVersioned {
 
     // Laboratory
     public var bypassesSNIFiltering = false
+    // Optional per the additive-field convention above: blobs written before this key
+    // existed must keep decoding. Read through the non-optional convenience below.
+    public var detectsAdPages: Bool?
+}
+
+extension Setting {
+    public var detectsAdPagesEnabled: Bool { detectsAdPages == true }
 }
 
 extension Setting {
@@ -164,7 +171,8 @@ extension Setting {
         .init(
             threadLimit: downloadThreadLimit,
             allowCellular: downloadAllowCellular,
-            autoRetryFailedPages: downloadAutoRetryFailedPages
+            autoRetryFailedPages: downloadAutoRetryFailedPages,
+            detectsAdPages: detectsAdPagesEnabled
         )
     }
 }

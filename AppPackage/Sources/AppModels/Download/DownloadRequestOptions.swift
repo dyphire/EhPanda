@@ -7,15 +7,18 @@ public struct DownloadRequestOptions: Equatable, Sendable {
     public var threadLimit = Setting.downloadThreadLimitDefaultValue
     public var allowCellular = Setting.downloadAllowCellularDefaultValue
     public var autoRetryFailedPages = Setting.downloadAutoRetryFailedPagesDefaultValue
+    public var detectsAdPages = false
 
     public init(
         threadLimit: Int = Setting.downloadThreadLimitDefaultValue,
         allowCellular: Bool = Setting.downloadAllowCellularDefaultValue,
-        autoRetryFailedPages: Bool = Setting.downloadAutoRetryFailedPagesDefaultValue
+        autoRetryFailedPages: Bool = Setting.downloadAutoRetryFailedPagesDefaultValue,
+        detectsAdPages: Bool = false
     ) {
         self.threadLimit = threadLimit
         self.allowCellular = allowCellular
         self.autoRetryFailedPages = autoRetryFailedPages
+        self.detectsAdPages = detectsAdPages
     }
 
     public var workerCount: Int {

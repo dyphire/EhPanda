@@ -3,21 +3,40 @@ import AppModels
 import ImageIO
 import Kingfisher
 import AppTools
+import SFSafeSymbols
 
 public struct PreviewImageView: View {
     private let originalURL: URL?
     private let maxPixelSize: CGFloat
+    private let isBlurred: Bool
     public static let defaultMaxPixelSize = Defaults.ImageSize.previewMaxW * 3
+    /// The blur applied to a thumbnail flagged as an ad page. Shared with the reader's
+    /// page cells so every surface renders the same obscuring strength.
+    public static let adPageBlurRadius: CGFloat = 20
 
     public init(
         originalURL: URL?,
-        maxPixelSize: CGFloat = PreviewImageView.defaultMaxPixelSize
+        maxPixelSize: CGFloat = PreviewImageView.defaultMaxPixelSize,
+        isBlurred: Bool = false
     ) {
         self.originalURL = originalURL
         self.maxPixelSize = maxPixelSize
+        self.isBlurred = isBlurred
     }
 
     public var body: some View {
+        content
+            .blur(radius: isBlurred ? Self.adPageBlurRadius : 0)
+            .overlay {
+                if isBlurred {
+                    Image(systemSymbol: .eyeSlash)
+                        .foregroundStyle(.white)
+                        .shadow(radius: 2)
+                }
+            }
+    }
+
+    @ViewBuilder private var content: some View {
         if let originalURL, originalURL.isFileURL {
             LocalPreviewImageView(fileURL: originalURL, maxPixelSize: maxPixelSize) {
                 Placeholder(style: .activity(ratio: Defaults.ImageSize.previewAspect))

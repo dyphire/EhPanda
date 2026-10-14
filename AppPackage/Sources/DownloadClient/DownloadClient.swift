@@ -75,6 +75,22 @@ extension DownloadClient {
             downloadOptionsProvider: {
                 @Shared(.setting) var setting
                 return setting.downloadRequestOptions
+            },
+            adPageVerdictsProvider: { gid in
+                @Shared(.adPageVerdictCache) var verdictCache
+                return AdPageVerdictSnapshot(
+                    verdicts: verdictCache.verdicts(gid: gid),
+                    adImageHashes: verdictCache.adImageHashSet
+                )
+            },
+            adPageVerdictRecorder: { gid, index, isAd, imageHash in
+                @Shared(.adPageVerdictCache) var verdictCache
+                $verdictCache.withLock {
+                    $0.record(gid: gid, pageIndex: index, isAd: isAd)
+                    if isAd, let imageHash {
+                        $0.recordAdImageHash(imageHash)
+                    }
+                }
             }
         )
         Task {

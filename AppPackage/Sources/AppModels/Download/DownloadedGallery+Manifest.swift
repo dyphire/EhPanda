@@ -53,6 +53,16 @@ public struct DownloadManifest: Codable, Equatable, Sendable {
 }
 
 extension DownloadManifest {
+    /// `pages` value for a page ad-detection skipped: no file exists by design, but the key
+    /// stays so `pageCount` and the folder-reuse page-count checks keep matching the remote
+    /// gallery. It is a non-hash sentinel, so every consumer that resolves a page file or
+    /// hash must skip it explicitly.
+    public static let adSkippedPageMarker = "adSkipped"
+
+    public var skippedAdPageIndices: Set<Int> {
+        Set(pages.filter { $0.value == Self.adSkippedPageMarker }.keys)
+    }
+
     public var pageCount: Int {
         pages.count
     }

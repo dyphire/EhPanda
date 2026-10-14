@@ -147,12 +147,13 @@ public struct ReadingView: View {
                     isOffline: store.state.isOffline,
                     metadata: Self.mangaTranslationMetadata(
                         gallery: store.gallery, language: store.state.language
-                    ),
-                    imageURLForIndex: { index in displayImageURLs[index] },
-                    onFailure: { failure in
-                        store.send(.mangaTranslationFailed(failure.description))
-                    }
+                    )
                 )
+                mangaTranslationHandler.imageURLForIndex = { index in displayImageURLs[index] }
+                mangaTranslationHandler.isAdPage = { index in store.adPageIndices.contains(index) }
+                mangaTranslationHandler.onFailure = { failure in
+                    store.send(.mangaTranslationFailed(failure.description))
+                }
                 store.send(.onAppear(gid))
             }
     }
@@ -290,6 +291,7 @@ public struct ReadingView: View {
                 autoPlayPolicy: .init(get: { autoPlayHandler.policy }, set: { setAutoPlayPolocy($0) }),
                 range: 1...Float(store.gallery.pageCount),
                 previewURLs: displayPreviewURLs,
+                adPageIndices: store.adPageIndices,
                 dismissGesture: controlPanelDismissGesture,
                 dismissAction: { store.send(.onPerformDismiss) },
                 navigateSettingAction: { store.send(.presentReadingSetting) },
@@ -350,6 +352,12 @@ public struct ReadingView: View {
                     mangaTranslationHandler.refreshConfiguration()
                 }
             }
+            // Ad-page detections can land after translation already ran on a page:
+            // drop those results and re-sync so the queue never works on ad pages.
+            .onChange(of: store.adPageIndices) { _, newValue in
+                mangaTranslationHandler.discardResults(for: newValue)
+                mangaTranslationHandler.syncQueue(currentIndex: currentPageNumber)
+            }
     }
 
     @ViewBuilder private func imageStack(index: Int) -> some View {
@@ -372,11 +380,13 @@ public struct ReadingView: View {
             imageURLs: displayImageURLs,
             originalImageURLs: displayOriginalImageURLs,
             loadingStates: store.imageURLLoadingStates,
+            adPageIndices: store.adPageIndices,
             enablesLiveText: enablesLiveText,
             mangaTranslationHandler: mangaTranslationHandler,
             fetchAction: { store.send(.fetchImageURLs($0)) },
             refetchAction: { store.send(.refetchImageURLs($0)) },
             prefetchAction: { store.send(.prefetchImages($0, effectiveSetting.prefetchLimit)) },
+            detectAdPageAction: { store.send(.detectAdPage($0)) },
             loadRetryAction: { store.send(.onWebImageRetry($0)) },
             loadSucceededAction: { store.send(.onWebImageSucceeded($0)) },
             loadFailedAction: { store.send(.onWebImageFailed($0)) },

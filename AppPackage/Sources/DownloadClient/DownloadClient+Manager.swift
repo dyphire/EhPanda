@@ -305,6 +305,12 @@ public actor DownloadCoordinator {
     /// Options are not stored in manifests or request payloads so settings changed while
     /// a gallery is queued apply to the eventual detail fetch and page workers.
     public let downloadOptionsProvider: @Sendable () async -> DownloadRequestOptions
+    /// Reads/writes the shared ad-page verdict cache (`@Shared(.adPageVerdictCache)`).
+    /// Injected because the coordinator is TCA-free; the live client wires these to the
+    /// app-storage-backed cache, tests get the no-op defaults. The recorder's fourth
+    /// argument is the page's pixel hash, supplied when the page was judged an ad.
+    public let adPageVerdictsProvider: @Sendable (String) async -> AdPageVerdictSnapshot
+    public let adPageVerdictRecorder: @Sendable (String, Int, Bool, String?) async -> Void
     public let queueStore: DownloadQueueStore
     public let taskRunner: DownloadTaskRunner
     public let observerHub = DownloadObserverHub()
@@ -350,6 +356,8 @@ public actor DownloadCoordinator {
         downloadOptionsProvider: @escaping @Sendable () async -> DownloadRequestOptions = {
             DownloadRequestOptions()
         },
+        adPageVerdictsProvider: @escaping @Sendable (String) async -> AdPageVerdictSnapshot = { _ in .init() },
+        adPageVerdictRecorder: @escaping @Sendable (String, Int, Bool, String?) async -> Void = { _, _, _, _ in },
         queueStore: DownloadQueueStore? = nil,
         taskRunner: DownloadTaskRunner = .init()
     ) {
@@ -363,6 +371,8 @@ public actor DownloadCoordinator {
         self.storedCookiesProvider = storedCookiesProvider
         self.libraryClient = libraryClient
         self.downloadOptionsProvider = downloadOptionsProvider
+        self.adPageVerdictsProvider = adPageVerdictsProvider
+        self.adPageVerdictRecorder = adPageVerdictRecorder
         self.queueStore = queueStore ?? DownloadQueueStore(fileURL: storage.queueURL())
         self.taskRunner = taskRunner
     }

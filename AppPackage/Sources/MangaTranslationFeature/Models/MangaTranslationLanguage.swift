@@ -28,6 +28,18 @@ public enum MangaTranslationLanguage {
         language.hasPrefix("ja") || language.hasPrefix("zh")
     }
 
+    /// Sameness for the no-op short-circuit, compared on the primary language subtag:
+    /// script/region variants count as the same language (a `zh` gallery needs no
+    /// translation into `zh-Hans`).
+    public static func isSameLanguage(_ source: String, _ target: String) -> Bool {
+        func baseSubtag(_ language: String) -> Substring? {
+            language.split(separator: "-").first
+        }
+        guard let sourceBase = baseSubtag(source), let targetBase = baseSubtag(target)
+        else { return source.caseInsensitiveCompare(target) == .orderedSame }
+        return sourceBase.caseInsensitiveCompare(targetBase) == .orderedSame
+    }
+
     public static func pickerCodes(including language: String? = nil) -> [String] {
         var codes = Set(LanguageCodeHelper.commonLanguageCodes)
         codes.insert(systemTarget)

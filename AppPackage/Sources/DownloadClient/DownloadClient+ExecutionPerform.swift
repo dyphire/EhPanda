@@ -31,11 +31,24 @@ extension DownloadCoordinator {
             existingDownload: existingDownload,
             folderURL: workingFolderURL
         )
-        let pendingIndices = pendingPageIndices(
+        var pendingIndices = pendingPageIndices(
             payload: payload,
             folderURL: workingFolderURL,
             existingPageRelativePaths: workingSeed.existingPages
         )
+
+        // Ad-page skip runs before source resolution so skipped pages never get their
+        // showpage/image URLs fetched either. The sentinel stamp keeps them skipped
+        // (and out of the finalize missing-page check) if the run is interrupted.
+        if options.detectsAdPages {
+            let skipped = await detectAdPagesToSkip(
+                payload: payload, options: options, pendingIndices: pendingIndices
+            )
+            if !skipped.isEmpty {
+                pendingIndices = pendingIndices.filter { !skipped.contains($0) }
+                try markManifestAdSkippedPages(skipped, folderURL: workingFolderURL)
+            }
+        }
 
         let executionContext = DownloadExecutionContext(
             payload: payload,
@@ -130,7 +143,8 @@ extension DownloadCoordinator {
             manifest: manifest
         )
         return manifest.pages.keys.sorted().filter { index in
-            existingPages[index] == nil
+            manifest.pages[index] != DownloadManifest.adSkippedPageMarker
+                && existingPages[index] == nil
         }
     }
 
