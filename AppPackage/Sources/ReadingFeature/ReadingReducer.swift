@@ -84,6 +84,11 @@ public struct ReadingReducer: Sendable {
         public var showsPanel = false
         public var showsSliderPreview = false
 
+        // Display-ready ad set (recorded positives + neighbour backfill), seeded from
+        // `@Shared(.adPageVerdictCache)` on appear and refreshed as detections land.
+        public var adPageIndices = Set<Int>()
+        public var adDetectionInFlight = Set<Int>()
+
         // `gallery` is required (no `.empty` default) so every pushing context is forced to seed it:
         // a blank gallery has a `nil` galleryURL and a random-UUID gid, which bricks remote reading
         // and writes junk history entries. `previewConfig`/`language` are threaded from the detail
@@ -219,6 +224,12 @@ public struct ReadingReducer: Sendable {
         case fetchMPVImageURL(Int, Bool)
         case fetchMPVImageURLDone(Int, Result<GalleryMPVImageURLResponse, AppError>)
         case captureCachedPage(Int)
+
+        // A `nil` verdict means the thumbnail couldn't be loaded — nothing is recorded,
+        // so a later appearance retries instead of caching a false negative. The third
+        // payload is the page's pixel hash, supplied when the page was judged an ad.
+        case detectAdPage(Int)
+        case adPageDetected(Int, Bool?, String?)
     }
 
     @Dependency(\.appDelegateClient) var appDelegateClient

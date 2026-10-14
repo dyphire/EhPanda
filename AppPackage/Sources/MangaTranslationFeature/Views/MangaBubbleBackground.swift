@@ -6,6 +6,18 @@ import UIKit
 public enum MangaBubbleBackground {
     private static let ciContext = CIContext()
 
+    // Sampled fills cluster near pure white/black, so a mid-gray luminance
+    // threshold suffices to keep the text readable.
+    public static func textColor(on background: CGColor) -> CGColor {
+        guard let space = CGColorSpace(name: CGColorSpace.sRGB),
+              let components = background.converted(to: space, intent: .defaultIntent, options: nil)?
+                .components,
+              components.count >= 3
+        else { return CGColor(gray: 0, alpha: 1) }
+        let luminance = 0.299 * components[0] + 0.587 * components[1] + 0.114 * components[2]
+        return luminance < 0.5 ? CGColor(gray: 1, alpha: 1) : CGColor(gray: 0, alpha: 1)
+    }
+
     public static func feather(forCoreSize size: CGSize) -> CGFloat {
         min(14, max(6, min(size.width, size.height) * 0.12))
     }

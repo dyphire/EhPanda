@@ -33,7 +33,13 @@ extension ReadingReducer {
                     }
                     state.previewLoadingStates[index] = .idle
                     state.updatePreviewURLs(previewURLs)
-                    return .none
+                    // A cell that appeared before its preview URL existed couldn't run
+                    // ad detection; revisit the newly arrived batch (deduped downstream).
+                    return .run { send in
+                        for previewIndex in previewURLs.keys {
+                            await send(.detectAdPage(previewIndex))
+                        }
+                    }
                 case .failure(let error):
                     state.previewLoadingStates[index] = .failed(error)
                 }

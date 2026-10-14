@@ -175,4 +175,18 @@ struct StrictDecodingTests {
         #expect(user.displayName == nil)
         #expect(user.favoriteCategories == nil)
     }
+
+    @Test
+    func settingToleratesABlobFromBeforeTheAdDetectionField() throws {
+        // The ad-detection field is an additive optional: a v1 blob written before it
+        // existed must still decode, leaving it nil (read as disabled).
+        let data = try JSONEncoder().encode(Setting())
+        let json = try JSONSerialization.jsonObject(with: data)
+        var object = try #require(json as? [String: Any])
+        object.removeValue(forKey: "detectsAdPages")
+        let legacyBlob = try JSONSerialization.data(withJSONObject: object)
+        let setting = try JSONDecoder().decode(Setting.self, from: legacyBlob)
+        #expect(setting.detectsAdPages == nil)
+        #expect(!setting.detectsAdPagesEnabled)
+    }
 }

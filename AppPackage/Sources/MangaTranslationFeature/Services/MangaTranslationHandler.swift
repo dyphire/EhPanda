@@ -34,8 +34,11 @@ public final class MangaTranslationHandler {
     private var currentIndex = 0
     private var isOffline = false
     private var metadata: MangaTranslationMetadata?
-    private var imageURLForIndex: @MainActor (Int) -> URL? = { _ in nil }
-    private var onFailure: (MangaTranslationFailure) -> Void = { _ in }
+    public var imageURLForIndex: @MainActor (Int) -> URL? = { _ in nil }
+    /// Live lookup into the reader's ad-page set; ad pages are never queued for
+    /// translation (OCR + provider calls on them would be pure waste).
+    public var isAdPage: @MainActor (Int) -> Bool = { _ in false }
+    public var onFailure: (MangaTranslationFailure) -> Void = { _ in }
 
     @ObservationIgnored
     @Dependency(\.imageClient) private var imageClient
@@ -49,20 +52,31 @@ public final class MangaTranslationHandler {
         results[index]
     }
 
+    /// Same-language sessions are a no-op, resolved before any model preparation or
+    /// image fetch: no detection, no recognition, no provider call.
+    private var needsTranslation: Bool {
+        @Shared(.mangaTranslationPreferences) var preferences
+        let languages = MangaTranslationConfiguration.resolvedLanguages(
+            metadata: metadata, preferences: preferences
+        )
+        return !MangaTranslationLanguage.isSameLanguage(
+            languages.sourceLanguage, languages.targetLanguage
+        )
+    }
+
+    /// Scalar session facts. The closure lookups (`imageURLForIndex`, `isAdPage`,
+    /// `onFailure`) are public vars assigned directly by the caller — folding them in
+    /// here would push the signature past the parameter-count lint limit.
     public func setContext(
         gid: String,
         pageCount: Int,
         isOffline: Bool,
-        metadata: MangaTranslationMetadata?,
-        imageURLForIndex: @escaping @MainActor (Int) -> URL?,
-        onFailure: @escaping (MangaTranslationFailure) -> Void
+        metadata: MangaTranslationMetadata?
     ) {
         self.gid = gid
         self.pageCount = pageCount
         self.isOffline = isOffline
         self.metadata = metadata
-        self.imageURLForIndex = imageURLForIndex
-        self.onFailure = onFailure
     }
 
     public func setEnabled(_ enabled: Bool) {
@@ -76,7 +90,7 @@ public final class MangaTranslationHandler {
     /// Manual button: translate the current page now (retrying it if a result
     /// already exists), then continue the queue.
     public func translatePage(_ index: Int) {
-        guard isEnabled else { return }
+        guard isEnabled, needsTranslation else { return }
         guard !phase.isBusy else { return }
         currentIndex = index
         if results[index] != nil {
@@ -96,6 +110,11 @@ public final class MangaTranslationHandler {
     public func syncQueue(currentIndex index: Int) {
         currentIndex = index
         guard isEnabled, gid != "" else { return }
+        guard needsTranslation else {
+            stopQueue()
+            phase = .idle
+            return
+        }
         let indices = desiredIndices(currentIndex: index)
         if indices == pendingQueueIndices(), queueTask != nil { return }
         if let front = indices.first, front == index, let cached = results[index] {
@@ -128,12 +147,18 @@ public final class MangaTranslationHandler {
     private func desiredIndices(currentIndex index: Int, includeCachedFront: Bool = false) -> [Int] {
         var indices: [Int] = []
         guard index >= 1, index <= pageCount else { return indices }
-        if includeCachedFront || results[index] == nil {
+        if !isAdPage(index), includeCachedFront || results[index] == nil {
             indices.append(index)
         }
         var next = index + 1
         var visited = 0
         while next <= pageCount, visited < Self.prefetchItemCount {
+            // Ad pages are skipped without consuming the prefetch budget, so the
+            // lookahead still reaches the next real page past an ad block.
+            if isAdPage(next) {
+                next += 1
+                continue
+            }
             visited += 1
             if results[next] == nil, !indices.contains(next) {
                 indices.append(next)
@@ -181,7 +206,9 @@ public final class MangaTranslationHandler {
         while !queueSnapshot.isEmpty {
             guard isCurrentQueue(id) else { return }
             let index = queueSnapshot.removeFirst()
-            if results[index] != nil { continue }
+            // Defence in depth: the snapshot may predate a detection that landed while
+            // the queue was running.
+            if results[index] != nil || isAdPage(index) { continue }
             inFlightIndex = index
             await processItem(index, queueID: id)
             if inFlightIndex == index {
@@ -190,6 +217,19 @@ public final class MangaTranslationHandler {
         }
         guard isCurrentQueue(id) else { return }
         queueTask = nil
+    }
+
+    /// Drops cached translations for pages newly flagged as ads (detection lands after
+    /// the fact) and resets the phase when the current page's result went away.
+    public func discardResults(for indices: Set<Int>) {
+        guard !indices.isEmpty else { return }
+        for index in indices {
+            results.removeValue(forKey: index)
+            resultOrder.removeAll { $0 == index }
+        }
+        if indices.contains(currentIndex), results[currentIndex] == nil, !phase.isBusy {
+            phase = .idle
+        }
     }
 
     /// Only the page the user is looking at reports failures and phase; the

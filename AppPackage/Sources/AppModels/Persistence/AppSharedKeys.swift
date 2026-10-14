@@ -117,6 +117,14 @@ extension SharedKey where Self == InMemoryKey<TagTranslator>.Default {
     }
 }
 
+// MARK: Ad page detection (derived verdicts + ad-image hashes; FIFO-capped, freely rebuildable)
+
+extension SharedKey where Self == AppStorageKey<AdPageVerdictCache>.Default {
+    public static var adPageVerdictCache: Self {
+        Self[.appStorage("adPageVerdictCache"), default: AdPageVerdictCache()]
+    }
+}
+
 // MARK: Browsing history (merged recency + reading progress; capped, pruned at launch)
 
 extension SharedKey where Self == AppStorageKey<[GalleryHistoryEntry]>.Default {

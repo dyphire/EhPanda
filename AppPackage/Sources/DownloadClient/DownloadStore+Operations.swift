@@ -86,7 +86,10 @@ extension DownloadStore {
         )
         var pages = manifest.pages
         for index in manifest.pages.keys.sorted() {
-            guard pages[index]?.isEmpty != false else {
+            // Only *empty* slots are filled: a recorded hash is never recomputed, and the
+            // ad-skipped sentinel (a non-hash, non-empty value with no file by design)
+            // is likewise left untouched.
+            guard let value = pages[index], value.isEmpty else {
                 continue
             }
             guard let relativePath = existingPages[index] else {
@@ -283,6 +286,10 @@ extension DownloadStore {
         verifiesContentHash: Bool
     ) -> DownloadValidationState? {
         guard !expectedHash.isEmpty else {
+            return nil
+        }
+        // Ad-skipped pages carry the sentinel instead of a hash and have no file by design.
+        guard expectedHash != DownloadManifest.adSkippedPageMarker else {
             return nil
         }
 

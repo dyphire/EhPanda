@@ -53,11 +53,13 @@ struct HorizontalImageStack: View {
     private let imageURLs: [Int: URL]
     private let originalImageURLs: [Int: URL]
     private let loadingStates: [Int: LoadingState]
+    private let adPageIndices: Set<Int>
     private let enablesLiveText: Bool
     private let mangaTranslationHandler: MangaTranslationHandler
     private let fetchAction: (Int) -> Void
     private let refetchAction: (Int) -> Void
     private let prefetchAction: (Int) -> Void
+    private let detectAdPageAction: (Int) -> Void
     private let loadRetryAction: (Int) -> Void
     private let loadSucceededAction: (Int) -> Void
     private let loadFailedAction: (Int) -> Void
@@ -68,10 +70,11 @@ struct HorizontalImageStack: View {
     init(
         index: Int, isDualPage: Bool, isActive: Bool, backgroundColor: Color,
         config: ImageStackConfig, imageURLs: [Int: URL], originalImageURLs: [Int: URL],
-        loadingStates: [Int: LoadingState], enablesLiveText: Bool,
+        loadingStates: [Int: LoadingState], adPageIndices: Set<Int>, enablesLiveText: Bool,
         mangaTranslationHandler: MangaTranslationHandler,
         fetchAction: @escaping (Int) -> Void,
         refetchAction: @escaping (Int) -> Void, prefetchAction: @escaping (Int) -> Void,
+        detectAdPageAction: @escaping (Int) -> Void,
         loadRetryAction: @escaping (Int) -> Void, loadSucceededAction: @escaping (Int) -> Void,
         loadFailedAction: @escaping (Int) -> Void, copyImageAction: @escaping (URL) -> Void,
         saveImageAction: @escaping (URL) -> Void, shareImageAction: @escaping (URL) -> Void
@@ -84,11 +87,13 @@ struct HorizontalImageStack: View {
         self.imageURLs = imageURLs
         self.originalImageURLs = originalImageURLs
         self.loadingStates = loadingStates
+        self.adPageIndices = adPageIndices
         self.enablesLiveText = enablesLiveText
         self.mangaTranslationHandler = mangaTranslationHandler
         self.fetchAction = fetchAction
         self.refetchAction = refetchAction
         self.prefetchAction = prefetchAction
+        self.detectAdPageAction = detectAdPageAction
         self.loadRetryAction = loadRetryAction
         self.loadSucceededAction = loadSucceededAction
         self.loadFailedAction = loadFailedAction
@@ -115,6 +120,7 @@ struct HorizontalImageStack: View {
             loadingState: loadingStates[index] ?? .idle,
             isDualPage: isDualPage,
             isActive: isActive,
+            isAdPage: adPageIndices.contains(index),
             backgroundColor: backgroundColor,
             enablesLiveText: enablesLiveText,
             mangaTranslationHandler: mangaTranslationHandler,
@@ -128,6 +134,7 @@ struct HorizontalImageStack: View {
                 fetchAction(index)
             }
             prefetchAction(index)
+            detectAdPageAction(index)
         }
         // Long-press is VisionKit's text-selection gesture while Live Text is on, so
         // the page context menu (also long-press) steps aside until it is turned off.
@@ -183,6 +190,7 @@ struct ImageContainer: View {
     private let loadingState: LoadingState
     private let isDualPage: Bool
     private let isActive: Bool
+    private let isAdPage: Bool
     private let backgroundColor: Color
     private let enablesLiveText: Bool
     private let mangaTranslationHandler: MangaTranslationHandler
@@ -192,12 +200,16 @@ struct ImageContainer: View {
     private let loadFailedAction: (Int) -> Void
 
     @State private var loadedImage: UIImage?
+    // Local-only "temporary reveal": the blur comes back as soon as the cell is
+    // recycled, so the choice never persists.
+    @State private var isAdUnblurred = false
 
     init(
         index: Int, imageURL: URL?,
         loadingState: LoadingState,
         isDualPage: Bool,
         isActive: Bool,
+        isAdPage: Bool,
         backgroundColor: Color,
         enablesLiveText: Bool,
         mangaTranslationHandler: MangaTranslationHandler,
@@ -211,6 +223,7 @@ struct ImageContainer: View {
         self.loadingState = loadingState
         self.isDualPage = isDualPage
         self.isActive = isActive
+        self.isAdPage = isAdPage
         self.backgroundColor = backgroundColor
         self.enablesLiveText = enablesLiveText
         self.mangaTranslationHandler = mangaTranslationHandler
@@ -218,6 +231,10 @@ struct ImageContainer: View {
         self.loadRetryAction = loadRetryAction
         self.loadSucceededAction = loadSucceededAction
         self.loadFailedAction = loadFailedAction
+    }
+
+    private var isObscured: Bool {
+        isAdPage && !isAdUnblurred
     }
 
     private func placeholder(_ progress: Progress?) -> some View {
@@ -244,19 +261,35 @@ struct ImageContainer: View {
 
     var body: some View {
         if loadingState == .idle {
-            image(url: imageURL).scaledToFit().overlay {
-                if enablesLiveText, let loadedImage {
-                    LiveTextImageView(image: loadedImage, isEnabled: true)
-                } else if mangaTranslationHandler.isEnabled, let loadedImage,
-                    let translationResult = mangaTranslationHandler.result(for: index)
-                {
-                    MangaTranslationOverlay(
-                        result: translationResult,
-                        isVisible: mangaTranslationHandler.showTranslation,
-                        image: loadedImage
-                    )
+            image(url: imageURL).scaledToFit()
+                .blur(radius: isObscured ? PreviewImageView.adPageBlurRadius : 0)
+                .overlay {
+                    if isObscured {
+                        Image(systemSymbol: .eyeSlash)
+                            .font(.largeTitle)
+                            .foregroundStyle(.white)
+                            .shadow(radius: 2)
+                    }
                 }
-            }
+                // Outranks the container's panel-toggle tap: the first tap on an
+                // obscured page reveals it instead of opening the control panel.
+                .highPriorityGesture(
+                    TapGesture().onEnded { isAdUnblurred = true },
+                    isEnabled: isObscured
+                )
+                .overlay {
+                    if enablesLiveText, let loadedImage {
+                        LiveTextImageView(image: loadedImage, isEnabled: true)
+                    } else if mangaTranslationHandler.isEnabled, let loadedImage,
+                        let translationResult = mangaTranslationHandler.result(for: index)
+                    {
+                        MangaTranslationOverlay(
+                            result: translationResult,
+                            isVisible: mangaTranslationHandler.showTranslation,
+                            image: loadedImage
+                        )
+                    }
+                }
         } else {
             ZStack {
                 backgroundColor

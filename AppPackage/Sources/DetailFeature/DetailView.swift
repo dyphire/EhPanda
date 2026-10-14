@@ -127,6 +127,7 @@ private extension DetailView {
                         )
                         if !displayPreviewURLs.isEmpty {
                             PreviewsSection(
+                                gid: gid,
                                 pageCount: store.galleryDetail?.pageCount ?? 0,
                                 previewURLs: displayPreviewURLs,
                                 navigatePreviewsAction: {

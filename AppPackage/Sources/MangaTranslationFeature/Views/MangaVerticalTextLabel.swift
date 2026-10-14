@@ -7,6 +7,10 @@ public final class MangaVerticalTextLabel: UIView {
         didSet { setNeedsDisplay() }
     }
 
+    public var textColor: CGColor = UIColor.black.cgColor {
+        didSet { setNeedsDisplay() }
+    }
+
     private var fontSize: CGFloat = 14
 
     public override init(frame: CGRect) {
@@ -32,7 +36,7 @@ public final class MangaVerticalTextLabel: UIView {
         guard !text.isEmpty, let context = UIGraphicsGetCurrentContext() else { return }
         let font = UIFont.systemFont(ofSize: fontSize, weight: .medium) as CTFont
         MangaVerticalTextCompositor.draw(
-            text: text, font: font, color: UIColor.black.cgColor, in: context, size: bounds.size
+            text: text, font: font, color: textColor, in: context, size: bounds.size
         )
     }
 }

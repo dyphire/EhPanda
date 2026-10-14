@@ -2,6 +2,7 @@ import Foundation
 import AppModels
 import Sharing
 import ComposableArchitecture
+import AppComponents
 import AppTools
 import HapticsClient
 import NetworkingFeature
@@ -40,6 +41,11 @@ public struct PreviewsReducer: Sendable {
         public var previewConfig: PreviewConfig = .normal(rows: 4)
         public var localPreviewRequestID = UUID()
 
+        // Display-ready ad set (recorded positives + neighbour backfill), seeded from
+        // `@Shared(.adPageVerdictCache)` on appear and refreshed as detections land.
+        public var adPageIndices = Set<Int>()
+        public var adDetectionInFlight = Set<Int>()
+
         public init(
             gallery: Gallery,
             previewConfig: PreviewConfig = .normal(rows: 4), language: Language? = nil
@@ -72,6 +78,12 @@ public struct PreviewsReducer: Sendable {
         case openReadingDone(Result<(DownloadedGallery, DownloadManifest), AppError>)
         case fetchPreviewURLs(Int)
         case fetchPreviewURLsDone(Result<[Int: URL], AppError>)
+
+        // A `nil` verdict means the thumbnail couldn't be loaded — nothing is recorded,
+        // so a later appearance retries instead of caching a false negative. The third
+        // payload is the page's pixel hash, supplied when the page was judged an ad.
+        case detectAdPage(Int)
+        case adPageDetected(Int, Bool?, String?)
     }
 
     @Dependency(\.downloadClient) private var downloadClient
@@ -104,11 +116,71 @@ public struct PreviewsReducer: Sendable {
                 return .none
 
             case .onAppear(let gid):
+                if state.setting.detectsAdPagesEnabled {
+                    @Shared(.adPageVerdictCache) var verdictCache
+                    state.adPageIndices = verdictCache.displayAdIndices(
+                        gid: gid,
+                        pageCount: state.gallery.pageCount
+                    )
+                }
                 // Gallery is seeded from the pushing context; preview URLs are fetched on demand.
                 return .merge(
                     .send(.observeDownloads(gid)),
                     .send(.loadLocalPreviewURLs(gid))
                 )
+
+            case .detectAdPage(let index):
+                let gid = state.gallery.id
+                let pageCount = state.gallery.pageCount
+                guard state.setting.detectsAdPagesEnabled,
+                      gid.isValidGID,
+                      AdPageDetector.tailWindowIndices(pageCount: pageCount).contains(index),
+                      !state.adDetectionInFlight.contains(index)
+                else { return .none }
+                @Shared(.adPageVerdictCache) var verdictCache
+                if let verdict = verdictCache.verdict(gid: gid, pageIndex: index) {
+                    if verdict {
+                        state.adPageIndices = verdictCache.displayAdIndices(
+                            gid: gid, pageCount: pageCount
+                        )
+                    }
+                    return .none
+                }
+                guard let previewURL = state.localPreviewURLs[index] ?? state.previewURLs[index]
+                else { return .none }
+                state.adDetectionInFlight.insert(index)
+                let knownAdImageHashes = verdictCache.adImageHashSet
+                return .run { send in
+                    guard let image = await AdPageThumbnailLoader.load(previewURL: previewURL) else {
+                        await send(.adPageDetected(index, nil, nil))
+                        return
+                    }
+                    let imageHash = image.cgImage.map { AdPageDetector.imageHash(for: $0) } ?? ""
+                    // A known ad image needs no QR re-detection — ad images repeat
+                    // across galleries byte-identically.
+                    if !imageHash.isEmpty, knownAdImageHashes.contains(imageHash) {
+                        await send(.adPageDetected(index, true, imageHash))
+                        return
+                    }
+                    let isAd = AdPageDetector.isAdPage(image: image)
+                    await send(.adPageDetected(index, isAd, isAd ? imageHash : nil))
+                }
+
+            case .adPageDetected(let index, let isAd, let imageHash):
+                state.adDetectionInFlight.remove(index)
+                guard let isAd else { return .none }
+                let gid = state.gallery.id
+                @Shared(.adPageVerdictCache) var verdictCache
+                $verdictCache.withLock {
+                    $0.record(gid: gid, pageIndex: index, isAd: isAd)
+                    if let imageHash, !imageHash.isEmpty {
+                        $0.recordAdImageHash(imageHash)
+                    }
+                }
+                state.adPageIndices = verdictCache.displayAdIndices(
+                    gid: gid, pageCount: state.gallery.pageCount
+                )
+                return .none
 
             case .observeDownloads(let gid):
                 guard gid.isValidGID else { return .none }
@@ -203,7 +275,13 @@ public struct PreviewsReducer: Sendable {
                         return .none
                     }
                     state.updatePreviewURLs(previewURLs)
-                    return .none
+                    // A cell that appeared before its preview URL existed couldn't run
+                    // ad detection; revisit the newly arrived batch (deduped downstream).
+                    return .run { send in
+                        for previewIndex in previewURLs.keys {
+                            await send(.detectAdPage(previewIndex))
+                        }
+                    }
                 case .failure(let error):
                     state.loadingState = .failed(error)
                 }

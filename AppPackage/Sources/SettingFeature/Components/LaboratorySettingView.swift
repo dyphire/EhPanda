@@ -14,6 +14,13 @@ struct LaboratorySettingView: View {
         self.store = store
     }
 
+    private var detectsAdPagesBinding: Binding<Bool> {
+        .init(
+            get: { setting.detectsAdPagesEnabled },
+            set: { newValue in $setting.withLock { $0.detectsAdPages = newValue } }
+        )
+    }
+
     var body: some View {
         ScrollView {
             VStack {
@@ -21,6 +28,11 @@ struct LaboratorySettingView: View {
                     isOn: Binding($setting.bypassesSNIFiltering),
                     title: .bypassesSniFiltering,
                     symbol: .theatermasksFill, tintColor: .purple
+                )
+                LaboratoryCell(
+                    isOn: detectsAdPagesBinding,
+                    title: .detectsAdPages,
+                    symbol: .qrcodeViewfinder, tintColor: .orange
                 )
             }
             .padding()

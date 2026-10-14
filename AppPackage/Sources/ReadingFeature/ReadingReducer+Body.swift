@@ -1,5 +1,7 @@
 import SwiftUI
+import Sharing
 import Kingfisher
+import AppModels
 import AppComponents
 import ComposableArchitecture
 import AppTools
@@ -91,6 +93,13 @@ extension ReadingReducer {
                 return .none
 
             case .onAppear(let gid):
+                if state.setting.detectsAdPagesEnabled {
+                    @Shared(.adPageVerdictCache) var verdictCache
+                    state.adPageIndices = verdictCache.displayAdIndices(
+                        gid: gid,
+                        pageCount: state.gallery.pageCount
+                    )
+                }
                 var effects: [Effect<Action>] = [
                     .send(.observeDownloads(gid)),
                     .send(.loadLocalPageURLs(gid))
@@ -99,6 +108,59 @@ extension ReadingReducer {
                     effects.append(.send(.setOrientationPortrait(false)))
                 }
                 return .merge(effects)
+
+            case .detectAdPage(let index):
+                let gid = state.gallery.id
+                let pageCount = state.gallery.pageCount
+                guard state.setting.detectsAdPagesEnabled,
+                      gid.isValidGID,
+                      AdPageDetector.tailWindowIndices(pageCount: pageCount).contains(index),
+                      !state.adDetectionInFlight.contains(index)
+                else { return .none }
+                @Shared(.adPageVerdictCache) var verdictCache
+                if let verdict = verdictCache.verdict(gid: gid, pageIndex: index) {
+                    if verdict {
+                        state.adPageIndices = verdictCache.displayAdIndices(
+                            gid: gid, pageCount: pageCount
+                        )
+                    }
+                    return .none
+                }
+                guard let previewURL = state.localPageURLs[index] ?? state.previewURLs[index]
+                else { return .none }
+                state.adDetectionInFlight.insert(index)
+                let knownAdImageHashes = verdictCache.adImageHashSet
+                return .run { send in
+                    guard let image = await AdPageThumbnailLoader.load(previewURL: previewURL) else {
+                        await send(.adPageDetected(index, nil, nil))
+                        return
+                    }
+                    let imageHash = image.cgImage.map { AdPageDetector.imageHash(for: $0) } ?? ""
+                    // A known ad image needs no QR re-detection — ad images repeat
+                    // across galleries byte-identically.
+                    if !imageHash.isEmpty, knownAdImageHashes.contains(imageHash) {
+                        await send(.adPageDetected(index, true, imageHash))
+                        return
+                    }
+                    let isAd = AdPageDetector.isAdPage(image: image)
+                    await send(.adPageDetected(index, isAd, isAd ? imageHash : nil))
+                }
+
+            case .adPageDetected(let index, let isAd, let imageHash):
+                state.adDetectionInFlight.remove(index)
+                guard let isAd else { return .none }
+                let gid = state.gallery.id
+                @Shared(.adPageVerdictCache) var verdictCache
+                $verdictCache.withLock {
+                    $0.record(gid: gid, pageIndex: index, isAd: isAd)
+                    if let imageHash, !imageHash.isEmpty {
+                        $0.recordAdImageHash(imageHash)
+                    }
+                }
+                state.adPageIndices = verdictCache.displayAdIndices(
+                    gid: gid, pageCount: state.gallery.pageCount
+                )
+                return .none
 
             case .onWebImageRetry(let index):
                 state.imageURLLoadingStates[index] = .idle

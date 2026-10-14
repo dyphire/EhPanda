@@ -23,6 +23,7 @@ struct ControlPanel<G: Gesture>: View {
     private let navigateMangaTranslationSettingAction: () -> Void
     private let range: ClosedRange<Float>
     private let previewURLs: [Int: URL]
+    private let adPageIndices: Set<Int>
     private let dismissGesture: G
     private let dismissAction: () -> Void
     private let navigateSettingAction: () -> Void
@@ -34,7 +35,7 @@ struct ControlPanel<G: Gesture>: View {
         showsPanel: Binding<Bool>, showsSliderPreview: Binding<Bool>, sliderValue: Binding<Float>,
         setting: Binding<Setting>, enablesLiveText: Binding<Bool>, enablesMangaTranslation: Binding<Bool>,
         mangaTranslationPhase: MangaTranslationPhase, autoPlayPolicy: Binding<AutoPlayPolicy>,
-        range: ClosedRange<Float>, previewURLs: [Int: URL], dismissGesture: G,
+        range: ClosedRange<Float>, previewURLs: [Int: URL], adPageIndices: Set<Int>, dismissGesture: G,
         dismissAction: @escaping () -> Void,
         navigateSettingAction: @escaping () -> Void,
         reloadAllImagesAction: @escaping () -> Void,
@@ -57,6 +58,7 @@ struct ControlPanel<G: Gesture>: View {
         self.navigateMangaTranslationSettingAction = navigateMangaTranslationSettingAction
         self.range = range
         self.previewURLs = previewURLs
+        self.adPageIndices = adPageIndices
         self.dismissGesture = dismissGesture
         self.dismissAction = dismissAction
         self.navigateSettingAction = navigateSettingAction
@@ -92,6 +94,7 @@ struct ControlPanel<G: Gesture>: View {
                 LowerPanel(
                     showsSliderPreview: $showsSliderPreview,
                     sliderValue: $sliderValue, previewURLs: previewURLs, range: range,
+                    adPageIndices: adPageIndices,
                     isReversed: setting.readingDirection == .rightToLeft,
                     dismissGesture: dismissGesture, dismissAction: dismissAction,
                     fetchPreviewURLsAction: fetchPreviewURLsAction
@@ -278,6 +281,7 @@ private struct LowerPanel<G: Gesture>: View {
     @Binding private var sliderValue: Float
     private let previewURLs: [Int: URL]
     private let range: ClosedRange<Float>
+    private let adPageIndices: Set<Int>
     private let isReversed: Bool
     private let dismissGesture: G
     private let dismissAction: () -> Void
@@ -285,7 +289,7 @@ private struct LowerPanel<G: Gesture>: View {
 
     init(
         showsSliderPreview: Binding<Bool>, sliderValue: Binding<Float>,
-        previewURLs: [Int: URL], range: ClosedRange<Float>, isReversed: Bool,
+        previewURLs: [Int: URL], range: ClosedRange<Float>, adPageIndices: Set<Int>, isReversed: Bool,
         dismissGesture: G, dismissAction: @escaping () -> Void,
         fetchPreviewURLsAction: @escaping (Int) -> Void
     ) {
@@ -293,6 +297,7 @@ private struct LowerPanel<G: Gesture>: View {
         _sliderValue = sliderValue
         self.previewURLs = previewURLs
         self.range = range
+        self.adPageIndices = adPageIndices
         self.isReversed = isReversed
         self.dismissGesture = dismissGesture
         self.dismissAction = dismissAction
@@ -317,6 +322,7 @@ private struct LowerPanel<G: Gesture>: View {
                     sliderValue: $sliderValue,
                     previewURLs: previewURLs,
                     range: range,
+                    adPageIndices: adPageIndices,
                     isReversed: isReversed,
                     fetchPreviewURLsAction: fetchPreviewURLsAction
                 )
@@ -357,6 +363,7 @@ private struct SliderPreivew: View {
     @Binding var sliderValue: Float
     private let previewURLs: [Int: URL]
     private let range: ClosedRange<Float>
+    private let adPageIndices: Set<Int>
     private let isReversed: Bool
     private let fetchPreviewURLsAction: (Int) -> Void
 
@@ -367,6 +374,7 @@ private struct SliderPreivew: View {
         sliderValue: Binding<Float>,
         previewURLs: [Int: URL],
         range: ClosedRange<Float>,
+        adPageIndices: Set<Int>,
         isReversed: Bool,
         fetchPreviewURLsAction: @escaping (Int) -> Void
     ) {
@@ -374,6 +382,7 @@ private struct SliderPreivew: View {
         _sliderValue = sliderValue
         self.previewURLs = previewURLs
         self.range = range
+        self.adPageIndices = adPageIndices
         self.isReversed = isReversed
         self.fetchPreviewURLsAction = fetchPreviewURLsAction
     }
@@ -382,7 +391,10 @@ private struct SliderPreivew: View {
         HStack(spacing: previewSpacing) {
             ForEach(previewsIndices, id: \.self) { index in
                 VStack {
-                    PreviewImageView(originalURL: previewURLs[index])
+                    PreviewImageView(
+                        originalURL: previewURLs[index],
+                        isBlurred: adPageIndices.contains(index)
+                    )
                         .frame(width: previewWidth, height: showsSliderPreview ? previewHeight : 0)
 
                     Text(index, format: .number)

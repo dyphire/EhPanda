@@ -10,6 +10,9 @@ extension DownloadCoordinator {
         failedPages: [Int: PageFailure]
     ) -> [DownloadPageInspection] {
         (1...download.pageCount).map { index -> DownloadPageInspection in
+            if download.manifest.pages[index] == DownloadManifest.adSkippedPageMarker {
+                return .init(index: index, status: .skipped)
+            }
             if let relativePath = existingRelativePaths[index],
                let folderURL = activeFolderURL {
                 let fileURL = folderURL
