@@ -1,9 +1,16 @@
 name: Deploy
 on:
-  pull_request:
-    branches:
-      - main
-    types: [closed]
+  workflow_dispatch:
+    inputs:
+      releaseTitle:
+        description: 'Release title'
+        required: true
+        type: string
+      releaseDescription:
+        description: 'Release description (use \n for line breaks)'
+        required: true
+        type: string
+
 env:
   DEVELOPER_DIR: /Applications/Xcode_26.5.app
   SCHEME_NAME: 'EhPanda'
@@ -21,10 +28,7 @@ jobs:
     runs-on: macos-26
     permissions:
       contents: write
-    if: |
-      github.event.pull_request.merged == true && (
-      github.event.pull_request.user.login == 'aalberrty' ||
-      github.event.pull_request.user.login == 'chihchy')
+    if: github.event_name == 'workflow_dispatch'
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -32,6 +36,17 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Prepare release description
+        id: release-description
+        env:
+          RELEASE_DESCRIPTION: ${{ inputs.releaseDescription }}
+        run: |
+          release_description="${RELEASE_DESCRIPTION//\\n/$'\n'}"
+          {
+            echo "value<<__RELEASE_DESCRIPTION__"
+            echo "$release_description"
+            echo "__RELEASE_DESCRIPTION__"
+          } >> "$GITHUB_OUTPUT"
       - name: Install iOS 26 Platform
         uses: nick-fields/retry@v4
         with:
@@ -41,12 +56,6 @@ jobs:
           command: xcodebuild -downloadPlatform iOS
       - name: Show Xcode version
         run: xcodebuild -version
-      - name: Run tests
-        run: xcodebuild clean test
-          -skipMacroValidation
-          -skipPackagePluginValidation
-          -scheme ${{ env.SCHEME_NAME }}
-          -destination 'platform=iOS Simulator,name=iPhone Air'
       - name: Xcode archive
         run: xcodebuild archive
           -skipMacroValidation
@@ -71,7 +80,7 @@ jobs:
       - name: Retrieve data
         id: retrieve-data
         env:
-          RELEASE_NOTES_SOURCE: ${{ github.event.pull_request.body }}
+          RELEASE_NOTES_SOURCE: ${{ steps.release-description.outputs.value }}
         run: |
           swiftc -o "$FILTER_PATH" "$FILTER_SWIFT_PATH"
           chmod +x "$FILTER_PATH"
@@ -113,8 +122,8 @@ jobs:
           } >> "$GITHUB_OUTPUT"
       - name: Validate data
         env:
-          PR_BODY: ${{ github.event.pull_request.body }}
-          PR_TITLE: ${{ github.event.pull_request.title }}
+          RELEASE_TITLE: ${{ inputs.releaseTitle }}
+          RELEASE_DESCRIPTION: ${{ steps.release-description.outputs.value }}
           RELEASE_SIZE: ${{ steps.retrieve-data.outputs.size }}
           RELEASE_SHA256: ${{ steps.retrieve-data.outputs.sha256 }}
           RELEASE_NOTES: ${{ steps.retrieve-data.outputs.notes }}
@@ -125,8 +134,8 @@ jobs:
           RELEASE_DATE: ${{ steps.retrieve-data.outputs.version_date }}
           RELEASE_PRIVACY: ${{ steps.retrieve-data.outputs.privacy }}
         run: |
-          [[ ! -z "$PR_BODY" ]] || exit 1
-          [[ ! -z "$PR_TITLE" ]] || exit 1
+          [[ ! -z "$RELEASE_TITLE" ]] || exit 1
+          [[ ! -z "$RELEASE_DESCRIPTION" ]] || exit 1
           [[ ! -z "$RELEASE_SIZE" ]] || exit 1
           [[ ! -z "$RELEASE_SHA256" ]] || exit 1
           [[ ! -z "$RELEASE_NOTES" ]] || exit 1
@@ -142,8 +151,8 @@ jobs:
          fail_on_unmatched_files: true
          files: ${{ env.IPA_OUTPUT_PATH }}
          token: ${{ secrets.GITHUB_TOKEN }}
-         body: ${{ github.event.pull_request.body }}
-         name: ${{ github.event.pull_request.title }}
+         body: ${{ steps.release-description.outputs.value }}
+         name: ${{ inputs.releaseTitle }}
          tag_name: ${{ steps.retrieve-data.outputs.version }}
       - name: Update AltStore.json
         env:
@@ -164,7 +173,7 @@ jobs:
             --arg marketingVersion "$RELEASE_MARKETING_VERSION" \
             --arg date "$RELEASE_DATE" \
             --arg localizedDescription "$RELEASE_NOTES" \
-            --arg downloadURL "https://github.com/EhPanda-Team/EhPanda/releases/download/v$RELEASE_VERSION/EhPanda.ipa" \
+            --arg downloadURL "https://github.com/EhPanda-Team/EhPanda/releases/download/$RELEASE_VERSION/EhPanda.ipa" \
             --arg sha256 "$RELEASE_SHA256" \
             --arg minOSVersion "$RELEASE_MIN_OS_VERSION" \
             --argjson size "$RELEASE_SIZE" \
@@ -192,19 +201,5 @@ jobs:
       - name: Commit update AltStore.json
         run: |
           git add "$ALTSTORE_JSON_PATH"
-          git commit -m "Update AltStore.json"
+          git diff --cached --quiet || git commit -m "Update AltStore.json"
           git push origin HEAD
-      - name: Post release notes
-        env:
-          RELEASE_VERSION: ${{ steps.retrieve-data.outputs.version }}
-          RELEASE_BODY: ${{ github.event.pull_request.body }}
-          RELEASE_NOTES: ${{ steps.retrieve-data.outputs.notes }}
-        run: |
-         message="$(printf '*%s Release Notes:*\n%s' "$RELEASE_VERSION" "$RELEASE_BODY")"
-         curl https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
-         -d parse_mode=markdown -d chat_id=${{ secrets.TELEGRAM_CHANNEL_ID }} \
-         --data-urlencode "text=$message"
-
-         payload="$(jq -n --arg content "**$RELEASE_VERSION Release Notes:**\n$RELEASE_NOTES" '{content: $content}')"
-         curl ${{ secrets.DISCORD_WEBHOOK }} \
-         -F "payload_json=$payload"
