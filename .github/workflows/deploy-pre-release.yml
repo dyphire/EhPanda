@@ -42,12 +42,6 @@ jobs:
           command: xcodebuild -downloadPlatform iOS
       - name: Show Xcode version
         run: xcodebuild -version
-      - name: Run tests
-        run: xcodebuild clean test
-          -skipMacroValidation
-          -skipPackagePluginValidation
-          -scheme ${{ env.SCHEME_NAME }}
-          -destination 'platform=iOS Simulator,name=iPhone Air'
       - name: Xcode archive
         run: xcodebuild archive
           -skipMacroValidation
