@@ -53,8 +53,16 @@ extension Color: @retroactive Codable {
     public func encode(to encoder: Encoder) throws {
         guard let colorComponents = self.colorComponents else { return }
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(colorComponents.red, forKey: .red)
-        try container.encode(colorComponents.green, forKey: .green)
-        try container.encode(colorComponents.blue, forKey: .blue)
+        try container.encode(persistedComponent(colorComponents.red), forKey: .red)
+        try container.encode(persistedComponent(colorComponents.green), forKey: .green)
+        try container.encode(persistedComponent(colorComponents.blue), forKey: .blue)
     }
+}
+
+/// Rounds an RGBA component to 6 decimal places before persisting. SwiftUI stores colors in a
+/// working color space and the `getRed` conversion can drift by a tiny amount per channel, so
+/// persisting full precision is not idempotent across a decode→encode cycle — the rounded value
+/// is (well below visual perception, and it keeps persisted blobs and backups byte-stable).
+private func persistedComponent(_ component: CGFloat) -> Double {
+    (component * 1_000_000).rounded() / 1_000_000
 }

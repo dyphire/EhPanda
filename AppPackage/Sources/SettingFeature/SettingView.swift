@@ -65,6 +65,9 @@ public struct SettingView: View {
         case .reading(let readingStore):
             ReadingSettingView(store: readingStore)
 
+        case .backup(let backupStore):
+            BackupSettingView(store: backupStore)
+
         case .laboratory(let laboratoryStore):
             LaboratorySettingView(store: laboratoryStore)
 
@@ -130,6 +133,8 @@ extension SettingReducer.RootScreen {
             return .settingStateRouteDownload
         case .reading:
             return .settingStateRouteReading
+        case .backup:
+            return .settingStateRouteBackup
         case .laboratory:
             return .settingStateRouteLaboratory
         case .about:
@@ -148,6 +153,8 @@ extension SettingReducer.RootScreen {
             return .squareAndArrowDownOnSquare
         case .reading:
             return .newspaper
+        case .backup:
+            return .arrowUpArrowDownCircle
         case .laboratory:
             return .testtube2
         case .about:

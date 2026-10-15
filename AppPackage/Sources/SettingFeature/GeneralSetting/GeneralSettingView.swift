@@ -2,7 +2,6 @@ import SwiftUI
 import AppModels
 import Sharing
 import Resources
-import UniformTypeIdentifiers
 import ComposableArchitecture
 import AppComponents
 
@@ -76,12 +75,14 @@ struct GeneralSettingView: View {
                 Button(.importCustomTranslations) {
                     store.send(.importCustomTranslationsButtonTapped)
                 }
-                .fileImporter(
-                    isPresented: $store.destination.importTranslations,
-                    allowedContentTypes: [.json]
-                ) { result in
-                    if case .success(let url) = result {
-                        store.send(.onTranslationsFilePicked(url))
+                // `DocumentPicker` matches by extension: the modern `.fileImporter` greys out
+                // files whose UTI got re-tagged, which is exactly how translation files saved
+                // through a share sheet or transferred between devices tend to end up.
+                .sheet(isPresented: $store.destination.importTranslations) {
+                    DocumentPicker { url in
+                        if let url {
+                            store.send(.onTranslationsFilePicked(url))
+                        }
                     }
                 }
                 if tagTranslatorHasCustomTranslations {

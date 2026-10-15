@@ -22,6 +22,7 @@ public struct SettingReducer: Sendable {
         case appearance
         case download
         case reading
+        case backup
         case laboratory
         case about
 
@@ -37,6 +38,8 @@ public struct SettingReducer: Sendable {
                 return .download(.init())
             case .reading:
                 return .reading(.init())
+            case .backup:
+                return .backup(.init())
             case .laboratory:
                 return .laboratory(.init())
             case .about:

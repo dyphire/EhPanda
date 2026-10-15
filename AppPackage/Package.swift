@@ -647,6 +647,7 @@ let targets: [PackageDescription.Target] = [
             .module(.hapticsClient),
             .module(.libraryClient),
             .module(.logsClient),
+            .module(.mangaTranslationFeature),
             .module(.networkingFeature),
             .module(.osLogExt),
             .module(.readingSettingFeature),
@@ -933,6 +934,7 @@ let targets: [PackageDescription.Target] = [
             .module(.networkingFeature),
             .module(.hapticsClient),
             .module(.logsClient),
+            .module(.mangaTranslationFeature),
             .module(.settingFeature),
             .targetDependency(.composableArchitecture),
             .targetDependency(.sharing)

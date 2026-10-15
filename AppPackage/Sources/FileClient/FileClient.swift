@@ -6,6 +6,15 @@ import ComposableArchitecture
 public struct FileClient: Sendable {
     public var createFile: @Sendable (String, Data?) -> Bool
     public var importTagTranslator: @Sendable (URL) async -> Result<TagTranslator, AppError>
+    /// Encodes the envelope as pretty-printed JSON and writes it to Caches (a purgeable staging
+    /// area is fine — the file only needs to survive until the share sheet copies it elsewhere),
+    /// returning the file URL for the `ActivityView` share. `.failure(.fileOperationFailed)` on error.
+    public var exportSettingsBackup: @Sendable (SettingsBackupEnvelope) async -> Result<URL, AppError>
+    /// Reads and decodes a backup file picked through `.fileImporter`, using the same
+    /// security-scoped coordinated read as `importTagTranslator` (a user-picked iCloud item may not
+    /// be downloaded yet). Rejects files whose `formatVersion` is newer than the app understands;
+    /// member-level strict decoding rejects newer model shapes the same way.
+    public var importSettingsBackup: @Sendable (URL) async -> Result<SettingsBackupEnvelope, AppError>
     /// Decodes the raw downloaded DB JSON, applies OpenCC conversion for Traditional Chinese, caches
     /// the raw bytes for a launch-time rebuild, and returns the built translator (`nil` on decode
     /// failure). The raw file — not the converted dictionary — is what persists.
@@ -81,6 +90,46 @@ extension FileClient {
                 }
             }
         },
+        exportSettingsBackup: { envelope in
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+            guard let data = try? encoder.encode(envelope) else {
+                return .failure(.fileOperationFailed("encode"))
+            }
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyyMMdd-HHmmss"
+            let filename = "ehpanda-backup-\(formatter.string(from: envelope.exportDate)).json"
+            let url = URL.cachesDirectory.appending(component: filename)
+            do {
+                try data.write(to: url, options: .atomic)
+                return .success(url)
+            } catch {
+                return .failure(.fileOperationFailed(error.localizedDescription))
+            }
+        },
+        importSettingsBackup: { url in
+            await withCheckedContinuation { continuation in
+                // Same security-scoped coordinated read as `importTagTranslator` — see the comment there.
+                let didAccess = url.startAccessingSecurityScopedResource()
+                let intent = NSFileAccessIntent.readingIntent(with: url, options: .withoutChanges)
+                NSFileCoordinator().coordinate(with: [intent], queue: .init()) { error in
+                    defer { if didAccess { url.stopAccessingSecurityScopedResource() } }
+                    guard error == nil, let data = try? Data(contentsOf: intent.url) else {
+                        continuation.resume(returning: .failure(.parseFailed))
+                        return
+                    }
+                    guard let envelope = try? JSONDecoder().decode(
+                        SettingsBackupEnvelope.self, from: data
+                    ), envelope.formatVersion <= SettingsBackupEnvelope.currentFormatVersion else {
+                        // Either not a backup file at all, or one written by a newer app whose
+                        // envelope layout (or member shapes) we must not half-read.
+                        continuation.resume(returning: .failure(.parseFailed))
+                        return
+                    }
+                    continuation.resume(returning: .success(envelope))
+                }
+            }
+        },
         cacheAndBuildRemoteTagTranslator: { data, language, date in
             guard let translations = decodeTranslations(data, applyingChtFor: language) else { return nil }
             writeTranslations(data, to: remoteTranslationsURL(language))
@@ -131,6 +180,8 @@ extension FileClient {
     public static let noop: Self = .init(
         createFile: { _, _ in false },
         importTagTranslator: { _ in .success(.init()) },
+        exportSettingsBackup: { _ in .failure(.unknown) },
+        importSettingsBackup: { _ in .failure(.unknown) },
         cacheAndBuildRemoteTagTranslator: { _, _, _ in nil },
         loadCachedTagTranslator: { _ in nil },
         removeCustomTranslations: {}
@@ -141,6 +192,8 @@ extension FileClient {
     public static let unimplemented: Self = .init(
         createFile: IssueReporting.unimplemented(placeholder: placeholder()),
         importTagTranslator: IssueReporting.unimplemented(placeholder: placeholder()),
+        exportSettingsBackup: IssueReporting.unimplemented(placeholder: placeholder()),
+        importSettingsBackup: IssueReporting.unimplemented(placeholder: placeholder()),
         cacheAndBuildRemoteTagTranslator: IssueReporting.unimplemented(placeholder: placeholder()),
         loadCachedTagTranslator: IssueReporting.unimplemented(placeholder: placeholder()),
         removeCustomTranslations: IssueReporting.unimplemented(placeholder: placeholder())
