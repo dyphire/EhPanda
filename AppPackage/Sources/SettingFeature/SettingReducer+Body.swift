@@ -207,6 +207,17 @@ extension SettingReducer {
                     await send(.fetchTagTranslatorDone(result))
                 }
 
+            // The Backup screen relays the picked file; the parent runs the import effect and feeds
+            // the decoded envelope back into the child, which owns the confirmation dialog and the
+            // whole-package replace (mirroring the tag-translations flow above).
+            case .path(.element(
+                id: let id, action: .backup(.delegate(.importFilePicked(let url)))
+            )):
+                return .run { send in
+                    let result = await fileClient.importSettingsBackup(url)
+                    await send(.path(.element(id: id, action: .backup(.onBackupDecoded(result)))))
+                }
+
             case .path(.element(id: _, action: .general(.onRemoveCustomTranslations))):
                 // Drop the custom table from memory, metadata, and disk; the launch/remote flow refills
                 // it. FileClient owns the path, so the file lifecycle stays behind one module.

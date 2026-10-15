@@ -49,13 +49,40 @@ public struct CookieClient: Sendable {
     private let initializeCookie: @Sendable (HTTPCookie, String) -> HTTPCookie?
     private let storeCookie: @Sendable (HTTPCookie) -> Void
     private let setCookieValue: @Sendable (URL, String, String, String, TimeInterval, Bool) -> Void
+    /// Snapshots the session-relevant cookies (credentials, igneous, selected profile) as plain
+    /// values for a settings backup. `var` (not `let`) so tests can substitute the closure.
+    public var snapshotSessionCookies: @Sendable () -> [ExportedCookie]
+    /// Restores cookies from a backup snapshot, re-deriving the target hosts from each cookie's
+    /// name (same URL mapping `importAuthenticationCookies` uses). `var` so tests can substitute.
+    public var restoreSessionCookies: @Sendable ([ExportedCookie]) -> Void
 }
 
 extension CookieClient {
     public static let live: Self = live(cookieStorage: .shared)
 
     public static func live(cookieStorage: HTTPCookieStorage) -> Self {
-        .init(
+        // Shared by the `setCookieValue` member and `restoreSessionCookies` below; the memberwise
+        // init's closures can't reference the instance's stored properties.
+        let setValue: @Sendable (URL, String, String, String, TimeInterval, Bool) -> Void = {
+            url, key, value, path, expiresTime, sessionOnly in
+            let properties: [HTTPCookiePropertyKey: Any] = [
+                .path: path, .name: key, .value: value,
+                .originURL: url
+            ]
+            var mutableProperties = properties
+            if let host = url.host {
+                mutableProperties[.domain] = host
+            }
+            if sessionOnly {
+                mutableProperties[.discard] = "TRUE"
+            } else {
+                mutableProperties[.expires] = Date(timeIntervalSinceNow: expiresTime)
+            }
+            if let cookie = HTTPCookie(properties: mutableProperties) {
+                cookieStorage.setCookie(cookie)
+            }
+        }
+        return .init(
             clearAll: {
                 if let historyCookies = cookieStorage.cookies {
                     historyCookies.forEach {
@@ -100,22 +127,44 @@ extension CookieClient {
             storeCookie: { cookie in
                 cookieStorage.setCookie(cookie)
             },
-            setCookieValue: { url, key, value, path, expiresTime, sessionOnly in
-                let properties: [HTTPCookiePropertyKey: Any] = [
-                    .path: path, .name: key, .value: value,
-                    .originURL: url
+            setCookieValue: setValue,
+            snapshotSessionCookies: {
+                let keys = [
+                    Defaults.Cookie.ipbMemberId,
+                    Defaults.Cookie.ipbPassHash,
+                    Defaults.Cookie.igneous,
+                    Defaults.Cookie.selectedProfile
                 ]
-                var mutableProperties = properties
-                if let host = url.host {
-                    mutableProperties[.domain] = host
+                let urls = [Defaults.URL.ehentai, Defaults.URL.exhentai, Defaults.URL.sexhentai]
+                // One entry per key: the same credential is stored per host, so any host's copy
+                // will do. Expired or empty values are skipped — a stale credential is not useful
+                // to carry into a backup.
+                return keys.compactMap { key in
+                    urls.lazy
+                        .flatMap { cookieStorage.cookies(for: $0) ?? [] }
+                        .first {
+                            $0.name == key
+                                && !$0.value.isEmpty
+                                && ($0.expiresDate.map { $0 > .now } ?? true)
+                        }
+                        .map { ExportedCookie(name: $0.name, value: $0.value, domain: $0.domain) }
                 }
-                if sessionOnly {
-                    mutableProperties[.discard] = "TRUE"
-                } else {
-                    mutableProperties[.expires] = Date(timeIntervalSinceNow: expiresTime)
-                }
-                if let cookie = HTTPCookie(properties: mutableProperties) {
-                    cookieStorage.setCookie(cookie)
+            },
+            restoreSessionCookies: { exported in
+                for cookie in exported where !cookie.value.isEmpty {
+                    let targets: [URL] = switch cookie.name {
+                    case Defaults.Cookie.ipbMemberId, Defaults.Cookie.ipbPassHash:
+                        [Defaults.URL.ehentai, Defaults.URL.exhentai, Defaults.URL.sexhentai]
+                    case Defaults.Cookie.igneous:
+                        [Defaults.URL.exhentai, Defaults.URL.sexhentai]
+                    default:
+                        [Defaults.URL.host]
+                    }
+                    // Fresh one-year expiry, mirroring `setCookie`'s default: an imported
+                    // credential should outlive the session even if the backup is old.
+                    targets.forEach {
+                        setValue($0, cookie.name, cookie.value, "/", .oneYear, false)
+                    }
                 }
             }
         )
@@ -481,9 +530,11 @@ extension CookieClient {
         removeCookie: { _, _ in },
         deleteCookie: { _ in },
         checkExistence: { _, _ in false },
-        initializeCookie: { _, _ in .init() },
-        storeCookie: { _ in },
-        setCookieValue: { _, _, _, _, _, _ in }
+            initializeCookie: { _, _ in .init() },
+            storeCookie: { _ in },
+            setCookieValue: { _, _, _, _, _, _ in },
+            snapshotSessionCookies: { [] },
+            restoreSessionCookies: { _ in }
     )
 
     public static func placeholder<Result>() -> Result { fatalError() }
@@ -497,7 +548,9 @@ extension CookieClient {
         checkExistence: IssueReporting.unimplemented(placeholder: placeholder()),
         initializeCookie: IssueReporting.unimplemented(placeholder: placeholder()),
         storeCookie: IssueReporting.unimplemented(placeholder: placeholder()),
-        setCookieValue: IssueReporting.unimplemented(placeholder: placeholder())
+        setCookieValue: IssueReporting.unimplemented(placeholder: placeholder()),
+        snapshotSessionCookies: IssueReporting.unimplemented(placeholder: placeholder()),
+        restoreSessionCookies: IssueReporting.unimplemented(placeholder: placeholder())
     )
 }
 
@@ -690,6 +743,40 @@ extension CookieClient {
                     expiresTime: expiresTime,
                     sessionOnly: sessionOnly
                 )
+            },
+            snapshotSessionCookies: {
+                let keys = [
+                    Defaults.Cookie.ipbMemberId,
+                    Defaults.Cookie.ipbPassHash,
+                    Defaults.Cookie.igneous,
+                    Defaults.Cookie.selectedProfile
+                ]
+                let urls = [Defaults.URL.ehentai, Defaults.URL.exhentai, Defaults.URL.sexhentai]
+                return keys.compactMap { key in
+                    urls.lazy
+                        .flatMap { store.cookies(for: $0) }
+                        .first {
+                            $0.name == key
+                                && !$0.value.isEmpty
+                                && ($0.expiresDate.map { $0 > .now } ?? true)
+                        }
+                        .map { ExportedCookie(name: $0.name, value: $0.value, domain: $0.domain) }
+                }
+            },
+            restoreSessionCookies: { exported in
+                for cookie in exported where !cookie.value.isEmpty {
+                    let targets: [URL] = switch cookie.name {
+                    case Defaults.Cookie.ipbMemberId, Defaults.Cookie.ipbPassHash:
+                        [Defaults.URL.ehentai, Defaults.URL.exhentai, Defaults.URL.sexhentai]
+                    case Defaults.Cookie.igneous:
+                        [Defaults.URL.exhentai, Defaults.URL.sexhentai]
+                    default:
+                        [Defaults.URL.host]
+                    }
+                    targets.forEach {
+                        store.setValue(cookie.value, for: $0, key: cookie.name)
+                    }
+                }
             }
         )
     }

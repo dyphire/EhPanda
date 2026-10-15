@@ -114,4 +114,47 @@ struct FileClientTests {
             FileClient.live.loadCachedTagTranslator(TagTranslatorInfo(hasCustomTranslations: true)) == nil
         )
     }
+
+    // MARK: Settings backup
+
+    @Test
+    func exportedSettingsBackupReimportsWithSameMembers() async throws {
+        let envelope = SettingsBackupEnvelope(
+            exportDate: Date(timeIntervalSince1970: 1_700_000_000),
+            setting: Setting(galleryHost: .exhentai),
+            historyKeywords: ["keyword"],
+            cookies: [ExportedCookie(name: "ipb_member_id", value: "42", domain: "e-hentai.org")]
+        )
+
+        let url = try await FileClient.live.exportSettingsBackup(envelope).get()
+        defer { try? FileManager.default.removeItem(at: url) }
+
+        #expect(FileManager.default.fileExists(atPath: url.path))
+
+        let decoded = try await FileClient.live.importSettingsBackup(url).get()
+        #expect(decoded.formatVersion == envelope.formatVersion)
+        #expect(decoded.setting == envelope.setting)
+        #expect(decoded.historyKeywords == envelope.historyKeywords)
+        #expect(decoded.cookies == envelope.cookies)
+    }
+
+    @Test
+    func settingsBackupWithNewerFormatVersionIsRejected() async throws {
+        var envelope = SettingsBackupEnvelope(exportDate: Date(timeIntervalSince1970: 1_700_000_000))
+        envelope.formatVersion = SettingsBackupEnvelope.currentFormatVersion + 1
+        let url = try writeTemporaryFile(JSONEncoder().encode(envelope))
+        defer { try? FileManager.default.removeItem(at: url) }
+
+        let result = await FileClient.live.importSettingsBackup(url)
+        #expect(result == .failure(.parseFailed))
+    }
+
+    @Test
+    func nonBackupFileIsRejected() async throws {
+        let url = try writeTemporaryFile(Data("not json".utf8))
+        defer { try? FileManager.default.removeItem(at: url) }
+
+        let result = await FileClient.live.importSettingsBackup(url)
+        #expect(result == .failure(.parseFailed))
+    }
 }

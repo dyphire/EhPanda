@@ -76,9 +76,12 @@ struct GeneralSettingView: View {
                 Button(.importCustomTranslations) {
                     store.send(.importCustomTranslationsButtonTapped)
                 }
+                // `.json` alone greys out files whose UTI got re-tagged (e.g. saved via a share
+                // sheet to iCloud or third-party providers); `.data` accepts them since
+                // `public.json` conforms to it. A non-JSON pick is rejected by the decoder.
                 .fileImporter(
                     isPresented: $store.destination.importTranslations,
-                    allowedContentTypes: [.json]
+                    allowedContentTypes: [.json, .data]
                 ) { result in
                     if case .success(let url) = result {
                         store.send(.onTranslationsFilePicked(url))
