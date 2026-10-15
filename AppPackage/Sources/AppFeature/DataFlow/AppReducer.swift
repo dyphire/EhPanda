@@ -94,6 +94,8 @@ struct AppReducer {
                     var effects: [Effect<Action>] = [
                         .send(.appLock(.onBecomeActive(threshold, blurRadius))),
                         .send(.appLogsPump(.startPump)),
+                        // The staleness guard inside SettingReducer decides whether anything is due.
+                        .send(.setting(.autoBackupToWebdav)),
                         .run { _ in logger.notice("App entered foreground.") }
                     ]
                     if !cookieClient.apiuid.isEmpty {
@@ -199,7 +201,9 @@ struct AppReducer {
                         }
                         cookieClient.prepareAuthentication()
                         await send(.setting(.loadUserSettings))
-                    }
+                    },
+                    // The staleness guard inside SettingReducer decides whether anything is due.
+                    .send(.setting(.autoBackupToWebdav))
                 )
 
             case .appDelegate:

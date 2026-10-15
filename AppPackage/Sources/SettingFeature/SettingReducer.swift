@@ -9,6 +9,7 @@ import LibraryClient
 import DFClient
 import FileClient
 import CookieClient
+import WebDAVClient
 
 @Reducer
 public struct SettingReducer: Sendable {
@@ -61,6 +62,7 @@ public struct SettingReducer: Sendable {
         @Shared(.tagTranslatorInfo) public var tagTranslatorInfo: TagTranslatorInfo
         @Shared(.user) public var user: User
         @Shared(.greeting) public var greeting: Greeting?
+        @Shared(.webDAVConfiguration) public var webDAVConfig: WebDAVConfiguration
 
         public var hasLoadedInitialSetting = false
 
@@ -117,6 +119,9 @@ public struct SettingReducer: Sendable {
         case fetchFavoriteCategories
         case fetchFavoriteCategoriesDone(Result<[Int: String], AppError>)
         case igneousRefreshed
+
+        case autoBackupToWebdav
+        case autoBackupToWebdavDone
     }
 
     @Dependency(\.applicationClient) var applicationClient
@@ -126,6 +131,7 @@ public struct SettingReducer: Sendable {
     @Dependency(\.cookieRefreshClient) var cookieRefreshClient
     @Dependency(\.fileClient) var fileClient
     @Dependency(\.dfClient) var dfClient
+    @Dependency(\.webDAVClient) var webDAVClient
 
     public init() {}
 

@@ -104,6 +104,7 @@ enum Module: String {
     case tagTranslationFeature = "TagTranslationFeature"
     case urlClient = "URLClient"
     case userDefaultsClient = "UserDefaultsClient"
+    case webDAVClient = "WebDAVClient"
 
     // Test support
     case testingSupport = "TestingSupport"
@@ -115,6 +116,7 @@ enum Module: String {
     case settingFeatureTests = "SettingFeatureTests"
     case detailFeatureTests = "DetailFeatureTests"
     case networkingFeatureTests = "NetworkingFeatureTests"
+    case webDAVClientTests = "WebDAVClientTests"
     case appModelsTests = "AppModelsTests"
 }
 
@@ -654,6 +656,7 @@ let targets: [PackageDescription.Target] = [
             .module(.resources),
             .module(.systemNotificationExt),
             .module(.userDefaultsClient),
+            .module(.webDAVClient),
             .targetDependency(.composableArchitecture),
             .targetDependency(.sfSafeSymbols),
             .targetDependency(.sharing)
@@ -856,6 +859,16 @@ let targets: [PackageDescription.Target] = [
         ],
         plugins: swiftLintPlugins
     ),
+    .target(
+        module: .webDAVClient,
+        dependencies: [
+            .module(.appModels),
+            .module(.osLogExt),
+            .targetDependency(.composableArchitecture),
+            .targetDependency(.sharing)
+        ],
+        plugins: swiftLintPlugins
+    ),
 
     // MARK: Test Support
     .target(
@@ -936,6 +949,7 @@ let targets: [PackageDescription.Target] = [
             .module(.logsClient),
             .module(.mangaTranslationFeature),
             .module(.settingFeature),
+            .module(.webDAVClient),
             .targetDependency(.composableArchitecture),
             .targetDependency(.sharing)
         ],
@@ -959,6 +973,14 @@ let targets: [PackageDescription.Target] = [
             .module(.cookieClient),
             .module(.networkingFeature),
             .targetDependency(.composableArchitecture)
+        ],
+        plugins: swiftLintPlugins
+    ),
+    .testTarget(
+        module: .webDAVClientTests,
+        dependencies: [
+            .module(.appModels),
+            .module(.webDAVClient)
         ],
         plugins: swiftLintPlugins
     ),
