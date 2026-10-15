@@ -5,6 +5,7 @@ import Sharing
 import CookieClient
 import FileClient
 import Synchronization
+import WebDAVClient
 @testable import SettingFeature
 import ComposableArchitecture
 
@@ -205,5 +206,207 @@ struct BackupSettingReducerTests {
             return
         }
         #expect(child.importBackupDialog != nil)
+    }
+
+    // MARK: WebDAV
+
+    @Test
+    func webDAVBackupUploadsLatestAndTimestampedCopies() async throws {
+        let defaults = UserDefaults.inMemory
+        try await withDependencies {
+            $0.defaultAppStorage = defaults
+        } operation: {
+            let uploads = Mutex<[(String, Data)]>([])
+            let store = TestStore(initialState: .init(), reducer: BackupSettingReducer.init) {
+                $0.defaultAppStorage = defaults
+                $0.cookieClient.snapshotSessionCookies = { [] }
+                $0.webDAVClient.upload = { _, filename, data in
+                    uploads.withLock { $0.append((filename, data)) }
+                    return .success(())
+                }
+            }
+            store.exhaustivity = .off
+
+            @Shared(.webDAVConfiguration) var config
+            $config.withLock {
+                $0.serverURL = "https://dav.example.com"
+                $0.username = "alice"
+            }
+            #expect(config.lastBackupDate == nil)
+
+            await store.send(.webDAVBackupButtonTapped)
+            await store.receive(.webDAVBackupDone(nil))
+            await store.finish()
+
+            #expect(store.state.webDAVBackingUp == false)
+            #expect(store.state.toast == .success(caption: .webdavBackupSucceeded))
+            let uploaded = uploads.withLock { $0 }
+            #expect(uploaded.count == 2)
+            #expect(uploaded[0].0 == SettingsBackup.latestFileName)
+            #expect(uploaded[1].0.hasPrefix("ehpanda-backup-"))
+            #expect(uploaded[1].0.hasSuffix(".json"))
+            #expect(uploaded[0].1 == uploaded[1].1)
+            // Success refreshes the staleness watermark.
+            #expect(config.lastBackupDate != nil)
+        }
+    }
+
+    @Test
+    func webDAVBackupFailureLeavesWatermarkUntouched() async throws {
+        let defaults = UserDefaults.inMemory
+        try await withDependencies {
+            $0.defaultAppStorage = defaults
+        } operation: {
+            let store = TestStore(initialState: .init(), reducer: BackupSettingReducer.init) {
+                $0.defaultAppStorage = defaults
+                $0.cookieClient.snapshotSessionCookies = { [] }
+                $0.webDAVClient.upload = { _, _, _ in .failure(.authenticationRequired) }
+            }
+            store.exhaustivity = .off
+
+            @Shared(.webDAVConfiguration) var config
+            $config.withLock {
+                $0.serverURL = "https://dav.example.com"
+                $0.username = "alice"
+            }
+
+            await store.send(.webDAVBackupButtonTapped)
+            await store.receive(.webDAVBackupDone(.authenticationRequired))
+            await store.finish()
+
+            #expect(store.state.webDAVBackingUp == false)
+            #expect(store.state.toast != nil)
+            #expect(config.lastBackupDate == nil)
+        }
+    }
+
+    @Test
+    func webDAVRestoreFiltersAndSortsBackupsThenDecodesPick() async throws {
+        let defaults = UserDefaults.inMemory
+        try await withDependencies {
+            $0.defaultAppStorage = defaults
+        } operation: {
+            let envelope = SettingsBackupEnvelope(
+                exportDate: .now, setting: Setting(galleryHost: .exhentai)
+            )
+            // The downloaded bytes must be a valid envelope, but the decoded value can't be
+            // compared wholesale: `Color` doesn't round-trip identically (its decoded provider
+            // is a resolved HDR value containing NaN), so the assertions below check the flow
+            // semantics instead of envelope equality.
+            let encoded = try #require(SettingsBackup.encode(envelope))
+            let older = Date(timeIntervalSinceNow: -3600 * 30)
+            let files = [
+                WebDAVFile(
+                    name: "ehpanda-backup-old.json",
+                    path: "/ehpanda/ehpanda-backup-old.json", size: 10, modifiedDate: older
+                ),
+                WebDAVFile(
+                    name: "ehpanda-backup-latest.json",
+                    path: "/ehpanda/ehpanda-backup-latest.json", size: 10, modifiedDate: .now
+                ),
+                WebDAVFile(
+                    name: "unrelated.txt", path: "/ehpanda/unrelated.txt", size: 10, modifiedDate: .now
+                )
+            ]
+            let downloadedName = Mutex<String?>(nil)
+            let store = TestStore(initialState: .init(), reducer: BackupSettingReducer.init) {
+                $0.defaultAppStorage = defaults
+                $0.webDAVClient.list = { _ in .success(files) }
+                $0.webDAVClient.download = { _, filename in
+                    downloadedName.withLock { $0 = filename }
+                    return .success(encoded)
+                }
+            }
+            store.exhaustivity = .off
+
+            @Shared(.webDAVConfiguration) var config
+            $config.withLock {
+                $0.serverURL = "https://dav.example.com"
+                $0.username = "alice"
+            }
+
+            await store.send(.webDAVRestoreButtonTapped)
+            await store.receive(.webDAVListDone(.success(files))) {
+                $0.webDAVListing = false
+                // Only backup JSON files, newest first.
+                $0.destination = .restoreFileList([files[1], files[0]])
+            }
+
+            await store.send(.webDAVFilePicked(files[1])) {
+                $0.destination = nil
+            }
+            await store.skipReceivedActions(strict: false)
+            // The pick downloaded and decoded into the shared confirmation dialog.
+            #expect(store.state.importBackupDialog != nil)
+            #expect(downloadedName.withLock { $0 } == "ehpanda-backup-latest.json")
+        }
+    }
+
+    @Test
+    func webDAVDownloadFailureShowsToastWithoutDialog() async throws {
+        let defaults = UserDefaults.inMemory
+        try await withDependencies {
+            $0.defaultAppStorage = defaults
+        } operation: {
+            let store = TestStore(initialState: .init(), reducer: BackupSettingReducer.init) {
+                $0.defaultAppStorage = defaults
+                $0.webDAVClient.download = { _, _ in .failure(.notFound) }
+            }
+
+            await store.send(.webDAVDownloadDone(.failure(.notFound))) {
+                $0.toast = .error(caption: AppError.notFound.localizedDescription)
+            }
+            #expect(store.state.importBackupDialog == nil)
+        }
+    }
+
+    @Test
+    func webDAVTestConnectionTogglesLoadingAndToastsResult() async throws {
+        let defaults = UserDefaults.inMemory
+        try await withDependencies {
+            $0.defaultAppStorage = defaults
+        } operation: {
+            let store = TestStore(initialState: .init(), reducer: BackupSettingReducer.init) {
+                $0.defaultAppStorage = defaults
+                $0.webDAVClient.testConnection = { _ in .success(()) }
+            }
+
+            @Shared(.webDAVConfiguration) var config
+            $config.withLock {
+                $0.serverURL = "https://dav.example.com"
+                $0.username = "alice"
+            }
+
+            await store.send(.webDAVTestConnectionButtonTapped) {
+                $0.webDAVTesting = true
+            }
+            await store.receive(.webDAVTestConnectionDone(nil)) {
+                $0.webDAVTesting = false
+                $0.toast = .success(caption: .webdavConnectionSucceeded)
+            }
+        }
+    }
+
+    @Test
+    func webDAVOperationsRequireUsableConfiguration() async {
+        let store = TestStore(initialState: .init(), reducer: BackupSettingReducer.init)
+
+        // Empty configuration: every operation guards out with no effect.
+        await store.send(.webDAVTestConnectionButtonTapped)
+        await store.send(.webDAVBackupButtonTapped)
+        await store.send(.webDAVRestoreButtonTapped)
+
+        #expect(store.state.webDAVTesting == false)
+        #expect(store.state.webDAVBackingUp == false)
+        #expect(store.state.webDAVListing == false)
+    }
+
+    @Test
+    func webDAVAutoBackupRejectedShowsToast() async {
+        let store = TestStore(initialState: .init(), reducer: BackupSettingReducer.init)
+
+        await store.send(.webDAVAutoBackupRejected) {
+            $0.toast = .error(caption: .webdavConfigIncomplete)
+        }
     }
 }

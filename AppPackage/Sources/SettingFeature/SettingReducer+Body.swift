@@ -228,6 +228,38 @@ extension SettingReducer {
             case .igneousRefreshed:
                 return .none
 
+            // Scheduled backup, triggered on launch and on every foreground return. Uploads only
+            // when the feature is enabled, configured, and the last success is over a day old;
+            // failures stay silent (OSLog only) so the next trigger can retry.
+            case .autoBackupToWebdav:
+                let config = state.webDAVConfig
+                guard config.isEnabled, config.isUsable,
+                      (config.lastBackupDate ?? .distantPast) < Date().addingTimeInterval(-86400)
+                else { return .none }
+                let envelope = SettingsBackup.envelope(
+                    exportDate: Date(),
+                    cookies: cookieClient.snapshotSessionCookies()
+                )
+                return .run { send in
+                    guard let data = SettingsBackup.encode(envelope) else {
+                        logger.notice("WebDAV auto-backup failed to encode.")
+                        return
+                    }
+                    let timestamped = SettingsBackup.timestampedFileName(exportDate: envelope.exportDate)
+                    guard case .success = await webDAVClient.upload(
+                        config, SettingsBackup.latestFileName, data
+                    ) else {
+                        logger.notice("WebDAV auto-backup upload failed.")
+                        return
+                    }
+                    _ = await webDAVClient.upload(config, timestamped, data)
+                    await send(.autoBackupToWebdavDone)
+                }
+
+            case .autoBackupToWebdavDone:
+                state.$webDAVConfig.withLock { $0.lastBackupDate = Date() }
+                return .none
+
             case .path:
                 return .none
             }
