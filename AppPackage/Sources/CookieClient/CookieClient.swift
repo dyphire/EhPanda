@@ -1,5 +1,4 @@
 import Foundation
-import WebKit
 import AppModels
 import ComposableArchitecture
 import AppTools
@@ -42,7 +41,6 @@ private func cookiePriority(_ cookie: HTTPCookie) -> Int {
 
 public struct CookieClient: Sendable {
     public let clearAll: @Sendable () -> Void
-    public let clearWebCookies: @Sendable () async -> Void
     public let getCookie: @Sendable (URL, String) -> CookieValue
     private let cookiesForURL: @Sendable (URL) -> [HTTPCookie]
     private let removeCookie: @Sendable (URL, String) -> Void
@@ -62,16 +60,6 @@ extension CookieClient {
                 if let historyCookies = cookieStorage.cookies {
                     historyCookies.forEach {
                         cookieStorage.deleteCookie($0)
-                    }
-                }
-            },
-            clearWebCookies: {
-                await withCheckedContinuation { continuation in
-                    WKWebsiteDataStore.default().removeData(
-                        ofTypes: [WKWebsiteDataTypeCookies],
-                        modifiedSince: .distantPast
-                    ) {
-                        continuation.resume()
                     }
                 }
             },
@@ -331,7 +319,10 @@ extension CookieClient {
                 dictionary[key] = cookieValue.rawValue
             }
         }
-        return dictionary.description
+        return dictionary
+            .sorted { $0.key < $1.key }
+            .map { "\($0.key)=\($0.value)" }
+            .joined(separator: "; ")
     }
 }
 
@@ -351,6 +342,61 @@ extension CookieClient {
                 }
             }
         }
+    }
+    @discardableResult
+    public func importCookieString(_ string: String) -> Bool {
+        let values = Self.cookieValues(in: string)
+        var importedCredentials = false
+        var importedIgneous = false
+        let memberID = values[Defaults.Cookie.ipbMemberId]?
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        let passHash = values[Defaults.Cookie.ipbPassHash]?
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        if let memberID, !memberID.isEmpty, let passHash, !passHash.isEmpty {
+            for url in [Defaults.URL.ehentai, Defaults.URL.exhentai, Defaults.URL.sexhentai] {
+                setOrEditCookie(for: url, key: Defaults.Cookie.ipbMemberId, value: memberID)
+                setOrEditCookie(for: url, key: Defaults.Cookie.ipbPassHash, value: passHash)
+            }
+            importedCredentials = true
+        }
+        if let igneous = values[Defaults.Cookie.igneous]?
+            .trimmingCharacters(in: .whitespacesAndNewlines),
+           !igneous.isEmpty,
+           hasCredentials(for: Defaults.URL.ehentai) || hasCredentials(for: Defaults.URL.exhentai) {
+            setOrEditCookie(for: Defaults.URL.exhentai, key: Defaults.Cookie.igneous, value: igneous)
+            setOrEditCookie(for: Defaults.URL.sexhentai, key: Defaults.Cookie.igneous, value: igneous)
+            importedIgneous = true
+        }
+        return importedCredentials || importedIgneous
+    }
+    private static func cookieValues(in string: String) -> [String: String] {
+        let keys = [
+            Defaults.Cookie.ipbMemberId,
+            Defaults.Cookie.ipbPassHash,
+            Defaults.Cookie.igneous
+        ]
+        var values = [String: String]()
+        for key in keys {
+            let escapedKey = NSRegularExpression.escapedPattern(for: key)
+            let patterns = [
+                "\\b\(escapedKey)=\\s*([^;,\\s]+)",
+                "\"\(escapedKey)\"\\s*:\\s*\"([^\"]+)\""
+            ]
+            for pattern in patterns {
+                guard let regex = try? NSRegularExpression(pattern: pattern) else { continue }
+                let range = NSRange(string.startIndex..., in: string)
+                guard let match = regex.firstMatch(in: string, range: range),
+                      let valueRange = Range(match.range(at: 1), in: string) else { continue }
+                let value = String(string[valueRange])
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                    .trimmingCharacters(in: CharacterSet(charactersIn: "\""))
+                if !value.isEmpty {
+                    values[key] = value
+                    break
+                }
+            }
+        }
+        return values
     }
     public func importCredentials(response: HTTPURLResponse) -> Bool {
         guard let url = response.url else { return false }
@@ -430,7 +476,6 @@ extension DependencyValues {
 extension CookieClient {
     public static let noop: Self = .init(
         clearAll: {},
-        clearWebCookies: {},
         getCookie: { _, _ in .empty },
         cookiesForURL: { _ in [] },
         removeCookie: { _, _ in },
@@ -445,7 +490,6 @@ extension CookieClient {
 
     public static let unimplemented: Self = .init(
         clearAll: IssueReporting.unimplemented(placeholder: placeholder()),
-        clearWebCookies: IssueReporting.unimplemented(placeholder: placeholder()),
         getCookie: IssueReporting.unimplemented(placeholder: placeholder()),
         cookiesForURL: IssueReporting.unimplemented(placeholder: placeholder()),
         removeCookie: IssueReporting.unimplemented(placeholder: placeholder()),
@@ -614,7 +658,6 @@ extension CookieClient {
             clearAll: {
                 store.removeAll()
             },
-            clearWebCookies: {},
             getCookie: { url, key in
                 cookieValue(in: store.cookies(for: url), key: key)
             },

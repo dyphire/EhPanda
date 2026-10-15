@@ -4,6 +4,7 @@ import AnimatedImageFeature
 
 public struct ClipboardClient: Sendable {
     public let url: @Sendable () -> URL?
+    public let text: @Sendable () -> String?
     public let changeCount: @Sendable () -> Int
     public let saveText: @Sendable (String) -> Void
     public let saveImage: @Sendable (UIImage, Bool) -> Void
@@ -18,6 +19,9 @@ extension ClipboardClient {
             } else {
                 return URL(string: UIPasteboard.general.string ?? "")
             }
+        },
+        text: {
+            UIPasteboard.general.string
         },
         changeCount: {
             UIPasteboard.general.changeCount
@@ -71,6 +75,7 @@ extension DependencyValues {
 extension ClipboardClient {
     public static let noop: Self = .init(
         url: { nil },
+        text: { nil },
         changeCount: { 0 },
         saveText: { _ in },
         saveImage: { _, _ in },
@@ -81,6 +86,7 @@ extension ClipboardClient {
 
     public static let unimplemented: Self = .init(
         url: IssueReporting.unimplemented(placeholder: placeholder()),
+        text: IssueReporting.unimplemented(placeholder: placeholder()),
         changeCount: IssueReporting.unimplemented(placeholder: placeholder()),
         saveText: IssueReporting.unimplemented(placeholder: placeholder()),
         saveImage: IssueReporting.unimplemented(placeholder: placeholder()),

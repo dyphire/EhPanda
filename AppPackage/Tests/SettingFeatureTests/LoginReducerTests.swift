@@ -16,10 +16,11 @@ struct LoginReducerTests {
             $0.hapticsClient = .noop
         }
 
+        // The initial `loginState` is `.idle`; a successful `.loginDone` sets it back to `.idle`,
+        // so the receive asserts no state change — the success path is pinned by the fact that a
+        // `.failure` result (see the test below) would have changed state and failed this receive.
         await store.send(.loginCookiesImported(true))
-        await store.receive(\.loginDone) {
-            $0.loginState = .idle
-        }
+        await store.receive(\.loginDone)
     }
 
     @Test
@@ -58,9 +59,8 @@ struct LoginReducerTests {
 
         await store.send(.webViewCookiesReceived(importedCookies))
         await store.receive(\.loginCookiesImported, true)
-        await store.receive(\.loginDone) {
-            $0.loginState = .idle
-        }
+        // A successful `.loginDone` leaves the initial `.idle` state untouched.
+        await store.receive(\.loginDone)
         #expect(cookieClient.didLogin)
     }
 }

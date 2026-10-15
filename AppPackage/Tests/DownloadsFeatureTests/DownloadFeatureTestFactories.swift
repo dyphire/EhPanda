@@ -299,8 +299,8 @@ extension DownloadFeatureTestCase {
         let manager = DownloadCoordinator(
             storage: storage,
             urlSession: URLSession(configuration: configuration),
-            downloadOptionsProvider: downloadOptionsProvider,
             cookieRefreshClient: cookieRefreshClient,
+            downloadOptionsProvider: downloadOptionsProvider,
             taskRunner: taskRunner
         )
         return (storage, manager)

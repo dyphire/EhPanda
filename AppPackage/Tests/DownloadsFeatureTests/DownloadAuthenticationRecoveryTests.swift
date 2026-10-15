@@ -32,11 +32,12 @@ struct DownloadAuthenticationRecoveryTests: DownloadFeatureTestCase {
             )
         )
         SharedSessionStubURLProtocol.setHandler(for: sessionID) { request in
-            #expect(request.url?.isExHentai == true)
+            guard let requestURL = request.url else { throw URLError(.badURL) }
+            #expect(requestURL.isExHentai)
             requestCount.value += 1
             let data = requestCount.value == 1 ? placeholderData : recoveredData
             let response = try #require(HTTPURLResponse(
-                url: try #require(request.url),
+                url: requestURL,
                 statusCode: 200,
                 httpVersion: nil,
                 headerFields: ["Content-Type": "image/jpeg"]
@@ -80,9 +81,10 @@ struct DownloadAuthenticationRecoveryTests: DownloadFeatureTestCase {
             }
         )
         SharedSessionStubURLProtocol.setHandler(for: sessionID) { request in
+            guard let requestURL = request.url else { throw URLError(.badURL) }
             requestCount.value += 1
             let response = try #require(HTTPURLResponse(
-                url: try #require(request.url),
+                url: requestURL,
                 statusCode: 200,
                 httpVersion: nil,
                 headerFields: ["Content-Type": "image/jpeg"]

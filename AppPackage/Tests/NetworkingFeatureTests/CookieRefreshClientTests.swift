@@ -9,9 +9,9 @@ import CookieClient
 struct CookieRefreshClientTests {
     @Test
     func refreshImportsValidIgneousAcrossExHosts() async throws {
+        // Each test gets a fresh, isolated store — don't `clearAll()`: it would wipe the seeded
+        // credentials below and make `performRefresh` bail before the network provider runs.
         let cookieClient = CookieClient.testing(memberID: "4172984", passHash: "pass-hash")
-        cookieClient.clearAll()
-        defer { cookieClient.clearAll() }
         let refreshClient = CookieRefreshClient.live(cookieClient: cookieClient) { request in
             #expect(request.url == Defaults.URL.exUConfig)
             let response = try #require(HTTPURLResponse(
@@ -67,9 +67,9 @@ struct CookieRefreshClientTests {
 
     @Test
     func concurrentRefreshUsesSingleFlightAndRevisionSkipsDuplicate() async throws {
+        // Each test gets a fresh, isolated store — don't `clearAll()`: it would wipe the seeded
+        // credentials below and make `performRefresh` bail before the network provider runs.
         let cookieClient = CookieClient.testing(memberID: "4172984", passHash: "pass-hash")
-        cookieClient.clearAll()
-        defer { cookieClient.clearAll() }
         let providerCalls = Mutex(0)
         let refreshClient = CookieRefreshClient.live(cookieClient: cookieClient) { _ in
             providerCalls.withLock { $0 += 1 }
