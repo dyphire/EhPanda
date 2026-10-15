@@ -9,12 +9,12 @@ import Foundation
 
 print(
     CommandLine.arguments[1]
-        .split(separator: "\r\n")
+        .split(whereSeparator: { $0.isNewline })
         .map(String.init)
         .filter({
             Array(0...100)
                 .map({ .init($0) + ". " })
                 .contains(where: $0.hasPrefix)
         })
-        .joined(separator: "\\n")
+        .joined(separator: "\n")
 )
